@@ -50,6 +50,10 @@ public class Attacker extends Robot{
         }
 
         MapLocation nextLoc = rc.getLocation().add(dir);
+
+        if (rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())&&rc.getCrumbs()>1000) {
+            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+        }
         if (rc.canMove(dir)){
             rc.move(dir);
         }
@@ -134,6 +138,8 @@ public class Attacker extends Robot{
             }
             rnds*=1000;
             rnds+=20-rc.getLocation().distanceSquaredTo(enemyLoc);
+            rnds*=10;
+            rnds+=rc.getID()%10;
             if(rnds>rounds){
                 rounds = rnds;
                 ret = i.getLocation();
