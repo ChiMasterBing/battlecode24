@@ -1,4 +1,4 @@
-package macroPath;
+package tester;
 
 import battlecode.common.*;
 //import macroPath.Attacker;
