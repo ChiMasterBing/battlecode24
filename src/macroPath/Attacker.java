@@ -23,7 +23,7 @@ public class Attacker extends Robot{
     }
     public void turn() throws GameActionException{
 
-        System.out.println("WTFsfasdfalkdsfasfd");
+        //System.out.println("WTFsfasdfalkdsfasfd");
         if (rc.canPickupFlag(rc.getLocation())){
             rc.pickupFlag(rc.getLocation());
 
@@ -41,13 +41,14 @@ public class Attacker extends Robot{
         // Move and attack randomly if no objective.
         Direction dir = directions[rng.nextInt(directions.length)];
         MapLocation nextLoc = rc.getLocation().add(dir);
-        if (rc.canMove(dir)){
-            rc.move(dir);
-        }
-        MapLocation attackLoc = findBestAttackLocation();
-        if(rc.canAttack(attackLoc)){
-            rc.attack(attackLoc);
-        }
+        bugNav.move(nextLoc);
+        // if (rc.canMove(dir)){
+        //     rc.move(dir);
+        // }
+        // MapLocation attackLoc = findBestAttackLocation();
+        // if(rc.canAttack(attackLoc)){
+        //     rc.attack(attackLoc);
+        // }
 
         // Rarely attempt placing traps behind the robot.
         MapLocation prevLoc = rc.getLocation().subtract(dir);

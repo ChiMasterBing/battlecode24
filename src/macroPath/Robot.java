@@ -13,6 +13,7 @@ public abstract class Robot {
 
     public Robot(RobotController rc) {
         this.rc = rc;
+        bugNav.init(rc);
     }
 
     public void turn() throws GameActionException {

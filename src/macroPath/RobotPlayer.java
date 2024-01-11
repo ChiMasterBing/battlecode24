@@ -48,18 +48,27 @@ public strictfp class RobotPlayer {
             }
             Robot robot;
             if (!rc.isSpawned()){
-                MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-                // Pick a random spawn location to attempt spawning in.
-                MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
-                if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+                if(rc.getRoundNum() == 1) {
+                    if (rc.readSharedArray(0) == 0) {
+                        mainDuck = true;
+                        rc.writeSharedArray(0, 1);
+                    } 
+                }
+                if (mainDuck) {
+                    MapLocation[] spawnLocs = rc.getAllySpawnLocations();
+                    // Pick a random spawn location to attempt spawning in.
+                    MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
+                    if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+                }
             }else {
 
                 System.out.println(Attacker.directions);
                 robot = new Attacker(rc);
-                while (true) {
-                    robot.turn();
-                    Clock.yield();
-                }
+                bugNav.move(new MapLocation(20, 24));
+                // while (true) {
+                //     robot.turn();
+                //     Clock.yield();
+                // }
             }
             Clock.yield();
         }
