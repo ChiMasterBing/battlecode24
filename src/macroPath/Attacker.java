@@ -1,7 +1,6 @@
 package macroPath;
 
 import battlecode.common.*;
-import sun.nio.cs.ext.MacRoman;
 
 import java.util.Map;
 import java.util.Random;
@@ -50,13 +49,12 @@ public class Attacker extends Robot{
         }
 
         MapLocation nextLoc = rc.getLocation().add(dir);
-
-        if (rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())&&rc.getCrumbs()>1000) {
-            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
-        }
+        //bugNav.move(nextLoc);
+        //rc.setIndicatorDot(nextLoc, 255, 0, 0);
         if (rc.canMove(dir)){
             rc.move(dir);
         }
+
         MapLocation attackLoc = findBestAttackLocation();
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
             rc.attack(attackLoc);
@@ -138,8 +136,6 @@ public class Attacker extends Robot{
             }
             rnds*=1000;
             rnds+=20-rc.getLocation().distanceSquaredTo(enemyLoc);
-            rnds*=10;
-            rnds+=rc.getID()%10;
             if(rnds>rounds){
                 rounds = rnds;
                 ret = i.getLocation();
