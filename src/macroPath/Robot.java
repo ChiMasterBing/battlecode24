@@ -15,8 +15,7 @@ public abstract class Robot {
         this.rc = rc;
     }
 
-    public static void turn() {
-        
+    public void turn() throws GameActionException {
 
     }
 }
