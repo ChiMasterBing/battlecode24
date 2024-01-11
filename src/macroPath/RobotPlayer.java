@@ -44,7 +44,7 @@ public strictfp class RobotPlayer {
         // You can also use indicators to save debug notes in replays.
         Robot robot;
         robot = new Attacker(rc);
-
+        MapLocation currentTarget = null;
         while(true){
             rc.setIndicatorString("Hello world!");
 //            if(rc.getRoundNum()>500){
@@ -65,8 +65,17 @@ public strictfp class RobotPlayer {
                 }
             }else {
 
-//                System.out.println(Attacker.directions);
-                robot.turn();
+// //                System.out.println(Attacker.directions);
+//                 robot.turn();
+                MapLocation[] arr = rc.senseBroadcastFlagLocations();
+                if (arr[0] != null) {
+                    currentTarget = arr[0];
+                }
+                if (currentTarget != null) {
+                    bugNav.move(currentTarget);
+                }
+                
+                
             }
             Clock.yield();
         }

@@ -49,10 +49,11 @@ public class Attacker extends Robot{
         }
 
         MapLocation nextLoc = rc.getLocation().add(dir);
-        bugNav.move(nextLoc);
-        // if (rc.canMove(dir)){
-        //     rc.move(dir);
-        // }
+        //bugNav.move(nextLoc);
+        //rc.setIndicatorDot(nextLoc, 255, 0, 0);
+        if (rc.canMove(dir)){
+            rc.move(dir);
+        }
 
         MapLocation attackLoc = findBestAttackLocation();
         if(attackLoc!=null&&rc.canAttack(attackLoc)){

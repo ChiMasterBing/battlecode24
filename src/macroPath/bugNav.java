@@ -31,47 +31,7 @@ public class bugNav {
         Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
         if (!rc.isMovementReady()) return;
         target = loc;
-        if (!nav())
-            greedyPath();
-    }
-
-    static final double eps = 1e-5;
-    static void greedyPath() {
-        try {
-            MapLocation myLoc = rc.getLocation();
-            Direction bestDir = null;
-            double bestEstimation = 0;
-            int bestEstimationDist = 0;
-            for (Direction dir : directions) {
-                MapLocation newLoc = myLoc.add(dir);
-                if (!rc.onTheMap(newLoc)) continue;
-                if (!canMove(dir)) continue; //can this replace the line before too
-                if (!strictlyCloser(newLoc, myLoc, target)) continue;
-
-                int newDist = newLoc.distanceSquaredTo(target);
-                // TODO: Better estimation?
-                double estimation = 1 + distance(target, newLoc);
-                if (bestDir == null || estimation < bestEstimation - eps
-                        || (Math.abs(estimation - bestEstimation) <= 2 * eps && newDist < bestEstimationDist)) {
-                    bestEstimation = estimation;
-                    bestDir = dir;
-                    bestEstimationDist = newDist;
-                }
-            }
-            if (bestDir != null)
-                rc.move(bestDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    static boolean strictlyCloser(MapLocation newLoc, MapLocation oldLoc, MapLocation target) {
-        int dOld = distance(target, oldLoc), dNew = distance(target, newLoc);
-        if (dOld < dNew)
-            return false;
-        if (dNew < dOld)
-            return true;
-        return target.distanceSquaredTo(newLoc) < target.distanceSquaredTo(oldLoc);
+        nav();
     }
 
     static boolean canMove(Direction dir) {
@@ -112,10 +72,8 @@ public class bugNav {
 
             // If I'm at a minimum distance to the target, I'm free!
             MapLocation myLoc = rc.getLocation();
-            // int d = myLoc.distanceSquaredTo(target);
             int d = distance(myLoc, target);
             if (d < minDistToEnemy) {
-                // Debug.println("New min dist: " + d + " Old: " + minDistToEnemy, id);
                 resetPathfinding();
                 minDistToEnemy = d;
             }
