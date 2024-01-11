@@ -1,6 +1,7 @@
 package macroPath;
 
 import battlecode.common.*;
+//import macroPath.Attacker;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public strictfp class RobotPlayer {
 
     static final Random rng = new Random(6147);
     static macroPath MP;
-    static Attacker penis;
+//    static Attacker penis;
 
     static boolean mainDuck = false;
 
@@ -41,12 +42,14 @@ public strictfp class RobotPlayer {
     @SuppressWarnings("unused")
     public static void run(RobotController rc) throws GameActionException {
         // You can also use indicators to save debug notes in replays.
+        Robot robot;
+        robot = new Attacker(rc);
+
         while(true){
             rc.setIndicatorString("Hello world!");
-            if(rc.getRoundNum()>500){
-                rc.resign();
-            }
-            Robot robot;
+//            if(rc.getRoundNum()>500){
+//                rc.resign();
+//            }
             if (!rc.isSpawned()){
                 if(rc.getRoundNum() == 1) {
                     if (rc.readSharedArray(0) == 0) {
@@ -62,13 +65,8 @@ public strictfp class RobotPlayer {
                 }
             }else {
 
-                System.out.println(Attacker.directions);
-                robot = new Attacker(rc);
-                bugNav.move(new MapLocation(20, 24));
-                // while (true) {
-                //     robot.turn();
-                //     Clock.yield();
-                // }
+//                System.out.println(Attacker.directions);
+                robot.turn();
             }
             Clock.yield();
         }

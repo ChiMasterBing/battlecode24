@@ -23,7 +23,6 @@ public class Attacker extends Robot{
     }
     public void turn() throws GameActionException{
 
-        //System.out.println("WTFsfasdfalkdsfasfd");
         if (rc.canPickupFlag(rc.getLocation())){
             rc.pickupFlag(rc.getLocation());
 
@@ -39,16 +38,27 @@ public class Attacker extends Robot{
             if (rc.canMove(dir)) rc.move(dir);
         }
         // Move and attack randomly if no objective.
-        Direction dir = directions[rng.nextInt(directions.length)];
+        MapLocation leaderloc = findLeader();
+        Direction dir = rc.getLocation().directionTo(new MapLocation(3, 26));
+        if(leaderloc!=null){
+            dir = rc.getLocation().directionTo(leaderloc);
+            if(rc.getLocation().distanceSquaredTo(leaderloc)<7){
+                dir = dir.opposite();
+            }
+
+        }
+
         MapLocation nextLoc = rc.getLocation().add(dir);
         bugNav.move(nextLoc);
         // if (rc.canMove(dir)){
         //     rc.move(dir);
         // }
-        // MapLocation attackLoc = findBestAttackLocation();
-        // if(rc.canAttack(attackLoc)){
-        //     rc.attack(attackLoc);
-        // }
+
+        MapLocation attackLoc = findBestAttackLocation();
+        if(attackLoc!=null&&rc.canAttack(attackLoc)){
+            rc.attack(attackLoc);
+            System.out.println("YAYYYY");
+        }
 
         // Rarely attempt placing traps behind the robot.
         MapLocation prevLoc = rc.getLocation().subtract(dir);
@@ -77,19 +87,29 @@ public class Attacker extends Robot{
 
         }
     }
-
-    public static MapLocation findBestAttackLocation() throws GameActionException{
-        RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+    public static MapLocation findLeader() throws GameActionException {
         RobotInfo[] friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
+        int maxH = rc.getHealth()*1000000+rc.getID();
+        MapLocation ret = null;
+        for(RobotInfo i: friendlyRobots){
+            if(maxH<i.getHealth()){
+                maxH = i.getHealth()*1000000+rc.getID();
+                ret = i.getLocation();
+            }
+        }
+        return ret;
+    }
+    public static MapLocation findBestAttackLocation() throws GameActionException{
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
+        RobotInfo[] friendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
         int totalHeal = 0;
         for(RobotInfo i: enemyRobots){
             if(i.healLevel>i.attackLevel){
                 totalHeal+=80;
             }
         }
-        double rounds = Double.MAX_VALUE;
+        double rounds = 0;
         MapLocation ret = null;
-
         for(RobotInfo i : enemyRobots){
             MapLocation enemyLoc = i.getLocation();
             int totalAttack = 0;
@@ -100,6 +120,9 @@ public class Attacker extends Robot{
             }
             double rnds = 0;
             int roundstokill = 100000;
+            if(i.hasFlag){
+                rnds+=100000000;
+            }
             if(totalAttack-totalHeal+1!=0) {
                 roundstokill = i.getHealth() / (totalAttack - totalHeal + 1);
             }
