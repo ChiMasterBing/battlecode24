@@ -2,6 +2,7 @@ package macroPath;
 
 import battlecode.common.*;
 
+import java.util.Map;
 import java.util.Random;
 
 public class Attacker extends Robot{
@@ -17,13 +18,8 @@ public class Attacker extends Robot{
     };
     static final Random rng = new Random(6147);
 
-    Attacker(RobotController rc){
+    public Attacker(RobotController rc){
         super(rc);
-    }
-    public  void chooseAttack() {
-
-
-
     }
     public void turn() throws GameActionException{
 
@@ -48,9 +44,9 @@ public class Attacker extends Robot{
         if (rc.canMove(dir)){
             rc.move(dir);
         }
-        else if (rc.canAttack(nextLoc)){
-            rc.attack(nextLoc);
-            System.out.println("Take that! Damaged an enemy that was in our way!");
+        MapLocation attackLoc = findBestAttackLocation();
+        if(rc.canAttack(attackLoc)){
+            rc.attack(attackLoc);
         }
 
         // Rarely attempt placing traps behind the robot.
@@ -58,10 +54,10 @@ public class Attacker extends Robot{
         if (rc.canBuild(TrapType.EXPLOSIVE, prevLoc) && rng.nextInt() % 37 == 1)
             rc.build(TrapType.EXPLOSIVE, prevLoc);
         // We can also move our code into different methods or classes to better organize it!
-        updateEnemyRobots(rc);
+        updateEnemyRobots();
 
     }
-    public static void updateEnemyRobots(RobotController rc) throws GameActionException{
+    public static void updateEnemyRobots() throws GameActionException{
         // Sensing methods can be passed in a radius of -1 to automatically
         // use the largest possible value.
         RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
@@ -77,6 +73,50 @@ public class Attacker extends Robot{
                 rc.writeSharedArray(0, enemyRobots.length);
                 int numEnemies = rc.readSharedArray(0);
             }
+
         }
+    }
+
+    public static MapLocation findBestAttackLocation() throws GameActionException{
+        RobotInfo[] enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+        RobotInfo[] friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
+        int totalHeal = 0;
+        for(RobotInfo i: enemyRobots){
+            if(i.healLevel>i.attackLevel){
+                totalHeal+=80;
+            }
+        }
+        double rounds = Double.MAX_VALUE;
+        MapLocation ret = null;
+
+        for(RobotInfo i : enemyRobots){
+            MapLocation enemyLoc = i.getLocation();
+            int totalAttack = 0;
+            for(RobotInfo j: friendlyRobots){
+                if(j.attackLevel>j.healLevel&&j.getLocation().isWithinDistanceSquared(enemyLoc, 4)){
+                    totalAttack+=180;
+                }
+            }
+            double rnds = 0;
+            int roundstokill = 100000;
+            if(totalAttack-totalHeal+1!=0) {
+                roundstokill = i.getHealth() / (totalAttack - totalHeal + 1);
+            }
+            rnds +=1/((double)roundstokill+1.0);
+            rnds*=1000;
+            if(i.attackLevel>=i.healLevel){
+                rnds+=(i.attackLevel+1);
+            }else{
+                rnds+=i.healLevel;
+            }
+            rnds*=1000;
+            rnds+=20-rc.getLocation().distanceSquaredTo(enemyLoc);
+            if(rnds>rounds){
+                rounds = rnds;
+                ret = i.getLocation();
+            }
+
+        }
+        return ret;
     }
 }

@@ -22,6 +22,8 @@ public strictfp class RobotPlayer {
 
     static final Random rng = new Random(6147);
     static macroPath MP;
+    static Attacker penis;
+
     static boolean mainDuck = false;
 
     /** Array containing all the possible movement directions. */
@@ -50,8 +52,9 @@ public strictfp class RobotPlayer {
                 // Pick a random spawn location to attempt spawning in.
                 MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
                 if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
-                robot = new Attacker(rc);
             }else {
+
+                System.out.println(Attacker.directions);
                 robot = new Attacker(rc);
                 while (true) {
                     robot.turn();
