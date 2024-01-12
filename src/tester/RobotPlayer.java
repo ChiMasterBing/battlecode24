@@ -1,4 +1,4 @@
-package bald;
+package tester;
 
 import battlecode.common.*;
 //import macroPath.Attacker;
@@ -22,6 +22,8 @@ public strictfp class RobotPlayer {
     //static macroPath MP;
 
     static final Random rng = new Random(6147);
+    static macroPath MP;
+//    static Attacker penis;
 
     static boolean mainDuck = false;
 
@@ -42,23 +44,29 @@ public strictfp class RobotPlayer {
         // You can also use indicators to save debug notes in replays.
         Robot robot;
         robot = new Attacker(rc);
-        MapLocation currentTarget = null;
         while(true){
             rc.setIndicatorString("Hello world!");
-            if (rc.getRoundNum() == 2) {
-                robot.populateTeamIDS();
-            }
+//            if(rc.getRoundNum()>500){
+//                rc.resign();
+//            }
             if (!rc.isSpawned()){
-                if (robot.myMoveNumber < 10) {
-                    MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-                    // Pick a random spawn location to attempt spawning in.
-                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber];
-                    if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+                if(rc.getRoundNum() == 1) {
+                    if (rc.readSharedArray(0) == 0) {
+                        mainDuck = true;
+                        rc.writeSharedArray(0, 1);
+                    }
                 }
+                MapLocation[] spawnLocs = rc.getAllySpawnLocations();
+                // Pick a random spawn location to attempt spawning in.
+                MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
+                if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+
             }else {
 
+// //                System.out.println(Attacker.directions);
                 robot.turn();
-                
+
+
             }
             Clock.yield();
         }
