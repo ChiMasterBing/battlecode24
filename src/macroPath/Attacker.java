@@ -89,16 +89,16 @@ public class Attacker extends Robot{
             bugNav.move(targ);
             return;
         }
-        MapLocation tooClose = findTooClose();
-        if(findTooClose()!=null){
-            Direction dir = rc.getLocation().directionTo(tooClose).opposite();
-            if(rc.canMove(dir)){
-                rc.move(dir);
-            }
-        }
+//        MapLocation tooClose = findTooClose();
+//        if(findTooClose()!=null){
+//            Direction dir = rc.getLocation().directionTo(tooClose).opposite();
+//            if(rc.canMove(dir)){
+//                rc.move(dir);
+//            }
+//        }
         // Move and attack randomly if no objective.
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
-        if(crummy.length>0){
+        if(crummy.length>0&&rc.getRoundNum()<250){
             bugNav.move(crummy[0]);
         }
         MapLocation leaderloc = findLeader();

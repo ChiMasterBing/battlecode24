@@ -21,8 +21,20 @@ public class Attacker extends Robot{
 
     RobotInfo[] enemyRobots;
     RobotInfo[] friendlyRobots;
+
+    RobotInfo[] closeFriendlyRobots;
+    RobotInfo[] closeEnemyRobots;
+    MapLocation closestSpawn;
+    int onOpponentSide = 0;
+    int prevNoBomb = 0;
     public Attacker(RobotController rc){
         super(rc);
+    }
+    public int onOpponentSide(MapLocation closetSpawn, MapLocation currentLocation) {//if closer to enemy, hten negative
+        if (currentTarget!=null) {
+            return currentLocation.distanceSquaredTo(currentTarget) - rc.getLocation().distanceSquaredTo(closetSpawn);
+        }
+        return 10;
     }
     public MapLocation findTooClose() throws GameActionException {
 
@@ -35,20 +47,9 @@ public class Attacker extends Robot{
     }
     public void movement() throws GameActionException {
         if (rc.hasFlag()){
-            MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-            int dist = Integer.MAX_VALUE;
-            MapLocation targ = null;
-            for(MapLocation spawn : spawnLocs){
-                int cdist = rc.getLocation().distanceSquaredTo(spawn);
-                if(cdist<dist){
-                    dist = cdist;
-                    targ = spawn;
-                }
-            }
-            bugNav.move(targ);
+            bugNav.move(closestSpawn);
             return;
         }
-
 
         int dist = Integer.MAX_VALUE;
         MapLocation targ = null;
@@ -63,15 +64,20 @@ public class Attacker extends Robot{
                     targ = i.getLocation();
                 }
             }
-            if(i.getTeam()==rc.getTeam().opponent()&&!i.isPickedUp()){
+            if(i.getTeam()==rc.getTeam().opponent()&&!i.isPickedUp()&&enemyRobots.length<friendlyRobots.length-1){//check if this is hleful
                 int cdist = i.getLocation().distanceSquaredTo(rc.getLocation());
                 if(cdist<dist){
                     dist = cdist;
                     targ = i.getLocation();
+                    //check if this is good
+//                        if (rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
+//                            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+//                        }
+
                 }
             }
-            if(i.getTeam()==rc.getTeam().opponent()&&i.isPickedUp()){
-                targ = null;
+            if(i.getTeam()==rc.getTeam().opponent()&&i.isPickedUp()&&i.getLocation().distanceSquaredTo(rc.getLocation())>9){
+                targ = i.getLocation();
                 break;
             }
 
@@ -83,16 +89,16 @@ public class Attacker extends Robot{
             bugNav.move(targ);
             return;
         }
-        MapLocation tooClose = findTooClose();
-        if(findTooClose()!=null){
-            Direction dir = rc.getLocation().directionTo(tooClose).opposite();
-            if(rc.canMove(dir)){
-                rc.move(dir);
-            }
-        }
+//        MapLocation tooClose = findTooClose();
+//        if(findTooClose()!=null){
+//            Direction dir = rc.getLocation().directionTo(tooClose).opposite();
+//            if(rc.canMove(dir)){
+//                rc.move(dir);
+//            }
+//        }
         // Move and attack randomly if no objective.
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
-        if(crummy.length>0){
+        if(crummy.length>0&&rc.getRoundNum()<250){
             bugNav.move(crummy[0]);
         }
         MapLocation leaderloc = findLeader();
@@ -113,42 +119,68 @@ public class Attacker extends Robot{
         }
     }
     public void turn() throws GameActionException{
-        rc.setIndicatorString("i dont have leader rn");
+        //cacllulates who's side you're on
+        MapLocation[] spawnLocs = rc.getAllySpawnLocations();
+        int dist = Integer.MAX_VALUE;
+        for(MapLocation spawn : spawnLocs){
+            int cdist = rc.getLocation().distanceSquaredTo(spawn);
+            if(cdist<dist){
+                dist = cdist;
+                closestSpawn = spawn;
+            }
+        }
+        System.out.println(closestSpawn);
+        onOpponentSide = onOpponentSide(closestSpawn, rc.getLocation());
+
+        closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
+        closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
+
 
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
-        if (rc.canPickupFlag(rc.getLocation())){
+
+        if (rc.canPickupFlag(rc.getLocation())&&friendlyRobots.length- enemyRobots.length>3){//check if this change is good
             rc.pickupFlag(rc.getLocation());
 
             rc.setIndicatorString("Holding a flag!");
         }
 
-        if(rc.hasFlag()){
-            if (rc.canBuild(TrapType.STUN, rc.getLocation())) {
-                rc.build(TrapType.STUN, rc.getLocation());
-            }
-
-            while(rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())){
+        if(rc.getRoundNum()>210) {
+            if (enemyRobots.length - friendlyRobots.length > 4-rc.getCrumbs()/1500 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
                 rc.build(TrapType.EXPLOSIVE, rc.getLocation());
             }
-        }
-
-        if (enemyRobots.length>2&&rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
-            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+        }else{
+            if (enemyRobots.length > 4-rc.getCrumbs()/500 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
+                rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+            }
         }
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
         if (arr.length>0&&arr[0] != null) {
             currentTarget = arr[0];
         }
+
+        MapLocation attackLoc = findBestAttackLocation();
+        if(attackLoc!=null&&rc.canAttack(attackLoc)){
+            rc.attack(attackLoc);
+//            System.out.println("YAYYYY");
+        }
+
         movement();
+//        if (closeEnemyRobots.length-closeFriendlyRobots.length>2&&rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
+//            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+//        }
+
+        //!! REMMEBER TO RESET EVERYTHING AFTER MOVING, like the enemy array and shit!!!!!!!!!!!!!!!!
 
         // If we are holding an enemy flag, singularly focus on moving towards
         // an ally spawn zone to capture it! We use the check roundNum >= SETUP_ROUNDS
         // to make sure setup phase has ended.
 
 
+        closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
+        closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
 
-        MapLocation attackLoc = findBestAttackLocation();
+        attackLoc = findBestAttackLocation();
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
             rc.attack(attackLoc);
 //            System.out.println("YAYYYY");
@@ -187,7 +219,6 @@ public class Attacker extends Robot{
         for(RobotInfo i: friendlyRobots){
             if(i.hasFlag){
                 rc.setIndicatorString("i have leader rn");
-
                 maxH+=1000000000;
                 ret = i.getLocation();
             }
@@ -196,23 +227,27 @@ public class Attacker extends Robot{
                 ret = i.getLocation();
             }
         }
+        if(ret==null){
+            if(enemyRobots.length>friendlyRobots.length&&onOpponentSide<0){
+                return closestSpawn;
+            }
+
+        }
         return ret;
     }
-    public static MapLocation findBestAttackLocation() throws GameActionException{
-        RobotInfo[] badBots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
-        RobotInfo[] goodBots = rc.senseNearbyRobots(4, rc.getTeam());
+    public MapLocation findBestAttackLocation() throws GameActionException{
         int totalHeal = 0;
-        for(RobotInfo i: badBots){
+        for(RobotInfo i: closeEnemyRobots){
             if(i.healLevel>i.attackLevel){
                 totalHeal+=80;
             }
         }
         double rounds = 0;
         MapLocation ret = null;
-        for(RobotInfo i : badBots){
+        for(RobotInfo i : closeEnemyRobots){
             MapLocation enemyLoc = i.getLocation();
             int totalAttack = 0;
-            for(RobotInfo j: goodBots){
+            for(RobotInfo j: closeFriendlyRobots){
                 if(j.attackLevel>j.healLevel&&j.getLocation().isWithinDistanceSquared(enemyLoc, 4)){
                     totalAttack+=180;
                 }
