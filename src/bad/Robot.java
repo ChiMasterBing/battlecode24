@@ -2,6 +2,7 @@ package bad;
 
 import battlecode.common.*;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public abstract class Robot {
@@ -10,7 +11,7 @@ public abstract class Robot {
     static RobotController rc;
 
     static int myMoveNumber;
-    static MapLocation currentTarget = null;
+    public MapLocation currentTarget = null;
 
     public Robot(RobotController rc) throws GameActionException {
         //TODO: First turn bytecode usage is high. can spread across first 5
@@ -38,7 +39,15 @@ public abstract class Robot {
 
     public void turn() throws GameActionException {
         teammateTracker.preTurn();
-//        if (rc.getRoundNum() > 500) {
+        MapLocation[] arr = rc.senseBroadcastFlagLocations();
+        System.out.println(Arrays.toString(arr));
+        if (arr.length>0&&arr[0] != null) {
+            currentTarget = arr[0];
+            System.out.println("wow"+currentTarget);
+            rc.setIndicatorDot(rc.getLocation(),0, 0, 255);
+        }
+
+//        if (rc.getRoundNum() > 15) {
 //            rc.resign();
 //        }
 

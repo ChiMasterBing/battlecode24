@@ -2,6 +2,7 @@ package bad;
 
 import battlecode.common.*;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
@@ -105,6 +106,7 @@ public class Attacker extends Robot{
         }
         MapLocation leaderloc = findLeader();
         if(leaderloc!=null){
+            rc.setIndicatorString("following leader at"+rc.getLocation());
             Direction dir = rc.getLocation().directionTo(leaderloc);
             if(rc.getLocation().distanceSquaredTo(leaderloc)<8){
                 dir = dir.opposite();
@@ -116,7 +118,11 @@ public class Attacker extends Robot{
 
         }else{
             if(currentTarget!=null) {
+
+                rc.setIndicatorString("moving towards "+currentTarget);
                 bugNav.move(currentTarget);
+            }else{
+                rc.setIndicatorString("tried to move towards current target, but couldnt find one");
             }
         }
     }
@@ -136,7 +142,10 @@ public class Attacker extends Robot{
         }
     }
     public void turn() throws GameActionException{
+//        System.out.println("fuck?");
         super.turn();
+        currentTarget = super.currentTarget;
+//        System.out.println("me!");
         //cacllulates who's side you're on
         MapLocation[] spawnLocs = rc.getAllySpawnLocations();
         int dist = Integer.MAX_VALUE;
@@ -148,7 +157,7 @@ public class Attacker extends Robot{
             }
         }
 
-        System.out.println(closestSpawn);
+//        System.out.println(closestSpawn);
         onOpponentSide = onOpponentSide(closestSpawn, rc.getLocation());
 
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
@@ -174,10 +183,7 @@ public class Attacker extends Robot{
                 rc.build(TrapType.EXPLOSIVE, rc.getLocation());
             }
         }
-        MapLocation[] arr = rc.senseBroadcastFlagLocations();
-        if (arr.length>0&&arr[0] != null) {
-            currentTarget = arr[0];
-        }
+        System.out.println("DADDY!");
 
         MapLocation attackLoc = findBestAttackLocation();
         if(attackLoc!=null&&rc.canAttack(attackLoc)){

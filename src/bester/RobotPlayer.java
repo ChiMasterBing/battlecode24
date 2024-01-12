@@ -1,4 +1,4 @@
-package bad;
+package bester;
 
 import battlecode.common.*;
 //import macroPath.Attacker;
@@ -22,6 +22,8 @@ public strictfp class RobotPlayer {
     //static macroPath MP;
 
     static final Random rng = new Random(6147);
+    static macroPath MP;
+//    static Attacker penis;
 
     static boolean mainDuck = false;
 
@@ -42,30 +44,32 @@ public strictfp class RobotPlayer {
         // You can also use indicators to save debug notes in replays.
         Robot robot;
         robot = new Attacker(rc);
-//        MapLocation currentTarget = null;
         while(true){
             rc.setIndicatorString("Hello world!");
-            if (rc.getRoundNum() == 2) {
-                robot.populateTeamIDS();
-            }
+//            if(rc.getRoundNum()>500){
+//                rc.resign();
+//            }
             if (!rc.isSpawned()){
-
-                    MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-                    // Pick a random spawn location to attempt spawning in.
-                    for(MapLocation randomLoc : spawnLocs){
-                        if(rc.canSpawn(randomLoc)){
-                            rc.spawn(randomLoc);
-                        }
+                if(rc.getRoundNum() == 1) {
+                    if (rc.readSharedArray(0) == 0) {
+                        mainDuck = true;
+                        rc.writeSharedArray(0, 1);
                     }
-                    robot.turn();
-
-//                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber% spawnLocs.length];
-//                    if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+                }
+                MapLocation[] spawnLocs = rc.getAllySpawnLocations();
+                // Pick a random spawn location to attempt spawning in.
+                for(MapLocation randomLoc : spawnLocs){
+                    if(rc.canSpawn(randomLoc)){
+                        rc.spawn(randomLoc);
+                    }
+                }
 
             }else {
 
+// //                System.out.println(Attacker.directions);
                 robot.turn();
-                
+
+
             }
             Clock.yield();
         }
