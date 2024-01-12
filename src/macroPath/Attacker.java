@@ -118,6 +118,19 @@ public class Attacker extends Robot{
             }
         }
     }
+    public void tryHeal() throws GameActionException {
+        MapLocation bestheal = null;
+        int lowestHealth = Integer.MAX_VALUE;
+        for(RobotInfo i: closeFriendlyRobots){
+            if(lowestHealth>i.getHealth()){
+                bestheal = i.getLocation();
+                lowestHealth = i.getHealth();
+            }
+        }
+        if(bestheal!=null&&rc.canHeal(bestheal)){
+            rc.heal(bestheal);
+        }
+    }
     public void turn() throws GameActionException{
         //cacllulates who's side you're on
         MapLocation[] spawnLocs = rc.getAllySpawnLocations();
@@ -129,11 +142,13 @@ public class Attacker extends Robot{
                 closestSpawn = spawn;
             }
         }
+
         System.out.println(closestSpawn);
         onOpponentSide = onOpponentSide(closestSpawn, rc.getLocation());
 
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
         closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
+
 
 
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
@@ -165,11 +180,12 @@ public class Attacker extends Robot{
 //            System.out.println("YAYYYY");
         }
 
+        tryHeal();
+
         movement();
 //        if (closeEnemyRobots.length-closeFriendlyRobots.length>2&&rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
 //            rc.build(TrapType.EXPLOSIVE, rc.getLocation());
 //        }
-
         //!! REMMEBER TO RESET EVERYTHING AFTER MOVING, like the enemy array and shit!!!!!!!!!!!!!!!!
 
         // If we are holding an enemy flag, singularly focus on moving towards
@@ -180,12 +196,13 @@ public class Attacker extends Robot{
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
         closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
 
+
         attackLoc = findBestAttackLocation();
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
             rc.attack(attackLoc);
 //            System.out.println("YAYYYY");
         }
-
+        tryHeal();
         // Rarely attempt placing traps behind the robot.
 //        MapLocation prevLoc = rc.getLocation().subtract(dir);
 //        if (rc.canBuild(TrapType.EXPLOSIVE, prevLoc) && rng.nextInt() % 37 == 1)
