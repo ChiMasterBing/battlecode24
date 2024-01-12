@@ -48,11 +48,12 @@ public strictfp class RobotPlayer {
             if (rc.getRoundNum() == 2) {
                 robot.populateTeamIDS();
             }
+            System.out.println("SDFDSFDSFDSFSDF");
             if (!rc.isSpawned()){
-                if (robot.myMoveNumber < 10) {
+                if (robot.myMoveNumber < 3000) {
                     MapLocation[] spawnLocs = rc.getAllySpawnLocations();
                     // Pick a random spawn location to attempt spawning in.
-                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber];
+                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber% spawnLocs.length];
                     if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
                 }
             }else {

@@ -26,6 +26,8 @@ public class Attacker extends Robot{
     RobotInfo[] closeEnemyRobots;
     MapLocation closestSpawn;
     int onOpponentSide = 0;
+
+
     int prevNoBomb = 0;
     public Attacker(RobotController rc){
         super(rc);

@@ -38,14 +38,13 @@ public abstract class Robot {
 
     public void turn() throws GameActionException {
         teammateTracker.preTurn();
+//        if (rc.getRoundNum() > 500) {
+//            rc.resign();
+//        }
 
-        if (rc.getRoundNum() > 500) {
-            rc.resign();
-        }
-
-        currentTarget = new MapLocation(31, 27);
+//        currentTarget = new MapLocation(31, 27);
         //Debug.println("attemting to move");
-        bugNav.move(currentTarget);
+//        bugNav.move(currentTarget);
         macroPath.scout();
         macroPath.updateSymm();
 
