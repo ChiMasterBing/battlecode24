@@ -1,4 +1,4 @@
-package macroPath;
+package bad;
 
 public class FastIntSet {
     public StringBuilder keys;

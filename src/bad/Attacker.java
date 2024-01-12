@@ -1,4 +1,4 @@
-package macroPath;
+package bad;
 
 import battlecode.common.*;
 
@@ -18,56 +18,11 @@ public class Attacker extends Robot{
     };
     static final Random rng = new Random(6147);
 
-    public Attacker(RobotController rc){
+    public Attacker(RobotController rc) throws GameActionException {
         super(rc);
     }
     public void turn() throws GameActionException{
-
-        if (rc.canPickupFlag(rc.getLocation())){
-            rc.pickupFlag(rc.getLocation());
-
-            rc.setIndicatorString("Holding a flag!");
-        }
-        // If we are holding an enemy flag, singularly focus on moving towards
-        // an ally spawn zone to capture it! We use the check roundNum >= SETUP_ROUNDS
-        // to make sure setup phase has ended.
-        if (rc.hasFlag() && rc.getRoundNum() >= GameConstants.SETUP_ROUNDS){
-            MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-            MapLocation firstLoc = spawnLocs[0];
-            Direction dir = rc.getLocation().directionTo(firstLoc);
-            if (rc.canMove(dir)) rc.move(dir);
-        }
-        // Move and attack randomly if no objective.
-        MapLocation leaderloc = findLeader();
-        Direction dir = rc.getLocation().directionTo(new MapLocation(3, 26));
-        if(leaderloc!=null){
-            dir = rc.getLocation().directionTo(leaderloc);
-            if(rc.getLocation().distanceSquaredTo(leaderloc)<7){
-                dir = dir.opposite();
-            }
-
-        }
-
-        MapLocation nextLoc = rc.getLocation().add(dir);
-        //bugNav.move(nextLoc);
-        //rc.setIndicatorDot(nextLoc, 255, 0, 0);
-        if (rc.canMove(dir)){
-            rc.move(dir);
-        }
-
-        MapLocation attackLoc = findBestAttackLocation();
-        if(attackLoc!=null&&rc.canAttack(attackLoc)){
-            rc.attack(attackLoc);
-            System.out.println("YAYYYY");
-        }
-
-        // Rarely attempt placing traps behind the robot.
-        MapLocation prevLoc = rc.getLocation().subtract(dir);
-        if (rc.canBuild(TrapType.EXPLOSIVE, prevLoc) && rng.nextInt() % 37 == 1)
-            rc.build(TrapType.EXPLOSIVE, prevLoc);
-        // We can also move our code into different methods or classes to better organize it!
-        updateEnemyRobots();
-
+        super.turn();
     }
     public static void updateEnemyRobots() throws GameActionException{
         // Sensing methods can be passed in a radius of -1 to automatically

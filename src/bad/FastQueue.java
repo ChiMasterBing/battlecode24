@@ -1,4 +1,4 @@
-package macroPath;
+package bad;
 //FastQueue implementation from 4 Muskets
 public class FastQueue<T> {
     private T[] buf;

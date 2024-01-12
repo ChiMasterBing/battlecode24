@@ -1,4 +1,4 @@
-package macroPath;
+package bad;
 
 import battlecode.common.*;
 //import macroPath.Attacker;
@@ -22,8 +22,6 @@ public strictfp class RobotPlayer {
     //static macroPath MP;
 
     static final Random rng = new Random(6147);
-    static macroPath MP;
-//    static Attacker penis;
 
     static boolean mainDuck = false;
 
@@ -47,34 +45,19 @@ public strictfp class RobotPlayer {
         MapLocation currentTarget = null;
         while(true){
             rc.setIndicatorString("Hello world!");
-//            if(rc.getRoundNum()>500){
-//                rc.resign();
-//            }
+            if (rc.getRoundNum() == 2) {
+                robot.populateTeamIDS();
+            }
             if (!rc.isSpawned()){
-                if(rc.getRoundNum() == 1) {
-                    if (rc.readSharedArray(0) == 0) {
-                        mainDuck = true;
-                        rc.writeSharedArray(0, 1);
-                    } 
-                }
-                if (mainDuck) {
+                if (robot.myMoveNumber < 10) {
                     MapLocation[] spawnLocs = rc.getAllySpawnLocations();
                     // Pick a random spawn location to attempt spawning in.
-                    MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
+                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber];
                     if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
                 }
             }else {
 
-// //                System.out.println(Attacker.directions);
-//                 robot.turn();
-                MapLocation[] arr = rc.senseBroadcastFlagLocations();
-                if (arr[0] != null) {
-                    currentTarget = arr[0];
-                }
-                if (currentTarget != null) {
-                    bugNav.move(currentTarget);
-                }
-                
+                robot.turn();
                 
             }
             Clock.yield();

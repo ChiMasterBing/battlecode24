@@ -1,4 +1,4 @@
-package macroPath;
+package bad;
 
 import java.util.Arrays;
 
@@ -27,13 +27,13 @@ public class macroPath {
         obstacleID = new int[WIDTH][HEIGHT];
         symmQueue = new FastQueue<MapLocation>();
         dsu = new DSU(100); //can change later
-        System.out.println("macroPath: finished init");
+        //System.out.println("macroPath: finished init");
     }
 
     public static void scout() {
-        if (rc.getRoundNum() % 10 == 0) {
-            System.out.println("scouting " + Arrays.toString(symmetries));
-        }
+        // if (rc.getRoundNum() % 10 == 0) {
+        //     System.out.println("scouting " + Arrays.toString(symmetries));
+        // }
         MapInfo[] tiles = rc.senseNearbyMapInfos();
         for (MapInfo tile:tiles) {
             updateTile(tile);
