@@ -115,6 +115,12 @@ public class bugNav {
                             dontMove.add(ri.location.add(teammateDir));
                             rc.setIndicatorDot(ri.location.add(teammateDir), 255, 0, 255);
                         }   
+                        if (ri.hasFlag) {
+                            for (Direction ddd:Direction.allDirections()) {
+                                dontMove.add(ri.location.add(ddd));
+                                rc.setIndicatorDot(ri.location.add(ddd), 255, 0, 255);
+                            }
+                        }
                     }
                 }
             }   
@@ -138,10 +144,10 @@ public class bugNav {
                     //Debug.println("itsa mario");
                     if (ri.team == rc.getTeam()) {
                         int myPriority = teammateTracker.getPriority(rc.senseRobotAtLocation(myLoc));
-                        if (teammateTracker.getPriority(ri) > myPriority) {
-                            rc.setIndicatorString(newLoc.toString());
-                            return false;
-                        }
+                        // if (teammateTracker.getPriority(ri) > myPriority) {
+                        //     rc.setIndicatorString(newLoc.toString());
+                        //     return false;
+                        // }
 
                         //Debug.println(myPriority + " " + teammateTracker.getPriority(ri));
                     }

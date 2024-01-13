@@ -134,6 +134,16 @@ public class Attacker extends Robot{
         }
     }
     public void turn() throws GameActionException{
+
+        if (rc.canBuyGlobal(GlobalUpgrade.HEALING)) {
+            rc.buyGlobal(GlobalUpgrade.HEALING);
+        }
+        if (rc.canBuyGlobal(GlobalUpgrade.ACTION)) {
+            rc.buyGlobal(GlobalUpgrade.ACTION);
+        }
+        if (rc.canBuyGlobal(GlobalUpgrade.CAPTURING)) {
+            rc.buyGlobal(GlobalUpgrade.CAPTURING);
+        }
         //cacllulates who's side you're on
         MapLocation[] spawnLocs = rc.getAllySpawnLocations();
         int dist = Integer.MAX_VALUE;

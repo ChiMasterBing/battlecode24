@@ -44,28 +44,40 @@ public strictfp class RobotPlayer {
         robot = new Attacker(rc);
 //        MapLocation currentTarget = null;
         while(true){
-            rc.setIndicatorString("Hello world!");
+            Comms.initBufferPool();
             if (rc.getRoundNum() == 2) {
                 robot.populateTeamIDS();
             }
+            if (rc.getRoundNum() == 3 && robot.myMoveNumber < 1) {
+                for (int i=0; i<64; i++) {
+                    rc.writeSharedArray(i, 0);
+                }
+            }
             if (!rc.isSpawned()){
-
-                    MapLocation[] spawnLocs = rc.getAllySpawnLocations();
-                    // Pick a random spawn location to attempt spawning in.
-                    for(MapLocation randomLoc : spawnLocs){
-                        if(rc.canSpawn(randomLoc)){
-                            rc.spawn(randomLoc);
+                MapLocation[] spawnLocs = rc.getAllySpawnLocations();
+                if (rc.getRoundNum() < 200) {
+                    if (rc.canSpawn(spawnLocs[robot.myMoveNumber % spawnLocs.length])) {
+                        rc.spawn(spawnLocs[robot.myMoveNumber % spawnLocs.length]);
+                    }
+                }
+                else {
+                    MapLocation center = null;
+                    //System.out.println(Comms.read(1) + " --");
+                    if (rc.getRoundNum() % 9 == 0) center = robot.myFlags[0]; // && Comms.isBitSet(1, 0)
+                    if (rc.getRoundNum() % 9 == 3) center = robot.myFlags[1]; //  && Comms.isBitSet(1, 1)
+                    if (rc.getRoundNum() % 9 == 6) center = robot.myFlags[2]; //  && Comms.isBitSet(1, 2)
+                    for (Direction d:Direction.allDirections()) {
+                        if (rc.getRoundNum() % 3 == 0 && rc.canSpawn(center.add(d))) {
+                            rc.spawn(center.add(d));
+                            robot.turn();
+                            break;
                         }
                     }
-                    robot.turn();
-
-//                    MapLocation randomLoc = spawnLocs[robot.myMoveNumber% spawnLocs.length];
-//                    if (rc.canSpawn(randomLoc)) rc.spawn(randomLoc);
+                }
+                
 
             }else {
-
-                robot.turn();
-                
+                robot.turn();   
             }
             Clock.yield();
         }

@@ -95,8 +95,8 @@ public class macroPath {
                     case 0:
                         obstacleID[pos.x][pos.y] = maxObstacleID;
                         maxObstacleID++;     
-                        System.out.println("New obstacle");
-                        System.out.println(maxObstacleID);
+                        // System.out.println("New obstacle");
+                        // System.out.println(maxObstacleID);
                         // rc.setIndicatorDot(pos, 255, 0, 0);
                         // System.out.println(obstacleID[2][6]);
                         break;
@@ -135,12 +135,12 @@ public class macroPath {
 
     public static int getSymmType() {
         //Improvement: switch to switch statement
-        if ((symmetries[H_SYM] && symmetries[V_SYM]) ||
-            (symmetries[R_SYM] && symmetries[H_SYM]) ||
-            (symmetries[R_SYM] && symmetries[V_SYM])) {
-            return -1;
-        }
-        else if (symmetries[H_SYM]) return H_SYM;
+        // if ((symmetries[H_SYM] && symmetries[V_SYM]) ||
+        //     (symmetries[R_SYM] && symmetries[H_SYM]) ||
+        //     (symmetries[R_SYM] && symmetries[V_SYM])) {
+        //     return -1;
+        // }
+        if (symmetries[H_SYM]) return H_SYM;
         else if (symmetries[V_SYM]) return V_SYM;
         else return R_SYM;
     }

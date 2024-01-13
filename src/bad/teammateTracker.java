@@ -9,8 +9,6 @@ public class teammateTracker {
     }
 
     public static int getPriority(RobotInfo ri) {
-        //TODO: tiebreak this based on moveordering or something
-        //rn arbitrary, first to move gets priority
         int priority = 5 + ri.attackLevel + ri.healLevel + ri.buildLevel;
         if (ri.hasFlag) priority += 20;
 

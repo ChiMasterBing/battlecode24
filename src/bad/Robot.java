@@ -11,7 +11,7 @@ public abstract class Robot {
     static RobotController rc;
 
     static int myMoveNumber;
-    public MapLocation currentTarget = null;
+    MapLocation[] myFlags = {null, null, null};
 
     public Robot(RobotController rc) throws GameActionException {
         //TODO: First turn bytecode usage is high. can spread across first 5
@@ -20,12 +20,13 @@ public abstract class Robot {
         teammateTracker.init(rc);
         macroPath.init(rc);
         Debug.init(rc);
+        Comms.init(rc);
         //init move ordering
         myMoveNumber = rc.readSharedArray(0);
         //Debug.println("My move order is " + myMoveNumber);
         rc.writeSharedArray(0, myMoveNumber+1);
         rc.writeSharedArray(myMoveNumber+1, rc.getID());
-        System.out.println("finish");
+        initFlagStatus();
     }
 
     void populateTeamIDS() throws GameActionException {
@@ -37,27 +38,66 @@ public abstract class Robot {
         }
     }
 
+    public void initFlagStatus() {
+        FastLocSet locs = new FastLocSet();
+        for (MapLocation m:rc.getAllySpawnLocations()) {
+            locs.add(m);
+        }
+        for (MapLocation m:rc.getAllySpawnLocations()) {
+            boolean isCenter = true;
+            for (Direction d:Direction.allDirections()) {
+                if (!locs.contains(m.add(d))) {
+                    isCenter = false;
+                    break;
+                }
+            }
+            if (isCenter) {
+                if (myFlags[0] == null) myFlags[0] = m;
+                else if (myFlags[1] == null) myFlags[1] = m;
+                else myFlags[2] = m;
+            }
+        }
+    }
+
+    public void updateFlagStatus() throws GameActionException {
+        boolean empty = rc.senseNearbyFlags(-1, rc.getTeam()).length == 0;
+        if (empty) {
+            if (rc.canSenseLocation(myFlags[0])) {
+                Comms.writeToBufferPool(1, Comms.read(1) | 1);
+
+            }
+            if (rc.canSenseLocation(myFlags[1])) {
+                Comms.writeToBufferPool(1, Comms.read(1) | 2);
+
+            }
+            if (rc.canSenseLocation(myFlags[2])) {
+                Comms.writeToBufferPool(1, Comms.read(1) | 4);
+
+            }
+        }
+    }
+
     public void turn() throws GameActionException {
-        teammateTracker.preTurn();
-        MapLocation[] arr = rc.senseBroadcastFlagLocations();
-        System.out.println(Arrays.toString(arr));
-        if (arr.length>0&&arr[0] != null) {
-            currentTarget = arr[0];
-            System.out.println("wow"+currentTarget);
-            rc.setIndicatorDot(rc.getLocation(),0, 0, 255);
+        if (rc.canBuyGlobal(GlobalUpgrade.ACTION)) {
+            rc.buyGlobal(GlobalUpgrade.ACTION);
+        }
+        if (rc.canBuyGlobal(GlobalUpgrade.HEALING)) {
+            rc.buyGlobal(GlobalUpgrade.HEALING);
+        }
+        if (rc.canBuyGlobal(GlobalUpgrade.CAPTURING)) {
+            rc.buyGlobal(GlobalUpgrade.CAPTURING);
         }
 
-//        if (rc.getRoundNum() > 15) {
-//            rc.resign();
-//        }
+        teammateTracker.preTurn();
+        
+        //if (rc.getRoundNum() > 100) rc.resign();
+        updateFlagStatus();
 
-//        currentTarget = new MapLocation(31, 27);
-        //Debug.println("attemting to move");
-//        bugNav.move(currentTarget);
         macroPath.scout();
         macroPath.updateSymm();
 
 
         teammateTracker.postTurn();
+        Comms.flushBufferPool();
     }
 }
