@@ -56,71 +56,13 @@ public class macroPath {
         if (type != map[pos.x][pos.y]) {
             symmQueue.add(pos);
             map[pos.x][pos.y] = type;     
-            if (isObstacle) {
-                assert (obstacleID[pos.x][pos.y] == 0);
-                int id, cnt = 0;
-                int one = 0, two = 0, three = 0, four = 0;
-
-                
-                if (pos.x + 1 < WIDTH && (id = obstacleID[pos.x + 1][pos.y]) != 0) {
-                    cnt++;
-                    if (one == 0) one = id;
-                    else if (two == 0) two = id;
-                    else if (three == 0) three = id;
-                    else four = id;
-                }
-                if (pos.x - 1 >= 0 && (id = obstacleID[pos.x - 1][pos.y]) != 0) {
-                    cnt++;
-                    if (one == 0) one = id;
-                    else if (two == 0) two = id;
-                    else if (three == 0) three = id;
-                    else four = id;
-                }
-                if (pos.y + 1 < HEIGHT && (id = obstacleID[pos.x][pos.y + 1]) != 0) {
-                    cnt++;   
-                    if (one == 0) one = id;
-                    else if (two == 0) two = id;
-                    else if (three == 0) three = id;
-                    else four = id;
-                }
-                if (pos.y - 1 >= 0 && (id = obstacleID[pos.x][pos.y - 1]) != 0) {
-                    cnt++;
-                    if (one == 0) one = id;
-                    else if (two == 0) two = id;
-                    else if (three == 0) three = id;
-                    else four = id;
-                }
-                
-                switch (cnt) {
-                    case 0:
-                        obstacleID[pos.x][pos.y] = maxObstacleID;
-                        maxObstacleID++;     
-                        // System.out.println("New obstacle");
-                        // System.out.println(maxObstacleID);
-                        // rc.setIndicatorDot(pos, 255, 0, 0);
-                        // System.out.println(obstacleID[2][6]);
-                        break;
-                    case 1:
-                        obstacleID[pos.x][pos.y] = one;
-                        break;
-                    default:
-                        //System.out.println("WOAH");
-                        obstacleID[pos.x][pos.y] = one;
-                        dsu.merge(one, two);
-                        if (three != 0) {
-                            dsu.merge(one, three);
-                        }
-                        if (four != 0) {
-                            dsu.merge(one, four);
-                        }
-                }
 
                 // System.out.println("------");
                 // System.out.println(obstacleID[2][6]);
                 // System.out.println(obstacleID[3][6]);
                 // System.out.println(obstacleID[4][6]);
                 // System.out.println("------");
-            }
+            
         }   
     }
 

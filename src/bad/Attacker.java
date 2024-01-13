@@ -177,11 +177,15 @@ public class Attacker extends Robot{
                     rc.build(TrapType.EXPLOSIVE, rc.getLocation());
             }
             if (rc.getLocation().distanceSquaredTo(currentTarget) < 5) {
-                if (traps < 3 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation()))
-                    rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+                if (traps < 3) {
+                    if (friendlyRobots.length >= 4 && rc.canBuild(TrapType.STUN, rc.getLocation()))
+                        rc.build(TrapType.STUN, rc.getLocation());
+                    if (rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation()))
+                        rc.build(TrapType.EXPLOSIVE, rc.getLocation());
+                }
             } 
         }else{
-            if (enemyRobots.length > 4-rc.getCrumbs()/500 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
+            if (enemyRobots.length > 3 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
                 if (traps < 2) {
                     rc.build(TrapType.EXPLOSIVE, rc.getLocation());
                 }
@@ -238,7 +242,22 @@ public class Attacker extends Robot{
 
         attackMicro();
 
+        tryFill();
     }
+
+    public void tryFill() throws GameActionException {
+        if (rc.getRoundNum() > 250) {
+            if (enemyRobots.length == 0);
+            MapInfo[] water = rc.senseNearbyMapInfos(4);
+            for (MapInfo w:water) {
+                if (w.isWater() && rc.canFill(w.getMapLocation()))  {
+                    rc.fill(w.getMapLocation());
+                    return;
+                }
+            }
+        }
+    }
+
     public void updateEnemyRobots() throws GameActionException{
         // Sensing methods can be passed in a radius of -1 to automatically
         // use the largest possible value.
