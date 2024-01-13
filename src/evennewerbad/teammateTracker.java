@@ -3,6 +3,7 @@ package evennewerbad;
 import battlecode.common.*;
 import evennewerbad.fast.FastIntIntMap;
 import evennewerbad.fast.FastIntLocMap;
+import evennewerbad.fast.FastQueue;
 
 public class teammateTracker {
     static RobotController rc;
@@ -13,7 +14,6 @@ public class teammateTracker {
     public static int getPriority(RobotInfo ri) {
         int priority = 5 + ri.attackLevel + ri.healLevel + ri.buildLevel;
         if (ri.hasFlag) priority += 20;
-
         priority *= 1000;
         priority -= IDtoMoveOrder.getVal(ri.ID);
         //System.out.println(ri.ID + " -- " + IDtoMoveOrder.getVal(ri.ID));
@@ -23,7 +23,7 @@ public class teammateTracker {
     static RobotInfo[] robots;
     static RobotInfo[] teammates = new RobotInfo[50];
     static FastIntLocMap teammateLocations = new FastIntLocMap();
-    static FastQueue<Integer> prevTurnTeammates = new FastQueue<Integer>();
+    static FastQueue<Integer> prevTurnTeammates = new FastQueue<Integer>(100);
     static final MapLocation nullLoc = new MapLocation(80, 80);
     static FastIntIntMap IDtoMoveOrder = new FastIntIntMap();
 
@@ -60,10 +60,13 @@ public class teammateTracker {
     }
 
     public static Direction getTeammateDirection(RobotInfo ri) {
-        MapLocation loc;
+        MapLocation loc = teammateLocations.getLoc(ri.ID);
         Direction d = null;
-        //TODO: use robot ID/moveordering to better detect this
-        if ((loc = teammateLocations.getLoc(ri.ID)).x != nullLoc.x) {
+        if (loc == null) {
+            System.out.println("WHAT");
+            return null;
+        }
+        if (loc.x != nullLoc.x) {
             d = loc.directionTo(ri.location);
         }
         return d;

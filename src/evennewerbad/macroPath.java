@@ -1,6 +1,7 @@
 package evennewerbad;
 import java.util.Arrays;
 import battlecode.common.*;
+import evennewerbad.fast.FastQueue;
 
 public class macroPath {
     
@@ -21,10 +22,8 @@ public class macroPath {
         rc = r;
         WIDTH = rc.getMapWidth();
         HEIGHT = rc.getMapHeight();
-        map = new int[WIDTH][HEIGHT];
         dam = new short[WIDTH][HEIGHT];
-        symmQueue = new FastQueue<MapLocation>();
-
+        map = new int[WIDTH][HEIGHT];
         //obstacleID = new int[WIDTH][HEIGHT];
         //dsu = new DSU(100); //can change later
     }
@@ -84,8 +83,8 @@ public class macroPath {
     public static int V_SYM = 1;
     public static int R_SYM = 2;
     static final int NO_WATER_ROUND = 0; //anything before this our robots will not dig
-    private static boolean[] symmetries = {true, true, true};
-    private static FastQueue<MapLocation> symmQueue; //the squares to check symmetry
+    static boolean[] symmetries = {true, true, true};
+    private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); //the squares to check symmetry
 
     public static int getSymmType() {
         return Comms.readSymmetry();

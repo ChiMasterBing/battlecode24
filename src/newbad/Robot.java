@@ -33,7 +33,7 @@ public abstract class Robot {
         for (int i=1; i<=50; i++) {
             int id = rc.readSharedArray(i);
             teammateTracker.IDtoMoveOrder.add(id, i-1);
-            System.out.println(id + " " + (i-1));
+            //System.out.println(id + " " + (i-1));
             teammateTracker.initTeammate(id);
         }
     }

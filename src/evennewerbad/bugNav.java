@@ -125,7 +125,11 @@ public class bugNav {
                         }
                     }
                 }
-            }   
+            } 
+            
+            if (!rc.isSpawned()) {
+                System.out.println("WHATT");
+            }
             
             // I rotate clockwise or counterclockwise (depends on 'rotateRight'). If I try
             // to go out of the map I change the orientation
@@ -144,6 +148,7 @@ public class bugNav {
                     rotateRight = !rotateRight;
                 } else if ((ri = rc.senseRobotAtLocation(newLoc)) != null) {
                     //Debug.println("itsa mario");
+
                     if (ri.team == rc.getTeam()) {
                         int myPriority = teammateTracker.getPriority(rc.senseRobotAtLocation(myLoc));
                         // if (teammateTracker.getPriority(ri) > myPriority) {

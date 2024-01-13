@@ -7,7 +7,7 @@ public class FastQueue<T> {
     private int ln;
 
     public FastQueue() {
-        ln = 10000;
+        ln = 5000;
         buf = (T[]) new Object[ln];
         l = 0;
         r = 0;

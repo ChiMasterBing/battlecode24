@@ -21,10 +21,19 @@ public class Attacker extends Robot{
             for (Direction d:Direction.allDirections()) {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
                     rc.move(d);
+                    if (spawnSet.contains(rc.getLocation())) {
+                        Debug.println("I DEPOSITED FLAG WOO!");
+                        Comms.depositFlag();
+                    }
                     return true;
                 }
             }
             bugNav.move(closestSpawn);
+            
+            if (spawnSet.contains(rc.getLocation())) {
+                Debug.println("I DEPOSITED FLAG WOO!");
+                Comms.depositFlag();
+            }
             return true;
         }
         int dist = Integer.MAX_VALUE;
@@ -110,18 +119,13 @@ public class Attacker extends Robot{
         if(crumbMovementLogic()) return;
         leaderMovementLogic();
         attackMicro();
-        myLoc = rc.getLocation();
     }
     public void setGlobals() throws GameActionException{
-
         myLoc = rc.getLocation();
-
-        ////DANIEL theres some weird null ptr exception that happens occsionally with rc.senseNearby, but idfk why :(
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
         closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
-
         int dist = Integer.MAX_VALUE;
         for(MapLocation spawn : spawnLocs){ 
             int cdist = myLoc.distanceSquaredTo(spawn);
@@ -133,7 +137,9 @@ public class Attacker extends Robot{
         }
         onOpponentSide = onOpponentSide(closestSpawn, myLoc);
     }
+
     public void tryHeal() throws GameActionException {
+        if (!rc.isActionReady()) return;
         MapLocation bestheal = null;
         int lowestHealth = Integer.MAX_VALUE;
         for(RobotInfo i: closeFriendlyRobots){
@@ -205,18 +211,9 @@ public class Attacker extends Robot{
         if (arr.length>0&&arr[0] != null) {
             currentTarget = arr[0];
         }
-
-        // int minDist = 10000; MapLocation minLoc;
-        // for(FlagInfo i : rc.senseNearbyFlags(-1)){
-        //     if (i.getTeam() == rc.getTeam().opponent() && i.isPickedUp() == false) {
-        //         if (myLoc.distanceSquaredTo(i.getLocation()) < minDist) {
-        //             minDist = myLoc.distanceSquaredTo(i.getLocation());
-        //             currentTarget = i.getLocation();
-        //         }
-        //     }
-        // }
     }
     public void attackLogic() throws GameActionException {
+        if (!rc.isActionReady()) return;
         MapLocation attackLoc = findBestAttackLocation();
         rc.setIndicatorString("best attack loc "  + attackLoc);
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
@@ -225,30 +222,22 @@ public class Attacker extends Robot{
         }
     }
     public void turn() throws GameActionException{
-        super.turn();
         setGlobals();
         checkPickupFlag();
         checkBuildTraps();
         updateCurrentTarget();
         attackLogic();
-
         tryHeal();
+
         movement();
-
-
         setGlobals(); // after we moved, globals are different
-
         attackLogic();
-
-        tryHeal();
-        updateEnemyRobots();
-
-        attackMicro();
-
+        tryHeal();        
         tryFill();
     }
 
     public void tryFill() throws GameActionException {
+        if (!rc.isActionReady()) return;
         if (rc.getRoundNum() > 0) {
             if (enemyRobots.length == 0) {
                 MapInfo[] water = rc.senseNearbyMapInfos(4);
@@ -262,14 +251,6 @@ public class Attacker extends Robot{
         }
     }
 
-    public void updateEnemyRobots() throws GameActionException{
-        if (enemyRobots.length != 0){
-            MapLocation[] enemyLocations = new MapLocation[enemyRobots.length];
-            for (int i = 0; i < enemyRobots.length; i++){
-                enemyLocations[i] = enemyRobots[i].getLocation();
-            }
-        }
-    }
     public MapLocation findLeader() {
         int maxH = rc.getHealth()*1000000+rc.getID();
         MapLocation ret = null;

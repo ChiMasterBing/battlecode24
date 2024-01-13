@@ -52,7 +52,8 @@ public strictfp class RobotPlayer {
      **/
     @SuppressWarnings("unused")
     public static void run(RobotController rc) throws GameActionException {
-
+        // System.out.println(Clock.getBytecodesLeft() + " " + rc.getRoundNum()); 
+        // rc.resign();
         // Hello world! Standard output is very useful for debugging.
         // Everything you say here will be directly viewable in your terminal when you run a match!
         System.out.println("I'm alive");

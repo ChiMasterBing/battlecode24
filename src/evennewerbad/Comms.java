@@ -1,7 +1,5 @@
 package evennewerbad;
 
-import javax.persistence.Basic;
-
 import battlecode.common.*;
 
 public class Comms {
@@ -16,12 +14,25 @@ public class Comms {
     // S1 --> symmetry (3), flags captured (2) 
     //      
 
-
     // Slots 5-24:
     // Squadron updates (move, attack, retreat, protect, build, stuck, etc.)
 
     // Slots 25-44:
     // Sector updates (danger level, pathing blockage, etc.)
+    //first two bits: 00 --> flag stolen
+    //consider round info as recent --> will only be tens and ones digit of current rounds
+    //100 turns --> 5 turn buckets --> 20 --> 4 bits
+
+    public static int encodeRound() {
+        return (rc.getRoundNum()%100)/5;
+    }
+
+    public static void distressFlag(int flagnum, MapLocation m) {
+        //send a sector packet
+        int packet = 0x3 | (encodeRound() << 2) << (locationToSector(m) << 6) | (flagnum) << 10;
+        // 2 bits + 6 bits + 2 bits + 6 bits of round
+
+    }
 
     public static int readSymmetry() { //0 bit = symm could be valid, 1 = invalid
         if (!isBitSet(0, 2)) return macroPath.R_SYM;
@@ -31,14 +42,18 @@ public class Comms {
         return -1;
     }
 
+    public static int locationToSector(MapLocation m) {
+        //cast 4 --> 1
+        return ((m.x/4) << 3) | (m.y/4);
+    }
+
     public static boolean isSymmetry(int symm) {
         if(isBitSet(0, symm)) return false;
         return true;
     }
 
     public static void invalidateSymmetry(int symm) throws GameActionException {
-        System.out.println("invalid " + symm);
-        writeToBufferPool(symm, bufferPool[0] | (1<<symm));
+        writeToBufferPool(0, bufferPool[0] | (1<<symm));
     }
 
     public static int countFlagsCaptured() { //can do this more efficiently later but what
@@ -50,7 +65,9 @@ public class Comms {
         ans++;
         int mask = read(0); 
         mask = (mask & 0xffffffe7) | (ans << 3);
+        Debug.println(mask + " " + ans);
         writeToBufferPool(0, mask);
+        Debug.println(countFlagsCaptured() + " ");
     }
 
     public static void init(RobotController r) {
@@ -142,8 +159,10 @@ public class Comms {
     }
 
     public static void flushBufferPool() throws GameActionException {
-        if (dirtyFlags[0])
+        if (dirtyFlags[0]) {
             rc.writeSharedArray(0, bufferPool[0]);
+            Debug.println("flush");
+        }
         if (dirtyFlags[1])
             rc.writeSharedArray(1, bufferPool[1]);
         if (dirtyFlags[2])
@@ -271,6 +290,10 @@ public class Comms {
         if (dirtyFlags[63])
             rc.writeSharedArray(63, bufferPool[63]);
     }
+
+    // public static void writeNextSectorPacket() {
+    //     if (read(25) == 0)
+    // }
 
 
 }
