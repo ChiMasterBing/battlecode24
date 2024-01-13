@@ -50,13 +50,14 @@ public class Attacker extends Robot{
                         }
                     }
                 }else{ //if we picked up their flag
-                    if(i.getLocation().distanceSquaredTo(rc.getLocation())>9){
+                    if (i.getLocation().distanceSquaredTo(rc.getLocation()) > 9) {
                         targ = i.getLocation();
                         break;
-                    }
-                    else {
-                        targ = closestSpawn;
-                        break;
+                    } else {
+                        if(rc.getRoundNum()%2==0) {
+                            targ = closestSpawn;
+                            break;
+                        }
                     }
                 }
             }
@@ -71,23 +72,24 @@ public class Attacker extends Robot{
     }
     public Boolean crumbMovementLogic() throws GameActionException {
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
+//        System.out.println(200 - rc.getMapHeight() + 11);
+//        if(rc.getRoundNum()>200){
+//            rc.resign();
+//        }
+//        rc.setIndicatorString(String.valueOf(200-rc.getMapHeight()+10));
+
         if (crummy.length > 0 && rc.getRoundNum() < 250) {
             bugNav.move(crummy[0]);
             return true;
         }
-        else {
+        else if(rc.getRoundNum()<200-rc.getMapHeight()/2){
             //randomly explore, with bias towards center
             MapLocation choice;
-            MapLocation center = new MapLocation(rc.getMapWidth()/2, rc.getMapHeight()/2);
-            if (random.nextInt(rc.getMapHeight() + rc.getMapWidth()) < bugNav.distance(rc.getLocation(), center) * 2) {
-                choice = center;
-            }
-            else {
-                choice = rc.getLocation().add(Direction.allDirections()[random.nextInt(8)]);
-            }
+            choice = rc.getLocation().add(Direction.allDirections()[random.nextInt(8)]);
             bugNav.move(choice);
             return true;
         }
+        return false;
     }
     public Boolean leaderMovementLogic() throws GameActionException {//always returns true
         MapLocation leaderloc = findLeader();
@@ -115,10 +117,8 @@ public class Attacker extends Robot{
                 return;
             }
         }
-        if(rc.getRoundNum()<225) {
-            if(crumbMovementLogic()) {
-                return;
-            }
+        if(crumbMovementLogic()) {
+            return;
         }
         leaderMovementLogic();
         attackMicro();
@@ -183,9 +183,9 @@ public class Attacker extends Robot{
                     if (rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation()))
                         rc.build(TrapType.EXPLOSIVE, rc.getLocation());
                 }
-            } 
+            }
         }else{
-            if (enemyRobots.length > 3 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
+            if (rc.getRoundNum()>190&&enemyRobots.length > 3 && rc.canBuild(TrapType.EXPLOSIVE, rc.getLocation())) {
                 if (traps < 2) {
                     rc.build(TrapType.EXPLOSIVE, rc.getLocation());
                 }
@@ -246,7 +246,7 @@ public class Attacker extends Robot{
     }
 
     public void tryFill() throws GameActionException {
-        if (rc.getRoundNum() > 250) {
+        if (rc.getRoundNum() > 0) {
             if (enemyRobots.length == 0);
             MapInfo[] water = rc.senseNearbyMapInfos(4);
             for (MapInfo w:water) {
@@ -336,12 +336,13 @@ public class Attacker extends Robot{
         return 10;
     }
     public MapLocation findBestAttackLocation() {
-        int minHP = 10000;
+        int minHP = 1000000000;
         MapLocation ret = null;
         for(RobotInfo i : closeEnemyRobots){
             MapLocation enemyLoc = i.getLocation();
-            if (i.getHealth() < minHP) {
-                minHP = i.getHealth();
+            int cval = Math.max(i.getHealth(), 150)*100-(i.getHealLevel()+i.getAttackLevel()+i.getBuildLevel()+Math.max(i.getHealLevel(), Math.max(i.getAttackLevel(), i.getBuildLevel())));
+            if (cval< minHP) {
+                minHP = cval;
                 ret = enemyLoc;
             }
             if (i.hasFlag) {
