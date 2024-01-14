@@ -3,7 +3,7 @@ package hotlinebling;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import evennewerbad.fast.FastLocSet;
+import hotlinebling.fast.FastLocSet;
 
 public abstract class Robot {
     

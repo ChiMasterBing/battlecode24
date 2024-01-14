@@ -1,7 +1,7 @@
 package hotlinebling;
 import java.util.Arrays;
 import battlecode.common.*;
-import evennewerbad.fast.FastQueue;
+import hotlinebling.fast.FastQueue;
 
 public class macroPath {
     

@@ -1,8 +1,8 @@
 package hotlinebling;
 
 import battlecode.common.*;
-import evennewerbad.fast.FastIntSet;
-import evennewerbad.fast.FastLocSet;
+import hotlinebling.fast.FastIntSet;
+import hotlinebling.fast.FastLocSet;
 
 public class bugNav {
     static RobotController rc;

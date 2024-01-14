@@ -1,9 +1,9 @@
 package hotlinebling;
 
 import battlecode.common.*;
-import evennewerbad.fast.FastIntIntMap;
-import evennewerbad.fast.FastIntLocMap;
-import evennewerbad.fast.FastQueue;
+import hotlinebling.fast.FastIntIntMap;
+import hotlinebling.fast.FastIntLocMap;
+import hotlinebling.fast.FastQueue;
 
 public class teammateTracker {
     static RobotController rc;

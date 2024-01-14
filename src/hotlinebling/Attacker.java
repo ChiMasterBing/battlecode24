@@ -1,6 +1,6 @@
 package hotlinebling;
 import battlecode.common.*;
-import evennewerbad.fast.FastLocSet;
+import hotlinebling.fast.FastLocSet;
 
 import java.util.Random;
 

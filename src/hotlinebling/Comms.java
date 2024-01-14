@@ -1,6 +1,6 @@
 package hotlinebling;
 
-import bad.FastQueue;
+import hotlinebling.fast.FastQueue;
 import battlecode.common.*;
 
 public class Comms {
