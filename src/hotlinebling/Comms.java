@@ -1,4 +1,4 @@
-package evennewerbad;
+package hotlinebling;
 
 import bad.FastQueue;
 import battlecode.common.*;
