@@ -47,8 +47,7 @@ public class Comms {
             case 0: //distress flag packet
                 res.type = 0;
                 res.flagID = packet >> 12;
-                break;
-        
+                break;        
             default:
                 break;
         }
@@ -64,7 +63,6 @@ public class Comms {
     }
 
     public static void distressFlag(int flagnum, MapLocation m) throws GameActionException {
-        //send a sector packet
         int packet = 0x3 | (encodeRound() << 2) | (locationToSector(m) << 6) | (flagnum << 12);
         // 2 (id) + 4 (round) + 6 (loc) + 2 (flagid) = 14 bits
         sectorMessageQueue.add(packet);
@@ -204,10 +202,8 @@ public class Comms {
     }
 
     public static void flushBufferPool() throws GameActionException {
-        if (dirtyFlags[0]) {
+        if (dirtyFlags[0]) 
             rc.writeSharedArray(0, bufferPool[0]);
-            Debug.println("flush");
-        }
         if (dirtyFlags[1])
             rc.writeSharedArray(1, bufferPool[1]);
         if (dirtyFlags[2])

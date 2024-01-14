@@ -2,7 +2,6 @@ package hotlinebling;
 import battlecode.common.*;
 import hotlinebling.fast.FastLocSet;
 
-import java.util.Map;
 import java.util.Random;
 
 public class Builder extends Robot{
@@ -75,10 +74,9 @@ public class Builder extends Robot{
         return false;
     }
     public Boolean leaderMovementLogic() {//always returns true
-        int maxH = 0;
-        MapLocation ret = null;
+        // int maxH = 0;
+        // MapLocation ret = null;
         for(RobotInfo i: friendlyRobots){
-//
 //            if(maxH<i.getHealth()&&i.getBuildLevel()!=6){
 //                maxH = i.getHealth()*1000000+rc.getID();
 //                ret = i.getLocation();
@@ -88,9 +86,9 @@ public class Builder extends Robot{
                 bugNav.move(myLoc.add(myLoc.directionTo(i.getLocation()).opposite()));
             }
         }
-        if(ret!=null){
-            bugNav.move(ret);
-        }
+        // if(ret!=null) {
+        //     bugNav.move(ret);
+        // }
         if(currentTarget!=null) {
             rc.setIndicatorString("attacking towards "+currentTarget);
             bugNav.move(currentTarget);

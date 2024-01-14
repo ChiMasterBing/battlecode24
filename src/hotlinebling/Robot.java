@@ -5,10 +5,8 @@ import java.util.Arrays;
 import battlecode.common.*;
 import hotlinebling.fast.FastLocSet;
 
-public abstract class Robot {
-    
-
-    static RobotController rc;
+public abstract class Robot {    
+    RobotController rc;
 
     int myMoveNumber, roundNumber;
     MapLocation[] myFlags = {null, null, null};
@@ -30,22 +28,21 @@ public abstract class Robot {
         initFlagStatus(); //~4000 bytecode
     }
 
-    boolean initTeamIDS = false;
     void populateTeamIDS() throws GameActionException {
         for (int i=1; i<=50; i++) {
             int id = rc.readSharedArray(i);
             teammateTracker.IDtoMoveOrder.add(id, i-1);
             teammateTracker.initTeammate(id);
         }
-        initTeamIDS = true;
     }
     void commFlagID() throws GameActionException {
         FlagInfo[] flags = rc.senseNearbyFlags(-1);
         for (FlagInfo f:flags) {
-            if (f.getLocation().equals(myFlags[0])) {
+            MapLocation floc = f.getLocation();
+            if (floc.equals(myFlags[0])) {
                 Comms.writeToBufferPool(51, f.getID());
             }
-            else if (f.getLocation().equals(myFlags[1])) {
+            else if (floc.equals(myFlags[1])) {
                 Comms.writeToBufferPool(52, f.getID());
             }
             else {
@@ -82,16 +79,15 @@ public abstract class Robot {
 
     public void checkStolenFlags() throws GameActionException {
         FlagInfo[] nearbyFlags = rc.senseNearbyFlags(-1, rc.getTeam());
-
         for (FlagInfo f:nearbyFlags) {
             if (f.isPickedUp()) {
                 if (flagIDs[0] == f.getID()) {
                     Comms.distressFlag(0, f.getLocation());
                 }
-                if (flagIDs[1] == f.getID()) {
+                else if (flagIDs[1] == f.getID()) {
                     Comms.distressFlag(1, f.getLocation());
                 }
-                if (flagIDs[2] == f.getID()) {
+                else if (flagIDs[2] == f.getID()) {
                     Comms.distressFlag(2, f.getLocation());
                 }
             }
@@ -111,11 +107,7 @@ public abstract class Robot {
                     stolenFlags[info.flagID] = info.loc;
                     stolenFlagRounds[info.flagID] = info.round;
                     rc.setIndicatorDot(info.loc, 0, 0, 0);
-                    // if (myMoveNumber == 0) {
-                    //     System.out.println("STOLEN FLAG " + info.loc);
-                    // }
                     break;
-            
                 default:
                     break;
             }
@@ -127,8 +119,6 @@ public abstract class Robot {
         teammateTracker.preTurn();
         
         turn();
-
-
         if (myMoveNumber < 1) {
             if (roundNumber % 50 == 0) {
                 Debug.println(Comms.readSymmetry() + " <-- Symm");
