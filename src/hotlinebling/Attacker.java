@@ -29,7 +29,7 @@ public class Attacker extends Robot{
                 }
             }
             bugNav.move(closestSpawn);
-            
+
             if (spawnSet.contains(rc.getLocation())) {
                 Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag();
@@ -105,16 +105,22 @@ public class Attacker extends Robot{
             }
 
         }else{
+            if(enemyRobots.length>friendlyRobots.length&&onOpponentSide<0){
+                bugNav.move(closestSpawn);
+            }
+
             if(currentTarget!=null) {
                 bugNav.move(currentTarget);
                 return true;
             }
+
         }
         return false;
     }
     public void movement() throws GameActionException {
-        if(rc.getRoundNum()>200){ 
-            if(flagMovementLogic()) return; 
+//        attackMicro();
+        if(rc.getRoundNum()>200){
+            if(flagMovementLogic()) return;
         }
         if(crumbMovementLogic()) return;
         leaderMovementLogic();
@@ -127,7 +133,7 @@ public class Attacker extends Robot{
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
         int dist = Integer.MAX_VALUE;
-        for(MapLocation spawn : spawnLocs){ 
+        for(MapLocation spawn : spawnLocs){
             int cdist = myLoc.distanceSquaredTo(spawn);
             spawnSet.add(spawn);
             if(cdist<dist){
@@ -143,9 +149,10 @@ public class Attacker extends Robot{
         MapLocation bestheal = null;
         int lowestHealth = Integer.MAX_VALUE;
         for(RobotInfo i: closeFriendlyRobots){
-            if(lowestHealth>i.getHealth()){
+            int cval = Math.max(i.getHealth(), 150)*100-(i.getHealLevel()+i.getAttackLevel()+i.getBuildLevel()+Math.max(i.getHealLevel(), Math.max(i.getAttackLevel(), i.getBuildLevel())));
+            if(lowestHealth>cval){
                 bestheal = i.getLocation();
-                lowestHealth = i.getHealth();
+                lowestHealth = cval;
             }
         }
         if(bestheal!=null&&rc.canHeal(bestheal)){
@@ -158,7 +165,7 @@ public class Attacker extends Robot{
             MapLocation nxt = myLoc.add(d);
             if (rc.canPickupFlag(nxt) && friendlyRobots.length- enemyRobots.length>3 && rc.getRoundNum() > 200) {//check if this change is good
                 rc.pickupFlag(nxt);
-                
+
             }
         }
     }
@@ -227,12 +234,15 @@ public class Attacker extends Robot{
         checkBuildTraps();
         updateCurrentTarget();
         attackLogic();
-        tryHeal();
+
+        if(enemyRobots.length==0) {
+            tryHeal();
+        }
 
         movement();
         setGlobals(); // after we moved, globals are different
         attackLogic();
-        tryHeal();        
+        tryHeal();
         tryFill();
     }
 
@@ -265,11 +275,6 @@ public class Attacker extends Robot{
                 ret = i.getLocation();
             }
         }
-        if(ret==null){
-            if(enemyRobots.length>friendlyRobots.length&&onOpponentSide<0){
-                return closestSpawn;
-            }
-        }
         return ret;
     }
     public void attackMicro() {
@@ -286,20 +291,22 @@ public class Attacker extends Robot{
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {
                     bugNav.move(closest);
+                }else{
+                    bugNav.move(myLoc.add(myLoc.directionTo(closest).opposite()));
                 }
             }
             else if (cooldown < 20) {
-                if (minEnemyDist > 8) {
+                if (minEnemyDist > 9) {
                     bugNav.move(closest);
                 }
-                if (minEnemyDist <= 4) {
+                if (minEnemyDist <= 9) {
                     bugNav.move(myLoc.add(myLoc.directionTo(closest).opposite()));
                 }
             }
             else {
-                if (minEnemyDist <= 6) {
-                    bugNav.move(myLoc.add(myLoc.directionTo(closest).opposite()));
-                }
+//                if (minEnemyDist <= 6) {
+                bugNav.move(myLoc.add(myLoc.directionTo(closest).opposite()));
+//                }
             }
         }
         rc.setIndicatorDot(myLoc, 0, 0, 0);
