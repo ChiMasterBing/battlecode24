@@ -1,4 +1,4 @@
-package hotlinebling;
+package bling2;
 
 import battlecode.common.*;
 import java.util.*;
@@ -13,10 +13,7 @@ public strictfp class RobotPlayer {
         int turn = rc.getRoundNum();
 
         while(true){
-            if(robot.myMoveNumber==24||robot.myMoveNumber==49||robot.myMoveNumber==1&&rc.getRoundNum()<2){
-                robot = new Builder(rc);
-                System.out.println("WOW");
-            }
+            
             robot.play();
             
             if (turn != rc.getRoundNum()) {

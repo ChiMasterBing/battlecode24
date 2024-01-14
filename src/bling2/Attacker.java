@@ -1,4 +1,4 @@
-package hotlinebling;
+package bling2;
 import battlecode.common.*;
 import hotlinebling.fast.FastLocSet;
 
@@ -105,10 +105,10 @@ public class Attacker extends Robot{
 //            }
 //
 //        }else{
-            if(currentTarget!=null) {
-                bugNav.move(currentTarget);
-                return true;
-            }
+        if(currentTarget!=null) {
+            bugNav.move(currentTarget);
+            return true;
+        }
 //        }
         return false;
     }
@@ -143,10 +143,6 @@ public class Attacker extends Robot{
         MapLocation bestheal = null;
         int lowestHealth = Integer.MAX_VALUE;
         for(RobotInfo i: closeFriendlyRobots){
-            if(i.getBuildLevel()==6){
-                bestheal = i.getLocation();
-                lowestHealth = -100000;
-            }
             int cval = Math.max(i.getHealth(), 150)*100-(i.getHealLevel()+i.getAttackLevel()+i.getBuildLevel()+Math.max(i.getHealLevel(), Math.max(i.getAttackLevel(), i.getBuildLevel())));
             if(lowestHealth>cval){
                 bestheal = i.getLocation();
@@ -175,12 +171,26 @@ public class Attacker extends Robot{
                 traps++;
             }
         }
-        if (rc.getRoundNum()>190&&enemyRobots.length > 4 && rc.canBuild(TrapType.EXPLOSIVE, myLoc)) {
-            if (traps < 2) {
-                rc.build(TrapType.EXPLOSIVE, myLoc);
+        if(rc.getRoundNum()>210) {
+            if (enemyRobots.length > (6 - rc.getCrumbs()/3500) && closeEnemyRobots.length >= (2 - rc.getCrumbs()/1500)) {
+                if (traps <= 1 && rc.canBuild(TrapType.EXPLOSIVE, myLoc))
+                    rc.build(TrapType.EXPLOSIVE, myLoc);
+            }
+            if (myLoc.distanceSquaredTo(currentTarget) < 5) {
+                if (traps <= 2) {
+                    if (friendlyRobots.length >= 4 && rc.canBuild(TrapType.STUN, myLoc))
+                        rc.build(TrapType.STUN, myLoc);
+                    if (rc.canBuild(TrapType.EXPLOSIVE, myLoc))
+                        rc.build(TrapType.EXPLOSIVE, myLoc);
+                }
+            }
+        }else{
+            if (rc.getRoundNum()>190&&enemyRobots.length > 3 && rc.canBuild(TrapType.EXPLOSIVE, myLoc)) {
+                if (traps < 2) {
+                    rc.build(TrapType.EXPLOSIVE, myLoc);
+                }
             }
         }
-
     }
     public void updateCurrentTarget() throws GameActionException {
         if (currentTarget == null) {
@@ -212,11 +222,10 @@ public class Attacker extends Robot{
             rc.attack(attackLoc);
         }
     }
-    public void attackerLogic() throws GameActionException {
+    public void turn() throws GameActionException{
+        setGlobals();
         checkPickupFlag();
-        if(rc.getRoundNum()<=210){
-            checkBuildTraps();
-        }
+        checkBuildTraps();
         updateCurrentTarget();
         attackLogic();
 
@@ -228,15 +237,8 @@ public class Attacker extends Robot{
         setGlobals(); // after we moved, globals are different
         attackLogic();
         tryHeal();
-        if(rc.getRoundNum()<=210) {
-            checkBuildTraps();
-        }
-//        tryFill();
-    }
-    public void turn() throws GameActionException{
-        setGlobals();
-        attackerLogic();
-
+        checkBuildTraps();
+        tryFill();
     }
 
     public void tryFill() throws GameActionException {
