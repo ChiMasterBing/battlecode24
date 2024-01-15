@@ -10,7 +10,7 @@ public strictfp class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
         Robot robot;
         int currentMoveNumber = rc.readSharedArray(0);
-        if (currentMoveNumber == 24 || currentMoveNumber == 49 || currentMoveNumber == 1) {
+        if (false && currentMoveNumber == 24 || currentMoveNumber == 49 || currentMoveNumber == 1) {
             robot = new Builder(rc);
         }
         else {

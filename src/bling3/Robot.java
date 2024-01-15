@@ -1,9 +1,9 @@
-package bling2;
+package bling3;
 
 import java.util.Arrays;
 
 import battlecode.common.*;
-import hotlinebling.fast.FastLocSet;
+import bling3.fast.FastLocSet;
 
 public abstract class Robot {    
     RobotController rc;

@@ -215,7 +215,7 @@ public class Attacker extends Robot{
         if(super.roundNumber<=210) {
             checkBuildTraps();
         }
-//        tryFill();
+       tryFill();
     }
     public void turn() throws GameActionException{
         setGlobals();

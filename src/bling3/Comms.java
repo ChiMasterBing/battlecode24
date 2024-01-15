@@ -1,6 +1,6 @@
-package bling2;
+package bling3;
 
-import hotlinebling.fast.FastQueue;
+import bling3.fast.FastQueue;
 import battlecode.common.*;
 
 public class Comms {
@@ -43,12 +43,15 @@ public class Comms {
         }
         MapLocation packetLoc = sectorToLocation((packet & 0xfc0) >> 6);
         SectorInfo res = new SectorInfo(packetLoc, round);
-        switch (packet & 0x3) {
-            case 0: //distress flag packet
-                res.type = 0;
-                res.flagID = packet >> 12;
-                break;
         
+        switch (packet & 0x3) {
+            case 0x0: //distress flag packet
+                res.type = 0;
+                res.flagID = packet >> 14;
+                break;
+            case 0x1:
+                res.type = 1;
+                break;
             default:
                 break;
         }
@@ -65,14 +68,23 @@ public class Comms {
 
     public static void distressFlag(int flagnum, MapLocation m) throws GameActionException {
         //send a sector packet
-        int packet = 0x3 | (encodeRound() << 2) | (locationToSector(m) << 6) | (flagnum << 12);
-        // 2 (id) + 4 (round) + 6 (loc) + 2 (flagid) = 14 bits
+        int packet = 0x0 | (encodeRound() << 2) | (locationToSector(m) << 6) | (flagnum << 14);
+        // 2 (id) + 4 (round) + 6 (loc) + 2 (flagid) = 16 bits
         sectorMessageQueue.add(packet);
-        // System.out.println("queueing flag packet @ " + m + " " + rc.getRoundNum());
-        // SectorInfo decoded = decodeSectorMessage(packet);
+        //System.out.println("queueing flag packet @ " + m + " " + rc.getRoundNum());
+        //SectorInfo decoded = decodeSectorMessage(packet);
         // System.out.println(decoded.loc.toString());
         // System.out.println(decoded.round + " ");
         // System.out.println(flagnum + " " + decoded.flagID);
+        // System.out.println(packet);
+        // System.out.println((encodeRound() << 2));
+        // System.out.println((locationToSector(m) << 6));
+    }
+
+    public static void notifyCombatFronts(MapLocation m) throws GameActionException {
+        int packet = 0x1 | (encodeRound() << 2) | (locationToSector(m) << 6);
+        // 2 (id) + 4 (round) + 6 (loc) + 2 (flagid) = 14 bits
+        sectorMessageQueue.add(packet);
     }
 
     public static int readSymmetry() { //0 bit = symm could be valid, 1 = invalid
@@ -85,11 +97,11 @@ public class Comms {
 
     public static int locationToSector(MapLocation m) {
         //cast 4 --> 1
-        return ((m.x/4) << 3) | (m.y/4);
+        return ((m.x/4) << 4) | (m.y/4);
     }
 
     public static MapLocation sectorToLocation(int sector) {
-        return new MapLocation((sector >> 3) * 4 + 1, (sector & 0x7) * 4 + 1);
+        return new MapLocation((sector >> 4) * 4 + 1, (sector & 0x7) * 4 + 1);
     }
 
     public static boolean isSymmetry(int symm) {

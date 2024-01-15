@@ -1,4 +1,4 @@
-package bling2;
+package bling3;
 
 import battlecode.common.*;
 

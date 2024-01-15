@@ -1,4 +1,4 @@
-package bling2;
+package manualtest1;
 
 import battlecode.common.*;
 
