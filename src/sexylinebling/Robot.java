@@ -1,4 +1,4 @@
-package hotlinebling;
+package sexylinebling;
 
 import java.util.Arrays;
 
@@ -6,16 +6,15 @@ import battlecode.common.*;
 import hotlinebling.fast.FastLocSet;
 
 public abstract class Robot {
-    RobotController rc;
+    
+
+    static RobotController rc;
 
     int myMoveNumber, roundNumber;
     MapLocation[] myFlags = {null, null, null};
-    MapLocation[] mirrorFlags = {null, null, null};
     MapLocation[] stolenFlags = {null, null, null};
     int[] stolenFlagRounds = {0, 0, 0};
     int[] flagIDs = {0, 0, 0};
-
-    int assumedSymmetry = macroPath.R_SYM;
 
     public Robot(RobotController rc) throws GameActionException {
         this.rc = rc;
@@ -29,24 +28,24 @@ public abstract class Robot {
         rc.writeSharedArray(myMoveNumber+1, rc.getID());
 
         initFlagStatus(); //~4000 bytecode
-        updateSymmetryComputations();
     }
 
+    boolean initTeamIDS = false;
     void populateTeamIDS() throws GameActionException {
         for (int i=1; i<=50; i++) {
             int id = rc.readSharedArray(i);
             teammateTracker.IDtoMoveOrder.add(id, i-1);
             teammateTracker.initTeammate(id);
         }
+        initTeamIDS = true;
     }
     void commFlagID() throws GameActionException {
         FlagInfo[] flags = rc.senseNearbyFlags(-1);
         for (FlagInfo f:flags) {
-            MapLocation floc = f.getLocation();
-            if (floc.equals(myFlags[0])) {
+            if (f.getLocation().equals(myFlags[0])) {
                 Comms.writeToBufferPool(51, f.getID());
             }
-            else if (floc.equals(myFlags[1])) {
+            else if (f.getLocation().equals(myFlags[1])) {
                 Comms.writeToBufferPool(52, f.getID());
             }
             else {
@@ -81,41 +80,22 @@ public abstract class Robot {
         }
     }
 
-    public void updateSymmetryComputations() throws GameActionException {
-        switch (assumedSymmetry) {
-            case macroPath.R_SYM:
-                mirrorFlags[0] = macroPath.getRSym(myFlags[0]);
-                mirrorFlags[1] = macroPath.getRSym(myFlags[1]);
-                mirrorFlags[2] = macroPath.getRSym(myFlags[2]);
-                break;
-            case macroPath.H_SYM:
-                mirrorFlags[0] = macroPath.getHSym(myFlags[0]);
-                mirrorFlags[1] = macroPath.getHSym(myFlags[1]);
-                mirrorFlags[2] = macroPath.getHSym(myFlags[2]);
-                break;
-            case macroPath.V_SYM:
-                mirrorFlags[0] = macroPath.getVSym(myFlags[0]);
-                mirrorFlags[1] = macroPath.getVSym(myFlags[1]);
-                mirrorFlags[2] = macroPath.getVSym(myFlags[2]);
-                break;
-        }
-    }
-
     public void checkStolenFlags() throws GameActionException {
         FlagInfo[] nearbyFlags = rc.senseNearbyFlags(-1, rc.getTeam());
+
         for (FlagInfo f:nearbyFlags) {
             if (f.isPickedUp()) {
                 if (flagIDs[0] == f.getID()) {
                     Comms.distressFlag(0, f.getLocation());
                 }
-                else if (flagIDs[1] == f.getID()) {
+                if (flagIDs[1] == f.getID()) {
                     Comms.distressFlag(1, f.getLocation());
                 }
-                else if (flagIDs[2] == f.getID()) {
+                if (flagIDs[2] == f.getID()) {
                     Comms.distressFlag(2, f.getLocation());
                 }
             }
-        }
+        } 
     }
 
     public abstract void turn() throws GameActionException;
@@ -131,7 +111,11 @@ public abstract class Robot {
                     stolenFlags[info.flagID] = info.loc;
                     stolenFlagRounds[info.flagID] = info.round;
                     rc.setIndicatorDot(info.loc, 0, 0, 0);
+                    // if (myMoveNumber == 0) {
+                    //     System.out.println("STOLEN FLAG " + info.loc);
+                    // }
                     break;
+            
                 default:
                     break;
             }
@@ -141,8 +125,10 @@ public abstract class Robot {
 
     public void spawnedTurn() throws GameActionException {
         teammateTracker.preTurn();
-
+        
         turn();
+
+
         if (myMoveNumber < 1) {
             if (roundNumber % 50 == 0) {
                 Debug.println(Comms.readSymmetry() + " <-- Symm");
@@ -158,10 +144,10 @@ public abstract class Robot {
 
         if (Clock.getBytecodesLeft() > 5000) {
             checkStolenFlags();
-        }
+        }   
     }
 
-    public void play() throws GameActionException {
+    public void play() throws GameActionException {  
         if (rc.canBuyGlobal(GlobalUpgrade.ACTION)) {
             rc.buyGlobal(GlobalUpgrade.ACTION);
         }
@@ -178,7 +164,7 @@ public abstract class Robot {
         if (roundNumber%3 == 0 && roundNumber >= 50) {
             Comms.readAllSectorMessages();
         }
-
+        
         //init moveordering
         if (roundNumber == 2) {
             populateTeamIDS();
@@ -187,7 +173,6 @@ public abstract class Robot {
         if (roundNumber == 3) {
             readCommFlagID();
         }
-
         if (roundNumber == 4) {
             Comms.writeToBufferPool(myMoveNumber, 0);
             if (myMoveNumber + 50 < 64) {
@@ -291,15 +276,7 @@ public abstract class Robot {
             }
         }
 
-        Comms.flushBufferPool(); //~no dirty = 300 bc
-
-        if (Clock.getBytecodesLeft() > 1500) {
-            int symm = Comms.readSymmetry();
-            if (symm != assumedSymmetry) {
-                assumedSymmetry = symm;
-                updateSymmetryComputations();
-            }
-        }
+        Comms.flushBufferPool(); //~no dirty = 300 bc   
 
         processMessages();
     }

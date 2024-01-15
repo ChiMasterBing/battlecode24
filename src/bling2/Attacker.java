@@ -116,8 +116,11 @@ public class Attacker extends Robot{
         if(rc.getRoundNum()>200){
             if(flagMovementLogic()) return;
         }
+        if(enemyRobots.length>0&&rc.getRoundNum()>200) {
+            attackMicro();
+            return;
+        }
         if(crumbMovementLogic()) return;
-        attackMicro();
         leaderMovementLogic();
     }
     public void setGlobals() throws GameActionException{
@@ -151,7 +154,7 @@ public class Attacker extends Robot{
         }
         if(bestheal!=null&&rc.canHeal(bestheal)){
             rc.heal(bestheal);
-            rc.setIndicatorString("I healed " + bestheal);
+//            rc.setIndicatorString("I healed " + bestheal);
         }
     }
     public void checkPickupFlag() throws GameActionException {
@@ -216,9 +219,9 @@ public class Attacker extends Robot{
     public void attackLogic() throws GameActionException {
         if (!rc.isActionReady()) return;
         MapLocation attackLoc = findBestAttackLocation();
-        rc.setIndicatorString("best attack loc "  + attackLoc);
+//        rc.setIndicatorString("best attack loc "  + attackLoc);
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
-            rc.setIndicatorString("I attacked " + attackLoc);
+//            rc.setIndicatorString("I attacked " + attackLoc);
             rc.attack(attackLoc);
         }
     }
@@ -280,6 +283,7 @@ public class Attacker extends Robot{
     public void attackMicro() {
         if (!rc.isMovementReady()) return;
         int cooldown = rc.getActionCooldownTurns();
+        rc.setIndicatorString("WOW");
         MapLocation closest = null; int minEnemyDist = 10000;
         for (RobotInfo ri:enemyRobots) {
             if (ri.location.distanceSquaredTo(myLoc) < minEnemyDist) {
@@ -287,18 +291,33 @@ public class Attacker extends Robot{
                 closest = ri.location;
             }
         }
-        if (closest != null) {
+
+
+            int mosthealth = 0;
+            for(RobotInfo ri : closeFriendlyRobots){
+                mosthealth = Math.max(mosthealth, ri.getHealth());
+            }
             MapLocation opposite = myLoc.add(myLoc.directionTo(closest).opposite());
+            if(rc.getHealth()<mosthealth){
+                bugNav.move(opposite);
+            }
+
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {
-                    bugNav.move(closest);
+                    if(rc.getRoundNum()>220||onOpponentSide>2) {
+                        rc.setIndicatorString(closest.toString());
+                        bugNav.move(closest);
+                    }
                 }else if(minEnemyDist<2){
                     bugNav.move(opposite);
                 }
             }
             else if (cooldown < 20) {
                 if (minEnemyDist > 9) {
-                    bugNav.move(closest);
+                    if(rc.getRoundNum()>220||onOpponentSide>2) {
+                        rc.setIndicatorString(closest.toString());
+                        bugNav.move(closest);
+                    }
                 }
                 if (minEnemyDist <=4) {
                     bugNav.move(opposite);
@@ -308,18 +327,40 @@ public class Attacker extends Robot{
                 if (minEnemyDist < 12) {
                     bugNav.move(opposite);
                 }else{
-                    bugNav.move(closest);
+                    if(rc.getRoundNum()>220||onOpponentSide>2) {
+                        rc.setIndicatorString(closest.toString());
+                        bugNav.move(closest);
+                    }
                 }
             }else{
                 bugNav.move(opposite);
             }
-        }
+
         rc.setIndicatorDot(myLoc, 0, 0, 0);
     }
 
     public int onOpponentSide(MapLocation closetSpawn, MapLocation currentLocation) {//if closer to enemy, then negative
-        if (currentTarget!=null) {
-            return currentLocation.distanceSquaredTo(currentTarget) - currentLocation.distanceSquaredTo(closetSpawn);
+        int symm = macroPath.getSymmType();
+        if (symm != -1) {
+            if (symm == macroPath.H_SYM) {
+                if(closetSpawn.x>rc.getMapWidth()/2){
+                    return currentLocation.x-rc.getMapWidth()/2;
+                }else{
+                    return rc.getMapWidth()/2-currentLocation.x;
+                }
+            }
+            else if (symm == macroPath.V_SYM) {
+                if(closetSpawn.y>rc.getMapHeight()/2){
+                    return currentLocation.y-rc.getMapHeight()/2;
+                }else{
+                    return rc.getMapHeight()/2-currentLocation.y;
+                }
+            }
+            else {
+                if (currentTarget!=null) {
+                    return currentLocation.distanceSquaredTo(currentTarget) - currentLocation.distanceSquaredTo(closetSpawn);
+                }
+            }
         }
         return 10;
     }
