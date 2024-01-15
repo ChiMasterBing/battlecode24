@@ -1,4 +1,4 @@
-package hotlinebling;
+package sexylinebling;
 import battlecode.common.*;
 import hotlinebling.fast.FastLocSet;
 import java.util.Random;
