@@ -106,7 +106,7 @@ public class Comms {
                 writeToBufferPool(63, locationToSector(m));
             }
         }
-        else if (myMoveNumber == 24) {
+        else if (myMoveNumber == 11) {
             if (m == null) {
                 writeToBufferPool(62, 42069);
             }
@@ -114,7 +114,7 @@ public class Comms {
                 writeToBufferPool(62, locationToSector(m));
             }
         }
-        else if (myMoveNumber == 49) {
+        else if (myMoveNumber == 21) {
             if (m == null) {
                 writeToBufferPool(61, 42069);
             }

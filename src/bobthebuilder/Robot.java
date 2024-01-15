@@ -16,8 +16,7 @@ public abstract class Robot {
     int[] flagIDs = {0, 0, 0};
 
     int assumedSymmetry = macroPath.R_SYM;
-
-    boolean leader = false; //"leader".. kinda
+    boolean free = false;
 
     public Robot(RobotController rc) throws GameActionException {
         this.rc = rc;
@@ -29,9 +28,6 @@ public abstract class Robot {
         myMoveNumber = rc.readSharedArray(0);
         rc.writeSharedArray(0, myMoveNumber+1);
         rc.writeSharedArray(myMoveNumber+1, rc.getID());
-        if (myMoveNumber >= 5 && myMoveNumber <= 10) {
-            leader = true;
-        }
 
         initFlagStatus(); //~4000 bytecode
         updateSymmetryComputations();
@@ -125,9 +121,6 @@ public abstract class Robot {
 
     public abstract void turn() throws GameActionException;
 
-    MapLocation[] combatFronts = new MapLocation[50];
-    int cPtr = 0;
-
     public void processMessages() {
         if (roundNumber <= 50) return;
         while (!Comms.sectorMessages.isEmpty()) {
@@ -140,15 +133,10 @@ public abstract class Robot {
                     stolenFlagRounds[info.flagID] = info.round;
                     rc.setIndicatorDot(info.loc, 0, 0, 0);
                     break;
-                case 1:
-                    //combat fronts
-                    if (cPtr >= 40) break;
-                    combatFronts[cPtr] = info.loc;
-                    cPtr++;
-                    break;
                 default:
                     break;
             }
+
         }
     }
 
@@ -164,7 +152,7 @@ public abstract class Robot {
         }
 
         teammateTracker.postTurn();
-        if (Clock.getBytecodesLeft() > 9000 && roundNumber > 10) {
+        if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
             macroPath.scout();
             macroPath.updateSymm();
         }
@@ -191,15 +179,6 @@ public abstract class Robot {
         if (roundNumber%3 == 0 && roundNumber >= 50) {
             Comms.readAllSectorMessages();
         }
-
-        if (myMoveNumber == 1 || myMoveNumber == 11 || myMoveNumber == 21) {
-            if (rc.isSpawned()) {
-                Comms.writeBuilderLocation(rc.getLocation(), myMoveNumber);
-            }
-            else {
-                Comms.writeBuilderLocation(null, myMoveNumber);
-            }
-        }
         
         //init moveordering
         if (roundNumber == 2) {
@@ -218,6 +197,7 @@ public abstract class Robot {
         }
         
         if (!rc.isSpawned()){
+            free = false;
             MapLocation[] spawnLocs = rc.getAllySpawnLocations();
             if (roundNumber < 200) {
                 if (rc.canSpawn(spawnLocs[myMoveNumber % spawnLocs.length])) {
@@ -300,14 +280,6 @@ public abstract class Robot {
             }
         }else {
             spawnedTurn();
-        }
-
-        if (roundNumber % 50 == 0) {
-            cPtr = 0; //clear combat fronts
-        }
-        //debug
-        for (int i=0; i<cPtr; i++) {
-            rc.setIndicatorDot(combatFronts[i], 0, 0, 255);
         }
 
         //sector comms

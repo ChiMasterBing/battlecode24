@@ -65,7 +65,7 @@ public class Builder extends Robot{
         // }
         
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
-            currentTarget = broadcastLocations[random.nextInt(broadcastLocations.length)];
+            currentTarget = broadcastLocations[0];
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
