@@ -119,8 +119,8 @@ public class Attacker extends Robot{
             if(flagMovementLogic()) return;
         }
         if(crumbMovementLogic()) return;
-        
-        if (enemyRobots.length > friendlyRobots.length) 
+
+        if (enemyRobots.length > friendlyRobots.length)
             bugNav.move(closestSpawn);
         if (attackMicro())
             return;
@@ -185,7 +185,7 @@ public class Attacker extends Robot{
             }
         }
 
-        if(bestHeal != null && rc.canHeal(bestHeal)) { //bytecode issues 
+        if(bestHeal != null && rc.canHeal(bestHeal)) { //bytecode issues
             rc.heal(bestHeal);
             rc.setIndicatorString("I healed " + bestHeal);
         }
@@ -232,7 +232,7 @@ public class Attacker extends Robot{
     // public void updateCurrentTarget() throws GameActionException {
     //     if (currentTarget == null) {
     //         currentTarget = mirrorFlags[0]; //by symmetry
-    //     } 
+    //     }
     //     //from superclass
     //     if (roundNumber > 200 && (roundNumber - stolenFlagRounds[0]  < 10 || roundNumber - stolenFlagRounds[1] < 10 || roundNumber - stolenFlagRounds[2] < 10)) {
     //         //System.out.println("Intercepting!!");
@@ -319,7 +319,7 @@ public class Attacker extends Robot{
         if (currentTarget == null) {
             currentTarget = mirrorFlags[0]; //by symmetry
         }
-        
+
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
             currentTarget = broadcastLocations[0];
         }
@@ -362,7 +362,7 @@ public class Attacker extends Robot{
     public boolean attackMicro() {
         if (!rc.isMovementReady()) return true;
         if (enemyRobots.length == 0) return false;
-        
+
         int cooldown = rc.getActionCooldownTurns();
         MapLocation closest = null; int minEnemyDist = 10000;
         for (RobotInfo ri:enemyRobots) {

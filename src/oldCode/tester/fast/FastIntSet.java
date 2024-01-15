@@ -1,4 +1,4 @@
-package tester;
+package oldCode.tester.fast;
 
 public class FastIntSet {
     public StringBuilder keys;

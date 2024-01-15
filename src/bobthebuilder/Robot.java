@@ -18,6 +18,7 @@ public abstract class Robot {
     int assumedSymmetry = macroPath.R_SYM;
 
     boolean leader = false; //"leader".. kinda
+    boolean free = false;//wait for friendly troops beofre you go
 
     public Robot(RobotController rc) throws GameActionException {
         this.rc = rc;
@@ -292,6 +293,7 @@ public abstract class Robot {
 
                 for (Direction d:Direction.allDirections()) {
                     if (roundNumber % 3 == 0 && rc.canSpawn(center.add(d))) {
+                        free = false;
                         rc.spawn(center.add(d));
                         spawnedTurn();
                         break;

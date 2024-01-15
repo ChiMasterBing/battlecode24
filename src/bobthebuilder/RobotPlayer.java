@@ -29,7 +29,7 @@ public strictfp class RobotPlayer {
             turn++;
             totalByteCode += Clock.getBytecodesLeft();
 
-            rc.setIndicatorString(totalByteCode/turn + " <-- bytecodes");
+//            rc.setIndicatorString(totalByteCode/turn + " <-- bytecodes");
             Clock.yield();
         }
         // Your code should never reach here (unless it's intentional)! Self-destruction imminent...

@@ -11,14 +11,14 @@ public strictfp class RobotPlayer {
         Robot robot;
         int currentMoveNumber = rc.readSharedArray(0);
         robot = new Attacker(rc); //~6000 bytecode
-        
+
 
         int totalByteCode = 0;
 
         int turn = rc.getRoundNum();
         while(true){
             robot.play();
-            
+
             if (turn != rc.getRoundNum()) {
                 Debug.println("Bytecode limit reached last turn?");
                 turn = rc.getRoundNum();

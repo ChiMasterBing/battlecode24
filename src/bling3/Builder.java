@@ -1,8 +1,7 @@
-package bobthebuilder;
+package bling3;
 import battlecode.common.*;
 import bling3.fast.FastLocSet;
 import java.util.Random;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -20,7 +19,6 @@ public class Builder extends Robot{
         super(rc);
         spawnLocs = rc.getAllySpawnLocations();
     }
-    
     public void setGlobals() throws GameActionException{
         nearbyInfo = rc.senseNearbyMapInfos(-1);
 
@@ -47,25 +45,9 @@ public class Builder extends Robot{
         if (currentTarget == null) {
             currentTarget = mirrorFlags[0]; //by symmetry
         }
-        
-        // if (!leader && cPtr > 0) {
-        //     int minDist = 10000;
-        //     for (int i=0; i<cPtr; i++) {
-        //         int d = combatFronts[i].distanceSquaredTo(myLoc);
-        //         if (d < minDist) {
-        //             if (d < 25 && enemyRobots.length == 0) {
-        //                 combatFronts[i] = new MapLocation(10000, 10000);
-        //                 continue;
-        //             }
-        //             minDist = d;
-        //             currentTarget = combatFronts[i];
-        //         }
-        //     }
-        //     return;
-        // }
-        
+
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
-            currentTarget = broadcastLocations[random.nextInt(broadcastLocations.length)];
+            currentTarget = broadcastLocations[0];
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
@@ -74,7 +56,10 @@ public class Builder extends Robot{
         }
     }
     public void buildBest(int explosiveTraps, int stunTraps, int friendlyNearBomb, int enemyNearBomb, MapLocation trapLocation) throws GameActionException {
-        if(stunTraps+explosiveTraps>4+rc.getCrumbs()/1500){
+        if(stunTraps+explosiveTraps>5+rc.getCrumbs()/1500){
+            return;
+        }
+        if(enemyNearBomb<8-rc.getCrumbs()/500){
             return;
         }
 
@@ -99,19 +84,9 @@ public class Builder extends Robot{
         return closest;
     }
     public void attemptBuildTraps() throws GameActionException {
-        if(enemyRobots.length <= 1 && !(rc.getCrumbs() > 4000 && roundNumber > 250)) return;
-
-        if (enemyRobots.length == 0) {
-            //well we have a lot of crums so why not
-            for (Direction d:Direction.allDirections()) {
-                if (rc.getCrumbs() < 3000) return;
-                if (rc.canBuild(TrapType.EXPLOSIVE, myLoc.add(d))) {
-                    rc.build(TrapType.EXPLOSIVE, myLoc.add(d));
-                }
-            }
+        if(enemyRobots.length==0){
             return;
         }
-
         int explosiveTraps = 0;
         int stunTraps = 0;
         MapLocation closestAttacker = closestAttacker();
@@ -133,7 +108,7 @@ public class Builder extends Robot{
             }
         }
         int enemyNearBomb = 0;
-        for(RobotInfo i: enemyRobots){
+        for(RobotInfo i: friendlyRobots){
             if(close.distanceSquaredTo(i.getLocation())<=13){
                 enemyNearBomb++;
             }
@@ -231,18 +206,6 @@ public class Builder extends Robot{
         return false;
     }
     public Boolean avoidOtherBuilders() {//always returns true
-        MapLocation[] buddies = Comms.getBuilderLocations();
-        //System.out.println(Arrays.toString(buddies));
-        if (buddies[0] != null) {
-            rc.setIndicatorLine(myLoc, buddies[0], 255, 0, 0);
-        }
-        if (buddies[1] != null) {
-            rc.setIndicatorLine(myLoc, buddies[1], 255, 0, 0);
-        }
-        if (buddies[2] != null) {
-            rc.setIndicatorLine(myLoc, buddies[2], 255, 0, 0);
-        }
-
         for(RobotInfo i: friendlyRobots){
             if(i.getBuildLevel()==6&&i.getLocation().distanceSquaredTo(currentTarget)>myLoc.distanceSquaredTo(currentTarget)){
                 rc.setIndicatorString("too close to freindly bot");
@@ -266,23 +229,14 @@ public class Builder extends Robot{
         }
     }
     public void movement() throws GameActionException {
-//        if(rc.getRoundNum()<20){
-//            return;
-//        }
 //        if(rc.getRoundNum()>400){
 //            rc.resign();
 //        }
         if(rc.getRoundNum()>200){
             dodgeEnemies();
-            // if(flagMovementLogic()) return;
+            if(flagMovementLogic()) return;
             if(friendlyRobots.length>2) {
                 followFriendly();
-            }
-            if(friendlyRobots.length>=2){
-                free = true;
-            }
-            if(myLoc.distanceSquaredTo(closestSpawn)<20&&friendlyRobots.length<2&&!free){// i do this cuz bad pathfindm cuz they all get stuck at spawn
-                return;
             }
 //            else{
 //                bugNav.move(closestSpawn);
@@ -371,63 +325,12 @@ public class Builder extends Robot{
 
     }
 
-    public void buildSpawnTraps() throws GameActionException {
-        Direction[] diagonal = {Direction.CENTER, Direction.NORTHEAST};
-        if(myLoc.distanceSquaredTo(myFlags[0])<3){
-            MapLocation centerLoc = myFlags[0];
-            if(myLoc.distanceSquaredTo(centerLoc)>0){
-                bugNav.move(myLoc);
-            }
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
-                return;
-            }
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-        }else if(myLoc.distanceSquaredTo(myFlags[1])<3){
 
-            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
-                return;
-            }
-
-            MapLocation centerLoc = myFlags[1];
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
-                return;
-            }
-
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-        }else if(myLoc.distanceSquaredTo(myFlags[2])<3){
-            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
-                return;
-            }
-            MapLocation centerLoc = myFlags[2];
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
-                return;
-            }
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-        }
-    }
     @Override
     public void turn() throws GameActionException {
         rc.setIndicatorString("");
         setGlobals();
         updateCurrentTarget();
-//        if(rc.getRoundNum()>200) {
-            buildSpawnTraps();
-//        }
 //        attemptBuildTraps();
         movement();
         setGlobals();

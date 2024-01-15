@@ -14,6 +14,7 @@ public class Attacker extends Robot{
     Random random = new Random();
     MapLocation closestEnemy;
     int minEnemyDist;
+    int deadMeat = 0;//amount of enemies next to bomb
 
     public Attacker(RobotController rc) throws GameActionException {
         super(rc);
@@ -101,6 +102,9 @@ public class Attacker extends Robot{
             }else {
                 if(!i.isPickedUp()){ //if their flag aint picked up
                     if(enemyRobots.length < friendlyRobots.length-1){//check if this is hleful
+                        if(i.getLocation().distanceSquaredTo(myLoc)<=9&&friendlyRobots.length-enemyRobots.length<3){
+                            return false;
+                        }
                         int cdist = i.getLocation().distanceSquaredTo(myLoc);
                         if(cdist<dist){
                             dist = cdist;
@@ -149,13 +153,23 @@ public class Attacker extends Robot{
             if(flagMovementLogic()) return;
         }
         if(crumbMovementLogic()) return;
-        
-        if (enemyRobots.length > friendlyRobots.length) 
-            bugNav.move(closestSpawn);
+//        if (enemyRobots.length > friendlyRobots.length)
+//            bugNav.move(closestSpawn);
         if (attackMicro())
             return;
-        if(currentTarget!=null)
+
+        if(friendlyRobots.length>=2){
+            free = true;
+        }
+        if(myLoc.distanceSquaredTo(closestSpawn)>9&&myLoc.distanceSquaredTo(closestSpawn)<20&&friendlyRobots.length<2&&!free){// i do this cuz bad pathfind
+            rc.setIndicatorString("stuck");
+            return;
+        }
+        if(currentTarget!=null) {
             bugNav.move(currentTarget);
+        }else{
+            rc.setIndicatorString("no target???");
+        }
     }
 
     public void setGlobals() throws GameActionException{
@@ -177,10 +191,16 @@ public class Attacker extends Robot{
 
         closestEnemy = null; 
         minEnemyDist = 10000;
+        deadMeat = 0;
         for (RobotInfo ri:enemyRobots) {
-            if (ri.location.distanceSquaredTo(myLoc) < minEnemyDist) {
-                minEnemyDist = ri.location.distanceSquaredTo(myLoc);
-                closestEnemy = ri.location;
+            MapLocation cval = ri.location;
+            if (cval.distanceSquaredTo(myLoc) < minEnemyDist) {
+                minEnemyDist = cval.distanceSquaredTo(myLoc);
+                closestEnemy = cval;
+            }
+            MapLocation dirToMe = cval.add(cval.directionTo(myLoc));
+            if(rc.canSenseLocation(dirToMe)&&rc.senseMapInfo(dirToMe).getTrapType()!=TrapType.NONE){
+                deadMeat++;
             }
         }
     }
@@ -236,7 +256,7 @@ public class Attacker extends Robot{
 
         if(bestHeal != null && rc.canHeal(bestHeal)) { //bytecode issues 
             rc.heal(bestHeal);
-            rc.setIndicatorString("I healed " + bestHeal);
+//            rc.setIndicatorString("I healed " + bestHeal);
         }
     }
 
@@ -309,9 +329,9 @@ public class Attacker extends Robot{
     public void attackLogic() throws GameActionException {
         if (!rc.isActionReady()) return;
         MapLocation attackLoc = findBestAttackLocation();
-        rc.setIndicatorString("best attack loc "  + attackLoc);
+//        rc.setIndicatorString("best attack loc "  + attackLoc);
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
-            rc.setIndicatorString("I attacked " + attackLoc);
+//            rc.setIndicatorString("I attacked " + attackLoc);
             rc.attack(attackLoc);
         }
     }
@@ -331,7 +351,7 @@ public class Attacker extends Robot{
         }
     }
 
-    public boolean attackMicro() {
+    public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
         if (enemyRobots.length == 0) return false;
         
@@ -342,10 +362,16 @@ public class Attacker extends Robot{
             mosthealth = Math.max(mosthealth, ri.getHealth());
         }
         MapLocation opposite = myLoc.add(myLoc.directionTo(closestEnemy).opposite());
+
         if(rc.getHealth()<mosthealth){
             bugNav.move(opposite);
         }
-
+//        if(myLoc.distanceSquaredTo(closestSpawn)<20){
+//            opposite = myLoc;
+//        }
+        if(deadMeat>0){
+            bugNav.move(opposite);
+        }
         if (closestEnemy != null) {
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {

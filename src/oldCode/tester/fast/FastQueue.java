@@ -1,4 +1,4 @@
-package tester;
+package oldCode.tester.fast;
 //FastQueue implementation from 4 Muskets
 public class FastQueue<T> {
     private T[] buf;
@@ -7,7 +7,7 @@ public class FastQueue<T> {
     private int ln;
 
     public FastQueue() {
-        ln = 10000;
+        ln = 1000;
         buf = (T[]) new Object[ln];
         l = 0;
         r = 0;
