@@ -46,16 +46,13 @@ public class macroPath {
     }
     
     public static void updateTile(MapInfo m) {
-        int type = 3;
+        int type = EMPTY;
         MapLocation pos = m.getMapLocation();
         if (m.isWall()) {
             type = WALL;
         }
         else if (m.isWater()) {
             type = WATER;
-        }
-        else {
-            type = EMPTY;
         }
         //dams are separate
         boolean toAdd = false;
@@ -79,9 +76,9 @@ public class macroPath {
 
     //-----------------------------------------
     //SYMMETRY MANAGEMENT
-    public static int H_SYM = 0;
-    public static int V_SYM = 1;
-    public static int R_SYM = 2;
+    public static final int H_SYM = 0;
+    public static final int V_SYM = 1;
+    public static final int R_SYM = 2;
     static final int NO_WATER_ROUND = 0; //anything before this our robots will not dig
     static boolean[] symmetries = {true, true, true};
     private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); //the squares to check symmetry

@@ -1,9 +1,9 @@
-package hotlinebling;
+package manualtest1;
 
 import battlecode.common.*;
 
 public class Debug {
-    static final boolean VERBOSE = false;
+    static final boolean VERBOSE = true;
     public static final boolean INFO = true;
     public static final boolean PATHFINDING = false;
     public static final boolean INDICATORS = true;

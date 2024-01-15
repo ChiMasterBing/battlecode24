@@ -1,7 +1,7 @@
-package bling2;
+package bling3;
 import java.util.Arrays;
 import battlecode.common.*;
-import bling2.fast.FastQueue;
+import bling3.fast.FastQueue;
 
 public class macroPath {
     
@@ -79,16 +79,12 @@ public class macroPath {
 
     //-----------------------------------------
     //SYMMETRY MANAGEMENT
-    public final static int H_SYM = 0;
-    public final static int V_SYM = 1;
-    public final static int R_SYM = 2;
+    public static final int H_SYM = 0;
+    public static final int V_SYM = 1;
+    public static final int R_SYM = 2;
     static final int NO_WATER_ROUND = 0; //anything before this our robots will not dig
     static boolean[] symmetries = {true, true, true};
     private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); //the squares to check symmetry
-
-    public static int getSymmType() {
-        return Comms.readSymmetry();
-    }
 
     static MapLocation getHSym(MapLocation loc){ return new MapLocation (WIDTH - loc.x - 1, loc.y); }
     static MapLocation getVSym(MapLocation loc){ return new MapLocation (loc.x, HEIGHT - loc.y - 1); }
