@@ -1,6 +1,6 @@
 package bobthebuilder;
 import battlecode.common.*;
-import bling3.fast.FastLocSet;
+import bobthebuilder.fast.FastLocSet;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class Builder extends Robot{
         // }
         
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
-            currentTarget = broadcastLocations[random.nextInt(broadcastLocations.length)];
+            currentTarget = broadcastLocations[0];
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();

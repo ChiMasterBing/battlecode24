@@ -1,9 +1,9 @@
 package bobthebuilder;
 
 import battlecode.common.*;
-import bling3.fast.FastIntIntMap;
-import bling3.fast.FastIntLocMap;
-import bling3.fast.FastQueue;
+import bobthebuilder.fast.FastIntIntMap;
+import bobthebuilder.fast.FastIntLocMap;
+import bobthebuilder.fast.FastQueue;
 
 public class teammateTracker {
     static RobotController rc;

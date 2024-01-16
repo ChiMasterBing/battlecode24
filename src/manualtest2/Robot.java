@@ -65,9 +65,9 @@ public abstract class Robot {
                 rc.build(TrapType.STUN, center);
             }
         }
-        if (rc.canHeal(rc.getLocation())) {
-            rc.heal(rc.getLocation());
-        }
-        System.out.println(Arrays.toString(rc.senseNearbyRobots()));
+        // if (rc.canHeal(rc.getLocation())) {
+        //     rc.heal(rc.getLocation());
+        // }
+        // System.out.println(Arrays.toString(rc.senseNearbyRobots()));
     }
 }

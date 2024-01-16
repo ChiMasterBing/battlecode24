@@ -24,6 +24,8 @@ public class Comms {
     //consider round info as recent --> will only be tens and ones digit of current rounds
     //100 turns --> 5 turn buckets --> 20 --> 4 bits
 
+    //slot 63, 62, 61: builders
+
     static FastQueue<Integer> sectorMessages = new FastQueue<Integer>(100);
     static FastQueue<Integer> sectorMessageQueue = new FastQueue<Integer>(25);
 
@@ -41,7 +43,7 @@ public class Comms {
         else {
             round += (thisRound - thisRound % 80);
         }
-        MapLocation packetLoc = sectorToLocation((packet & 0xfc0) >> 6);
+        MapLocation packetLoc = sectorToLocation((packet & 0x3fc0) >> 6);
         SectorInfo res = new SectorInfo(packetLoc, round);
         
         switch (packet & 0x3) {
@@ -81,10 +83,58 @@ public class Comms {
         // System.out.println((locationToSector(m) << 6));
     }
 
+    public static MapLocation[] getBuilderLocations() {
+        MapLocation[] ret = {null, null, null};
+        if (read(63) != 42069) {
+            ret[0] = sectorToLocation(read(63));
+        }
+        if (read(62) != 42069) {
+            ret[1] = sectorToLocation(read(62));
+        }
+        if (read(61) != 42069) {
+            ret[2] = sectorToLocation(read(61));
+        }
+        return ret;
+    }
+
+    public static void writeBuilderLocation(MapLocation m, int myMoveNumber) throws GameActionException {
+        if (myMoveNumber == 1) {
+            if (m == null) {
+                writeToBufferPool(63, 42069);
+            }
+            else {
+                writeToBufferPool(63, locationToSector(m));
+            }
+        }
+        else if (myMoveNumber == 11) {
+            if (m == null) {
+                writeToBufferPool(62, 42069);
+            }
+            else {
+                writeToBufferPool(62, locationToSector(m));
+            }
+        }
+        else if (myMoveNumber == 21) {
+            if (m == null) {
+                writeToBufferPool(61, 42069);
+            }
+            else {
+                writeToBufferPool(61, locationToSector(m));
+            }
+        }
+    }
+
+
+
+
     public static void notifyCombatFronts(MapLocation m) throws GameActionException {
         int packet = 0x1 | (encodeRound() << 2) | (locationToSector(m) << 6);
         // 2 (id) + 4 (round) + 6 (loc) + 2 (flagid) = 14 bits
         sectorMessageQueue.add(packet);
+        // System.out.println("queueing combaqt packet @ " + m + " " + rc.getRoundNum());
+        // SectorInfo decoded = decodeSectorMessage(packet);
+        // System.out.println(decoded.loc.toString());
+        // System.out.println(decoded.round + " ");
     }
 
     public static int readSymmetry() { //0 bit = symm could be valid, 1 = invalid
