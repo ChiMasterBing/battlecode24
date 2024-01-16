@@ -1,10 +1,10 @@
-package bobthebuilder;
+package bobnoheal;
 import battlecode.common.*;
 import bling3.fast.FastLocSet;
 
 import java.util.Random;
 
-public class Attacker extends Robot{
+public class Attacker extends Robot {
     MapLocation closestSpawn, myLoc = null, currentTarget = null;
     MapLocation[] broadcastLocations = {};
     MapLocation[] spawnLocs;
@@ -13,8 +13,6 @@ public class Attacker extends Robot{
     int onOpponentSide = 0;
     Random random = new Random();
     int deadMeat = 0;
-    MapLocation lowestHealthLoc;
-    int midEnemies = 0;
     MapLocation closestEnemy;
     int minEnemyDist;
 
@@ -40,7 +38,6 @@ public class Attacker extends Robot{
         movement();
         setGlobals(); //after we moved, globals are different
         attackLogic();
-//        if(midEnemies)
         tryHeal();
         checkBuildTraps();
         tryFill();
@@ -130,17 +127,11 @@ public class Attacker extends Robot{
         }
         if(crumbMovementLogic()) return;
 
+        if (enemyRobots.length > friendlyRobots.length)
+            bugNav.move(closestSpawn);
 
         if (attackMicro())
             return;
-        if(rc.getHealth()<=750&&closeFriendlyRobots.length>0){
-            return;
-        }
-        for(RobotInfo i: closeFriendlyRobots){
-            if(i.getHealth()<=750){
-                return;
-            }
-        }
 
         // if(friendlyRobots.length>=2){
         //     free = true;
@@ -149,9 +140,7 @@ public class Attacker extends Robot{
         //     rc.setIndicatorString("stuck");
         //     return;
         // }
-        if(lowestHealthLoc!=null){
-            bugNav.move(lowestHealthLoc);
-        }
+
         if(currentTarget!=null)
             bugNav.move(currentTarget);
     }
@@ -162,14 +151,6 @@ public class Attacker extends Robot{
         closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
-        int lowestHealth = 1000;
-        lowestHealthLoc= null;
-        for(RobotInfo ri: friendlyRobots){
-            if(ri.getHealth()<lowestHealth){
-                lowestHealth = ri.getHealth();
-                lowestHealthLoc = ri.getLocation();
-            }
-        }
         int dist = Integer.MAX_VALUE;
         for(MapLocation spawn : spawnLocs){
             int cdist = myLoc.distanceSquaredTo(spawn);
@@ -184,16 +165,11 @@ public class Attacker extends Robot{
         deadMeat = 0;
         closestEnemy = null;
         minEnemyDist = 100000;
-        midEnemies = 0;
         for (RobotInfo ri:enemyRobots) {
             MapLocation cval = ri.location;
-            int ridist = cval.distanceSquaredTo(myLoc);
-            if (ridist < minEnemyDist) {
-                minEnemyDist = ridist;
+            if (cval.distanceSquaredTo(myLoc) < minEnemyDist) {
+                minEnemyDist = cval.distanceSquaredTo(myLoc);
                 closestEnemy = cval;
-            }
-            if(ridist<9){
-                midEnemies++;
             }
             MapLocation dirToMe = cval.add(cval.directionTo(myLoc));
             if(rc.canSenseLocation(dirToMe)&&rc.senseMapInfo(dirToMe).getTrapType()!=TrapType.NONE){
@@ -421,8 +397,6 @@ public class Attacker extends Robot{
             mosthealth = Math.max(mosthealth, ri.getHealth());
         }
         MapLocation opposite = myLoc.add(myLoc.directionTo(closestEnemy).opposite());
-        if (enemyRobots.length > friendlyRobots.length&&cooldown>=10)
-            bugNav.move(opposite);
         if(rc.getHealth()<mosthealth){
             bugNav.move(opposite);
         }

@@ -1,12 +1,11 @@
-package bobthebuilder;
+package bobnoheal;
 import battlecode.common.*;
-import bobthebuilder.fast.FastLocSet;
+import bobnoheal.fast.FastLocSet;
+
 import java.util.Random;
-import java.util.Arrays;
-import java.util.Map;
 
 
-public class Builder extends Robot{
+public class Builder extends Robot {
     MapLocation[] broadcastLocations = {};
     MapLocation[] spawnLocs;
     MapInfo[] nearbyInfo;

@@ -1,9 +1,7 @@
-package bobthebuilder;
+package troll;
 import battlecode.common.*;
-import bobthebuilder.fast.FastLocSet;
+import bling3.fast.FastLocSet;
 import java.util.Random;
-import java.util.Arrays;
-import java.util.Map;
 
 
 public class Builder extends Robot{
@@ -65,7 +63,7 @@ public class Builder extends Robot{
         // }
         
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
-            currentTarget = broadcastLocations[0];
+            currentTarget = broadcastLocations[random.nextInt(broadcastLocations.length)];
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
@@ -371,12 +369,74 @@ public class Builder extends Robot{
 
     }
 
+    public void buildSpawnTraps() throws GameActionException {
+        Direction[] diagonal = {Direction.NORTHEAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.SOUTHWEST};
+        if(myLoc.distanceSquaredTo(myFlags[0])<3){
+            MapLocation centerLoc = myFlags[0];
+            if(myLoc.distanceSquaredTo(centerLoc)>0){
+                bugNav.move(myLoc);
+            }
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+                rc.build(TrapType.EXPLOSIVE, centerLoc);
+            }
 
+        }else if(myLoc.distanceSquaredTo(myFlags[1])<3){
+
+            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+                return;
+            }
+
+            MapLocation centerLoc = myFlags[1];
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+                rc.build(TrapType.EXPLOSIVE, centerLoc);
+            }
+
+        }else if(myLoc.distanceSquaredTo(myFlags[2])<3){
+            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+                return;
+            }
+            MapLocation centerLoc = myFlags[2];
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+                rc.build(TrapType.EXPLOSIVE, centerLoc);
+            }
+        }
+    }
     @Override
     public void turn() throws GameActionException {
         rc.setIndicatorString("");
         setGlobals();
         updateCurrentTarget();
+//        if(rc.getRoundNum()>200) {
+            buildSpawnTraps();
+//        }
 //        attemptBuildTraps();
         movement();
         setGlobals();
