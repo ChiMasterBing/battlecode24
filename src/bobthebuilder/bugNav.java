@@ -1,8 +1,8 @@
 package bobthebuilder;
 
 import battlecode.common.*;
-import bling3.fast.FastIntSet;
-import bling3.fast.FastLocSet;
+import bobthebuilder.fast.FastIntSet;
+import bobthebuilder.fast.FastLocSet;
 
 public class bugNav {
     static RobotController rc;

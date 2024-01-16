@@ -1,6 +1,6 @@
 package bobthebuilder;
 import battlecode.common.*;
-import bling3.fast.FastLocSet;
+import bobthebuilder.fast.FastLocSet;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Map;

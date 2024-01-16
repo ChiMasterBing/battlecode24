@@ -1,6 +1,6 @@
 package bobthebuilder;
 
-import bling3.fast.FastQueue;
+import bobthebuilder.fast.FastQueue;
 import battlecode.common.*;
 
 public class Comms {

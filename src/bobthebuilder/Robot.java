@@ -3,7 +3,7 @@ package bobthebuilder;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import bling3.fast.FastLocSet;
+import bobthebuilder.fast.FastLocSet;
 
 public abstract class Robot {    
     RobotController rc;
@@ -152,9 +152,18 @@ public abstract class Robot {
         }
 
         teammateTracker.postTurn();
-        if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
-            macroPath.scout();
-            macroPath.updateSymm();
+
+        if (roundNumber < 200) {
+            if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
+                macroPath.scout();
+                macroPath.updateSymm();
+            }
+        }
+        else {
+            if (Clock.getBytecodesLeft() > 12000 && roundNumber > 10) {
+                macroPath.scout();
+                macroPath.updateSymm();
+            }
         }
 
         if (Clock.getBytecodesLeft() > 5000) {

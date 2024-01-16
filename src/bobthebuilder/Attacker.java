@@ -27,10 +27,13 @@ public class Attacker extends Robot{
         checkBuildTraps();
         updateCurrentTarget();
         attackLogic();
-
         if(enemyRobots.length==0) {
             tryHeal();
         }
+
+        // if (rc.getRoundNum() > 400 && enemyRobots.length == 0) {
+        //     buildSpawnTraps();
+        // }
 
         movement();
         setGlobals(); //after we moved, globals are different
@@ -124,7 +127,7 @@ public class Attacker extends Robot{
         }
         if(crumbMovementLogic()) return;
 
-        if (enemyRobots.length > friendlyRobots.length) 
+        if (enemyRobots.length > friendlyRobots.length)
             bugNav.move(closestSpawn);
 
         if (attackMicro())
@@ -215,7 +218,7 @@ public class Attacker extends Robot{
             }
         }
 
-        if(bestHeal != null && rc.canHeal(bestHeal)) { //bytecode issues 
+        if(bestHeal != null && rc.canHeal(bestHeal)) { //bytecode issues
             rc.heal(bestHeal);
             rc.setIndicatorString("I healed " + bestHeal);
         }
@@ -231,26 +234,40 @@ public class Attacker extends Robot{
         }
     }
 
-
-
     public void checkBuildTraps() throws GameActionException{
         MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(4);
-        int traps = 0;
+        int expl = 0, stun = 0;
         for (MapInfo mi:nearbyInfo) {
-            if (mi.getTrapType() != TrapType.NONE) {
-                traps++;
+            if (mi.getTrapType() == TrapType.EXPLOSIVE) {
+                expl++;
+            }
+            else if (mi.getTrapType() == TrapType.STUN) {
+                stun++;
             }
         }
-        if(rc.getRoundNum()>210 && traps < 1) {
+//        int traps = expl + stun;
+        if(rc.getRoundNum()>200 && expl<1) {
             MapLocation nxt;
-            
-            int threshold = Math.max(1, 7 - rc.getCrumbs()/1000);
+
+            int threshold = Math.max(1, 7- rc.getCrumbs()/1000);
             for (Direction d:Direction.allDirections()) {
                 nxt = myLoc.add(d);
                 if (rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold) {
-                    if (rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
-                        rc.build(TrapType.EXPLOSIVE, nxt);
-                    }
+//                    if (friendlyRobots.length > enemyRobots.)
+
+                     if((closeEnemyRobots.length > 4 || rc.getCrumbs()<250)) { //friendlyRobots.length > 10 &&
+                         if(rc.canBuild(TrapType.STUN, nxt)) {
+                             //System.out.println("DANIEL SO PRO");
+                             rc.build(TrapType.STUN, nxt);
+                         }
+                     }
+                     if(rc.canBuild(TrapType.EXPLOSIVE, nxt)){
+                         rc.build(TrapType.EXPLOSIVE, nxt);
+                     }
+//                    if (rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
+//                        rc.build(TrapType.EXPLOSIVE, nxt);
+//                    }
+
                 }
             }
 
@@ -263,11 +280,72 @@ public class Attacker extends Robot{
         }
     }
 
+    public void buildSpawnTraps() throws GameActionException {
+        Direction[] diagonal = {Direction.NORTHEAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.SOUTHWEST};
+        if(myLoc.distanceSquaredTo(myFlags[0])<3){
+            MapLocation centerLoc = myFlags[0];
+            if(myLoc.distanceSquaredTo(centerLoc)>0){
+                bugNav.move(myLoc);
+            }
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+            // }
+
+        }else if(myLoc.distanceSquaredTo(myFlags[1])<3){
+
+            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+                return;
+            }
+
+            MapLocation centerLoc = myFlags[1];
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+            // }
+
+        }else if(myLoc.distanceSquaredTo(myFlags[2])<3){
+            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+                return;
+            }
+            MapLocation centerLoc = myFlags[2];
+            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+                bugNav.move(myLoc);
+                return;
+            }
+            for(Direction d: diagonal){
+                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+                    rc.build(TrapType.STUN, centerLoc.add(d));
+                }
+            }
+            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
+            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+            // }
+        }
+    }
+
     public void updateCurrentTarget() throws GameActionException {
         if (currentTarget == null) {
             currentTarget = mirrorFlags[0]; //by symmetry
         }
-        
+
         if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
             currentTarget = broadcastLocations[0];
         }
@@ -310,9 +388,9 @@ public class Attacker extends Robot{
     public boolean attackMicro() {
         if (!rc.isMovementReady()) return true;
         if (enemyRobots.length == 0) return false;
-        
+
         int cooldown = rc.getActionCooldownTurns();
-        
+
 
         int mosthealth = 0;
         for(RobotInfo ri : closeFriendlyRobots){

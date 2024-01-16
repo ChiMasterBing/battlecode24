@@ -1,7 +1,7 @@
 package bobthebuilder;
 import java.util.Arrays;
 import battlecode.common.*;
-import bling3.fast.FastQueue;
+import bobthebuilder.fast.FastQueue;
 
 public class macroPath {
     
