@@ -1,0 +1,33 @@
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test UP-TO-DATE
+> Task :check UP-TO-DATE
+> Task :unpackClient UP-TO-DATE
+
+> Task :checkNewVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !!!   NEW BATTLECODE VERSION AVAILABLE   !!!  
+Current Battlecode version: 1.2.3
+New Battlecode version:     1.2.5
+Run './gradlew update' to set new configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> Task :build UP-TO-DATE
+
+> Task :run FAILED
+[server:warning] Couldn't load map Hockey, skipping
+[server:warning] java version "1.8.0_392"
+[server:warning] OpenJDK 64-Bit Server VM (build 25.392-b08, mixed mode)
+[server:warning] Please report this to the 6.9610 devs, by posting to the forum
+[server:warning] under the "bugs" thread.  Include a copy of this printout and
+[server:warning] a brief description of the bug, including whether it's consistent
+[server:warning] or sporadic.  Thanks!
+7 actionable tasks: 2 executed, 5 up-to-date

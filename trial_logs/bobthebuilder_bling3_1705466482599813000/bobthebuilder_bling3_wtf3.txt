@@ -1,0 +1,185 @@
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test UP-TO-DATE
+> Task :check UP-TO-DATE
+> Task :unpackClient UP-TO-DATE
+
+> Task :checkNewVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !!!   NEW BATTLECODE VERSION AVAILABLE   !!!  
+Current Battlecode version: 1.2.3
+New Battlecode version:     1.2.5
+Run './gradlew update' to set new configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> Task :build UP-TO-DATE
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] bobthebuilder vs. bling3 on wtf3
+[A: #11887@50] 2 <-- Symm
+[A: #11887@50] 0<-- flags captured
+[B: #11558@50] 2 <-- Symm
+[B: #11558@50] 0<-- flags captured
+[A: #11887@100] 2 <-- Symm
+[A: #11887@100] 0<-- flags captured
+[B: #11558@100] 1 <-- Symm
+[B: #11558@100] 0<-- flags captured
+[A: #11887@150] 2 <-- Symm
+[A: #11887@150] 0<-- flags captured
+[B: #11558@150] 1 <-- Symm
+[B: #11558@150] 0<-- flags captured
+[A: #11887@200] 1 <-- Symm
+[A: #11887@200] 0<-- flags captured
+[B: #11558@200] 1 <-- Symm
+[B: #11558@200] 0<-- flags captured
+[A: #11887@250] 1 <-- Symm
+[A: #11887@250] 0<-- flags captured
+[A: #11887@300] 1 <-- Symm
+[A: #11887@300] 0<-- flags captured
+[B: #11558@300] 1 <-- Symm
+[B: #11558@300] 0<-- flags captured
+[A: #11887@350] 1 <-- Symm
+[A: #11887@350] 0<-- flags captured
+[B: #11558@350] 1 <-- Symm
+[B: #11558@350] 0<-- flags captured
+[A: #11887@400] 1 <-- Symm
+[A: #11887@400] 0<-- flags captured
+[B: #11558@400] 1 <-- Symm
+[B: #11558@400] 0<-- flags captured
+[A: #11887@450] 1 <-- Symm
+[A: #11887@450] 0<-- flags captured
+[A: #11887@500] 1 <-- Symm
+[A: #11887@500] 0<-- flags captured
+[B: #11558@500] 1 <-- Symm
+[B: #11558@500] 0<-- flags captured
+[A: #11887@550] 1 <-- Symm
+[A: #11887@550] 0<-- flags captured
+[B: #11558@550] 1 <-- Symm
+[B: #11558@550] 0<-- flags captured
+[B: #11558@600] 1 <-- Symm
+[B: #11558@600] 0<-- flags captured
+[A: #11887@650] 1 <-- Symm
+[A: #11887@650] 0<-- flags captured
+[B: #11558@650] 1 <-- Symm
+[B: #11558@650] 0<-- flags captured
+[A: #11887@700] 1 <-- Symm
+[A: #11887@700] 0<-- flags captured
+[B: #11558@700] 1 <-- Symm
+[B: #11558@700] 0<-- flags captured
+[A: #11887@750] 1 <-- Symm
+[A: #11887@750] 0<-- flags captured
+[B: #11558@750] 1 <-- Symm
+[B: #11558@750] 0<-- flags captured
+[A: #11887@800] 1 <-- Symm
+[A: #11887@800] 0<-- flags captured
+[B: #11558@800] 1 <-- Symm
+[B: #11558@800] 0<-- flags captured
+[A: #11887@850] 1 <-- Symm
+[A: #11887@850] 0<-- flags captured
+[B: #11558@850] 1 <-- Symm
+[B: #11558@850] 0<-- flags captured
+[A: #11887@900] 1 <-- Symm
+[A: #11887@900] 0<-- flags captured
+[B: #11558@900] 1 <-- Symm
+[B: #11558@900] 0<-- flags captured
+[A: #11887@950] 1 <-- Symm
+[A: #11887@950] 0<-- flags captured
+[B: #11558@950] 1 <-- Symm
+[B: #11558@950] 0<-- flags captured
+[A: #11887@1000] 1 <-- Symm
+[A: #11887@1000] 0<-- flags captured
+[B: #11558@1000] 1 <-- Symm
+[B: #11558@1000] 0<-- flags captured
+[A: #11887@1050] 1 <-- Symm
+[A: #11887@1050] 0<-- flags captured
+[B: #11558@1050] 1 <-- Symm
+[B: #11558@1050] 0<-- flags captured
+[A: #11887@1100] 1 <-- Symm
+[A: #11887@1100] 0<-- flags captured
+[B: #11558@1100] 1 <-- Symm
+[B: #11558@1100] 0<-- flags captured
+[A: #11887@1150] 1 <-- Symm
+[A: #11887@1150] 0<-- flags captured
+[B: #11558@1150] 1 <-- Symm
+[B: #11558@1150] 0<-- flags captured
+[A: #11887@1200] 1 <-- Symm
+[A: #11887@1200] 0<-- flags captured
+[A: #11887@1250] 1 <-- Symm
+[A: #11887@1250] 0<-- flags captured
+[B: #11558@1250] 1 <-- Symm
+[B: #11558@1250] 0<-- flags captured
+[A: #11887@1300] 1 <-- Symm
+[A: #11887@1300] 0<-- flags captured
+[B: #11558@1300] 1 <-- Symm
+[B: #11558@1300] 0<-- flags captured
+[A: #11887@1350] 1 <-- Symm
+[A: #11887@1350] 0<-- flags captured
+[B: #11558@1350] 1 <-- Symm
+[B: #11558@1350] 0<-- flags captured
+[A: #11887@1400] 1 <-- Symm
+[A: #11887@1400] 0<-- flags captured
+[B: #11558@1400] 1 <-- Symm
+[B: #11558@1400] 0<-- flags captured
+[A: #11887@1450] 1 <-- Symm
+[A: #11887@1450] 0<-- flags captured
+[B: #11558@1450] 1 <-- Symm
+[B: #11558@1450] 0<-- flags captured
+[A: #11887@1500] 1 <-- Symm
+[A: #11887@1500] 0<-- flags captured
+[B: #11558@1500] 1 <-- Symm
+[B: #11558@1500] 0<-- flags captured
+[A: #11887@1550] 1 <-- Symm
+[A: #11887@1550] 0<-- flags captured
+[B: #11558@1550] 1 <-- Symm
+[B: #11558@1550] 0<-- flags captured
+[A: #11887@1600] 1 <-- Symm
+[A: #11887@1600] 0<-- flags captured
+[B: #11558@1600] 1 <-- Symm
+[B: #11558@1600] 0<-- flags captured
+[A: #11887@1650] 1 <-- Symm
+[A: #11887@1650] 0<-- flags captured
+[B: #11558@1650] 1 <-- Symm
+[B: #11558@1650] 0<-- flags captured
+[A: #11887@1700] 1 <-- Symm
+[A: #11887@1700] 0<-- flags captured
+[B: #11558@1700] 1 <-- Symm
+[B: #11558@1700] 0<-- flags captured
+[A: #11887@1750] 1 <-- Symm
+[A: #11887@1750] 0<-- flags captured
+[B: #11558@1750] 1 <-- Symm
+[B: #11558@1750] 0<-- flags captured
+[A: #11887@1800] 1 <-- Symm
+[A: #11887@1800] 0<-- flags captured
+[B: #11558@1800] 1 <-- Symm
+[B: #11558@1800] 0<-- flags captured
+[A: #11887@1850] 1 <-- Symm
+[A: #11887@1850] 0<-- flags captured
+[B: #11558@1850] 1 <-- Symm
+[B: #11558@1850] 0<-- flags captured
+[A: #11887@1900] 1 <-- Symm
+[A: #11887@1900] 0<-- flags captured
+[B: #11558@1900] 1 <-- Symm
+[B: #11558@1900] 0<-- flags captured
+[A: #11887@1950] 1 <-- Symm
+[A: #11887@1950] 0<-- flags captured
+[B: #11558@1950] 1 <-- Symm
+[B: #11558@1950] 0<-- flags captured
+[A: #11887@2000] 1 <-- Symm
+[A: #11887@2000] 0<-- flags captured
+[B: #11558@2000] 1 <-- Symm
+[B: #11558@2000] 0<-- flags captured
+[server]                     bling3 (B) wins (round 2000)
+[server] Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 1m 42s
+7 actionable tasks: 2 executed, 5 up-to-date

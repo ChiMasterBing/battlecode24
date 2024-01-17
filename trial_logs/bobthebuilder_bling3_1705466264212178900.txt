@@ -1,0 +1,66 @@
+Tue Jan 16 23:40:15 2024
+-------------------- bobthebuilder vs. bling3 --------------------
+result: bobthebuilder (7 - 0) bling3
+secretpassage
+		Starting a Gradle Daemon, 4 busy and 8 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+clout
+		Starting a Gradle Daemon, 4 busy and 8 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+waterwall
+		Starting a Gradle Daemon, 4 busy and 8 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+rails
+		bobthebuilder (A) wins (round 402)
+		Reason: The winning team captured all flags.
+castle
+		bobthebuilder (A) wins (round 597)
+		Reason: The winning team captured all flags.
+asteroids
+		bobthebuilder (A) wins (round 746)
+		Reason: The winning team captured all flags.
+lanes
+		bobthebuilder (A) wins (round 704)
+		Reason: The winning team captured all flags.
+DefaultSmall
+		bobthebuilder (A) wins (round 992)
+		Reason: The winning team captured all flags.
+ninjastar
+		bobthebuilder (A) wins (round 1033)
+		Reason: The winning team captured all flags.
+DefaultMedium
+		bobthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+
+-------------------- bling3 vs. bobthebuilder --------------------
+result: bling3 (1 - 6) bobthebuilder
+waterwall
+		Starting a Gradle Daemon, 6 busy and 15 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+clout
+		Starting a Gradle Daemon, 6 busy and 15 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+secretpassage
+		Starting a Gradle Daemon, 6 busy and 15 stopped Daemons could not be reused, use --status for details
+		> Task :compileJava UP-TO-DATE
+ninjastar
+		bling3 (A) wins (round 508)
+		Reason: The winning team captured all flags.
+rails
+		bobthebuilder (B) wins (round 496)
+		Reason: The winning team captured all flags.
+castle
+		bobthebuilder (B) wins (round 554)
+		Reason: The winning team captured all flags.
+asteroids
+		bobthebuilder (B) wins (round 696)
+		Reason: The winning team captured all flags.
+DefaultSmall
+		bobthebuilder (B) wins (round 673)
+		Reason: The winning team captured all flags.
+lanes
+		bobthebuilder (B) wins (round 705)
+		Reason: The winning team captured all flags.
+DefaultMedium
+		bobthebuilder (B) wins (round 1405)
+		Reason: The winning team captured all flags.

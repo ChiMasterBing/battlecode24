@@ -1,0 +1,18 @@
+Tue Jan 16 23:21:30 2024
+-------------------- bobthebuilder vs. bling3 --------------------
+result: bobthebuilder (2 - 0) bling3
+castle
+		bobthebuilder (A) wins (round 424)
+		Reason: The winning team captured all flags.
+rails
+		bobthebuilder (A) wins (round 480)
+		Reason: The winning team captured all flags.
+
+-------------------- bling3 vs. bobthebuilder --------------------
+result: bling3 (0 - 2) bobthebuilder
+castle
+		bobthebuilder (B) wins (round 452)
+		Reason: The winning team captured all flags.
+rails
+		bobthebuilder (B) wins (round 465)
+		Reason: The winning team captured all flags.

@@ -1,0 +1,92 @@
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test
+> Task :check
+> Task :unpackClient UP-TO-DATE
+
+> Task :checkNewVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !!!   NEW BATTLECODE VERSION AVAILABLE   !!!  
+Current Battlecode version: 1.2.3
+New Battlecode version:     1.2.5
+Run './gradlew update' to set new configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> Task :build
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] bobnoheal vs. bobthebuilder on lanes
+[A: #13149@50] 1 <-- Symm
+[A: #13149@50] 0<-- flags captured
+[B: #10004@50] 2 <-- Symm
+[B: #10004@50] 0<-- flags captured
+[A: #13149@100] 1 <-- Symm
+[A: #13149@100] 0<-- flags captured
+[B: #10004@100] 1 <-- Symm
+[B: #10004@100] 0<-- flags captured
+[A: #13149@150] 1 <-- Symm
+[A: #13149@150] 0<-- flags captured
+[B: #10004@150] 1 <-- Symm
+[B: #10004@150] 0<-- flags captured
+[A: #13149@200] 1 <-- Symm
+[A: #13149@200] 0<-- flags captured
+[B: #10004@200] 1 <-- Symm
+[B: #10004@200] 0<-- flags captured
+[B: #10425@290] I DEPOSITED FLAG WOO!
+[B: #10425@290] 13 1
+[B: #10425@290] 1 
+[A: #13149@300] 1 <-- Symm
+[A: #13149@300] 0<-- flags captured
+[A: #13149@350] 1 <-- Symm
+[A: #13149@350] 0<-- flags captured
+[B: #10004@350] 1 <-- Symm
+[B: #10004@350] 1<-- flags captured
+[B: #10004@400] 1 <-- Symm
+[B: #10004@400] 1<-- flags captured
+[B: #10004@450] 1 <-- Symm
+[B: #10004@450] 1<-- flags captured
+[B: #13990@461] I DEPOSITED FLAG WOO!
+[B: #13990@461] 21 2
+[B: #13990@461] 2 
+[B: #10004@500] 1 <-- Symm
+[B: #10004@500] 2<-- flags captured
+[A: #13149@550] 1 <-- Symm
+[A: #13149@550] 0<-- flags captured
+[B: #10004@550] 1 <-- Symm
+[B: #10004@550] 2<-- flags captured
+[A: #13291@595] I DEPOSITED FLAG WOO!
+[A: #13291@595] 13 1
+[A: #13291@595] 1 
+[A: #13149@600] 1 <-- Symm
+[A: #13149@600] 1<-- flags captured
+[B: #10004@600] 1 <-- Symm
+[B: #10004@600] 2<-- flags captured
+[A: #13149@650] 1 <-- Symm
+[A: #13149@650] 1<-- flags captured
+[B: #10004@650] 1 <-- Symm
+[B: #10004@650] 2<-- flags captured
+[A: #13149@700] 1 <-- Symm
+[A: #13149@700] 1<-- flags captured
+[B: #10004@700] 1 <-- Symm
+[B: #10004@700] 2<-- flags captured
+[A: #10420@708] I DEPOSITED FLAG WOO!
+[A: #10420@708] 21 2
+[A: #10420@708] 2 
+[A: #11532@730] I DEPOSITED FLAG WOO!
+[A: #11532@730] 29 3
+[A: #11532@730] 3 
+[server]                   bobnoheal (A) wins (round 730)
+[server] Reason: The winning team captured all flags.
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 50s
+7 actionable tasks: 3 executed, 4 up-to-date

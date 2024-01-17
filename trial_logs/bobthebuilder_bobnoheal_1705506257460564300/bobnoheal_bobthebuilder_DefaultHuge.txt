@@ -1,0 +1,4 @@
+Starting a Gradle Daemon, 4 busy and 4 stopped Daemons could not be reused, use --status for details
+
+> Task :compileJava FAILED
+1 actionable task: 1 executed

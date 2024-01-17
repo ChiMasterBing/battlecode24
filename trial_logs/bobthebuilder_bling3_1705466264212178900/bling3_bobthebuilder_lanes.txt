@@ -1,0 +1,92 @@
+Starting a Gradle Daemon, 6 busy and 15 stopped Daemons could not be reused, use --status for details
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test UP-TO-DATE
+> Task :check UP-TO-DATE
+> Task :unpackClient UP-TO-DATE
+
+> Task :checkNewVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !!!   NEW BATTLECODE VERSION AVAILABLE   !!!  
+Current Battlecode version: 1.2.3
+New Battlecode version:     1.2.5
+Run './gradlew update' to set new configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> Task :build UP-TO-DATE
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] bling3 vs. bobthebuilder on lanes
+[A: #13149@50] 1 <-- Symm
+[A: #13149@50] 0<-- flags captured
+[B: #10004@50] 2 <-- Symm
+[B: #10004@50] 0<-- flags captured
+[A: #13149@100] 1 <-- Symm
+[A: #13149@100] 0<-- flags captured
+[B: #10004@100] 1 <-- Symm
+[B: #10004@100] 0<-- flags captured
+[A: #13149@150] 1 <-- Symm
+[A: #13149@150] 0<-- flags captured
+[B: #10004@150] 1 <-- Symm
+[B: #10004@150] 0<-- flags captured
+[A: #13149@200] 1 <-- Symm
+[A: #13149@200] 0<-- flags captured
+[B: #10004@200] 1 <-- Symm
+[B: #10004@200] 0<-- flags captured
+[A: #13149@250] 1 <-- Symm
+[A: #13149@250] 0<-- flags captured
+[B: #10004@250] 1 <-- Symm
+[B: #10004@250] 0<-- flags captured
+[A: #13149@300] 1 <-- Symm
+[A: #13149@300] 0<-- flags captured
+[B: #10004@300] 1 <-- Symm
+[B: #10004@300] 0<-- flags captured
+[A: #13149@350] 1 <-- Symm
+[A: #13149@350] 0<-- flags captured
+[B: #10004@350] 1 <-- Symm
+[B: #10004@350] 0<-- flags captured
+[A: #13149@400] 1 <-- Symm
+[A: #13149@400] 0<-- flags captured
+[B: #10004@400] 1 <-- Symm
+[B: #10004@400] 0<-- flags captured
+[B: #13566@418] I DEPOSITED FLAG WOO!
+[B: #13566@418] 13 1
+[B: #13566@418] 1 
+[B: #10004@450] 1 <-- Symm
+[B: #10004@450] 1<-- flags captured
+[A: #13149@550] 1 <-- Symm
+[A: #13149@550] 0<-- flags captured
+[B: #10004@550] 1 <-- Symm
+[B: #10004@550] 1<-- flags captured
+[B: #10004@600] 1 <-- Symm
+[B: #10004@600] 1<-- flags captured
+[B: #13347@612] I DEPOSITED FLAG WOO!
+[B: #13347@612] 21 2
+[B: #13347@612] 2 
+[A: #12484@620] I DEPOSITED FLAG WOO!
+[A: #12484@620] 13 1
+[A: #12484@620] 1 
+[A: #13149@650] 1 <-- Symm
+[A: #13149@650] 1<-- flags captured
+[B: #10004@650] 1 <-- Symm
+[B: #10004@650] 2<-- flags captured
+[B: #10004@700] 1 <-- Symm
+[B: #10004@700] 2<-- flags captured
+[B: #12621@705] I DEPOSITED FLAG WOO!
+[B: #12621@705] 29 3
+[B: #12621@705] 3 
+[server]                 bobthebuilder (B) wins (round 705)
+[server] Reason: The winning team captured all flags.
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 55s
+7 actionable tasks: 2 executed, 5 up-to-date

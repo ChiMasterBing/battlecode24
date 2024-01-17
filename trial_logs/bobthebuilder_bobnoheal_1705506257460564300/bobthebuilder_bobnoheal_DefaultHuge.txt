@@ -1,0 +1,13 @@
+Starting a Gradle Daemon, 3 busy Daemons could not be reused, use --status for details
+> Task :compileJava
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes
+> Task :jar
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test FAILED
+4 actionable tasks: 3 executed, 1 up-to-date

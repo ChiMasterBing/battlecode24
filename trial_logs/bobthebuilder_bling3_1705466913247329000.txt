@@ -1,0 +1,72 @@
+Tue Jan 16 23:52:26 2024
+-------------------- bobthebuilder vs. bling3 --------------------
+result: bobthebuilder (10 - 1) bling3
+castle
+		bobthebuilder (A) wins (round 597)
+		Reason: The winning team captured all flags.
+asteroids
+		bobthebuilder (A) wins (round 746)
+		Reason: The winning team captured all flags.
+DefaultSmall
+		bobthebuilder (A) wins (round 992)
+		Reason: The winning team captured all flags.
+lanes
+		bobthebuilder (A) wins (round 704)
+		Reason: The winning team captured all flags.
+DefaultMedium
+		bobthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+ninjastar
+		bobthebuilder (A) wins (round 1033)
+		Reason: The winning team captured all flags.
+rails
+		bobthebuilder (A) wins (round 402)
+		Reason: The winning team captured all flags.
+cout for clout
+		bling3 (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+tetris
+		bobthebuilder (A) wins (round 1381)
+		Reason: The winning team captured all flags.
+water wall
+		bobthebuilder (A) wins (round 1358)
+		Reason: The winning team captured all flags.
+secret passage
+		bobthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+
+-------------------- bling3 vs. bobthebuilder --------------------
+result: bling3 (1 - 10) bobthebuilder
+castle
+		bobthebuilder (B) wins (round 554)
+		Reason: The winning team captured all flags.
+DefaultSmall
+		bobthebuilder (B) wins (round 673)
+		Reason: The winning team captured all flags.
+asteroids
+		bobthebuilder (B) wins (round 696)
+		Reason: The winning team captured all flags.
+ninjastar
+		bling3 (A) wins (round 508)
+		Reason: The winning team captured all flags.
+lanes
+		bobthebuilder (B) wins (round 705)
+		Reason: The winning team captured all flags.
+DefaultMedium
+		bobthebuilder (B) wins (round 1405)
+		Reason: The winning team captured all flags.
+rails
+		bobthebuilder (B) wins (round 496)
+		Reason: The winning team captured all flags.
+cout for clout
+		bobthebuilder (B) wins (round 1827)
+		Reason: The winning team captured all flags.
+tetris
+		bobthebuilder (B) wins (round 903)
+		Reason: The winning team captured all flags.
+water wall
+		bobthebuilder (B) wins (round 1346)
+		Reason: The winning team captured all flags.
+secret passage
+		bobthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
