@@ -154,7 +154,11 @@ public abstract class Robot {
         senseGlobals();
 
         teammateTracker.preTurn();
+
+        
         turn();
+
+
         teammateTracker.postTurn();
 
         if (roundNumber < 200) {
@@ -299,7 +303,12 @@ public abstract class Robot {
         if (!rc.isSpawned()){
             if (trySpawn()) spawnedTurn();
         }else {
+            //int start = Clock.getBytecodesLeft();
             spawnedTurn();
+            // if (myMoveNumber < 1) {
+            //     Debug.println((start - Clock.getBytecodesLeft()) + " ");
+            // }
+            
         }
 
         if (roundNumber > 50) {
