@@ -62,8 +62,12 @@ public class Utils {
 
 
     // methods
-    public static int maplocation_to_int(MapLocation m) {
-        return (m.x * MAP_HEIGHT + m.y);
+    public static int maplocation_to_int(MapLocation location) {
+        return (location.x * MAP_WIDTH + location.y);
+    }
+
+    public static MapLocation locationDelta(MapLocation from, MapLocation to) {
+        return new MapLocation(to.x - from.x, to.y - from.y);
     }
     
     static void init(RobotController r) {
