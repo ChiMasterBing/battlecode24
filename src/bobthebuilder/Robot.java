@@ -180,8 +180,9 @@ public abstract class Robot {
     }
 
     private void buyUpgrades() throws GameActionException {
-        if (roundNumber == 750 && rc.canBuyGlobal(GlobalUpgrade.ACTION)) rc.buyGlobal(GlobalUpgrade.ACTION);
-        else if (roundNumber == 1500 && rc.canBuyGlobal(GlobalUpgrade.HEALING)) rc.buyGlobal(GlobalUpgrade.HEALING);
+        if (roundNumber == 600 && rc.canBuyGlobal(GlobalUpgrade.HEALING)) rc.buyGlobal(GlobalUpgrade.HEALING);
+        else if (roundNumber == 1200 && rc.canBuyGlobal(GlobalUpgrade.ATTACK)) rc.buyGlobal(GlobalUpgrade.ATTACK);
+        else if (roundNumber == 1800 && rc.canBuyGlobal(GlobalUpgrade.CAPTURING)) rc.buyGlobal(GlobalUpgrade.CAPTURING);
     }
 
     private void doPreRoundTasks() throws GameActionException {

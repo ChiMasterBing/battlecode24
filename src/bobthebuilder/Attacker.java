@@ -256,22 +256,6 @@ public class Attacker extends Robot{
                 bestHeal = i.getLocation();
             }
         }
-        //try healing yourself
-        int hp = rc.getHealth();
-        if (hp < 1000) {
-            int score = (1000 - hp);
-            if (hp + myHeal > 750) {
-                score += 250;
-            }
-            else if (hp + myHeal > 150) {
-                score += 500;
-            }
-            score += (rc.getLevel(SkillType.HEAL) + rc.getLevel(SkillType.ATTACK)) * 50;
-            if (score > bestScore) {
-                bestScore = score;
-                bestHeal = myLoc;
-            }
-        }
 
         if(bestHeal != null && rc.canHeal(bestHeal)) {
             rc.heal(bestHeal);

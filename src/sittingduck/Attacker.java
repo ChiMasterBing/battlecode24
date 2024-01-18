@@ -91,7 +91,7 @@ public class Attacker extends Robot{
                         }
                     }
                 }else{ //if we picked up their flag
-                    if (friendlyRobots.length >= 10) return false;
+                    // if (friendlyRobots.length >= 10) return false;
                     if (i.getLocation().distanceSquaredTo(myLoc) > 9) {
                         targ = i.getLocation();
                         break;
@@ -159,10 +159,11 @@ public class Attacker extends Robot{
         tooCloseToSpawn= false;
 
         if (currentTarget != null) {
-            if(roundNumber>200&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
+            if(enemyRobots.length>0 && roundNumber>200&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
                 tooCloseToSpawn = true;
             }
         }
+        
         int lowestHealth = 1000;
         lowestHealthLoc = null;
         for(RobotInfo ri : friendlyRobots){
@@ -261,22 +262,6 @@ public class Attacker extends Robot{
                 bestHeal = i.getLocation();
             }
         }
-        //try healing yourself
-        int hp = rc.getHealth();
-        if (hp < 1000) {
-            int score = (1000 - hp);
-            if (hp + myHeal > 750) {
-                score += 250;
-            }
-            else if (hp + myHeal > 150) {
-                score += 500;
-            }
-            score += (rc.getLevel(SkillType.HEAL) + rc.getLevel(SkillType.ATTACK)) * 50;
-            if (score > bestScore) {
-                bestScore = score;
-                bestHeal = myLoc;
-            }
-        }
 
         if(bestHeal != null && rc.canHeal(bestHeal)) {
             rc.heal(bestHeal);
@@ -298,6 +283,9 @@ public class Attacker extends Robot{
         if(roundNumber>200) {
             MapLocation nxt;
             int threshold = Math.max(1, 7- rc.getCrumbs()/1000);
+            if (tooCloseToSpawn) {
+                threshold--;
+            }
             for (Direction d:allDirections) {
                 nxt = myLoc.add(d);
                 if (rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold) {

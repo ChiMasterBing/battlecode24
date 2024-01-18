@@ -31,15 +31,8 @@ public class teammateTracker {
         teammateLocations.add(id, nullLoc);
     }
 
-    public static void preTurn() {
-        robots = rc.senseNearbyRobots();
-        int ptr = 0;
-        for (RobotInfo ri:robots) {
-            if (ri.team == rc.getTeam()) {
-                teammates[ptr] = ri;
-                ptr++;
-            }
-        }
+    public static void preTurn() throws GameActionException {
+        teammates = rc.senseNearbyRobots(-1, rc.getTeam());
     }
 
     public static void postTurn() {
@@ -49,21 +42,20 @@ public class teammateTracker {
         }
         
         for (RobotInfo ri:teammates) {
-            if (ri == null) break;
             teammateLocations.addReplace(ri.ID, ri.location);
             prevTurnTeammates.add(ri.ID);
         }
 
-        for (int i=0; i<50; i++) { //cann unroll later
-            teammates[i] = null;
-        }
+        // for (int i=0; i<50; i++) { //cann unroll later
+        //     teammates[i] = null;
+        // }
     }
 
     public static Direction getTeammateDirection(RobotInfo ri) {
         MapLocation loc = teammateLocations.getLoc(ri.ID);
         Direction d = null;
         if (loc == null) {
-            System.out.println("WHAT");
+            System.out.println("WHAT " + ri.ID);
             return null;
         }
         if (loc.x != nullLoc.x) {
