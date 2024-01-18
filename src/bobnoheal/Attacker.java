@@ -1,5 +1,6 @@
 package bobnoheal;
 import battlecode.common.*;
+import bobthebuilder.BFSController;
 import bobthebuilder.fast.FastLocSet;
 
 import java.util.Random;
@@ -110,8 +111,16 @@ public class Attacker extends Robot{
     }
     public Boolean crumbMovementLogic() throws GameActionException {
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
+        int closestCrum = 10000;
+        MapLocation crum = null;
+        for(MapLocation mi: crummy){
+            if(closestCrum>mi.distanceSquaredTo(myLoc)) {
+                crum = mi;
+                closestCrum = mi.distanceSquaredTo(myLoc);
+            }
+        }
         if (crummy.length > 0 && roundNumber < 250) {
-            bugNav.move(crummy[0]);
+            BFSController.move(rc, crum);
             return true;
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/2){
@@ -135,11 +144,11 @@ public class Attacker extends Robot{
 //        if(rc.getHealth()<=750&&closeFriendlyRobots.length>0){
 //            return;
 //        }
-        for(RobotInfo i: closeFriendlyRobots){
-            if(i.getHealth()<=750){
-                return;
-            }
-        }
+//        for(RobotInfo i: closeFriendlyRobots){
+//            if(i.getHealth()<=750){
+//                return;
+//            }
+//        }
 
         if(lowestHealthLoc!=null){
             bugNav.move(lowestHealthLoc);
