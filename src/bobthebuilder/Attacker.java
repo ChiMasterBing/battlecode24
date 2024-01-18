@@ -50,17 +50,17 @@ public class Attacker extends Robot{
     }
     public Boolean flagMovementLogic() throws GameActionException {
         if (rc.hasFlag()){
-            for (Direction d:allDirections) {
-                if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
-                    rc.move(d);
-                    Comms.depositFlag();
-                    Debug.println("I DEPOSITED FLAG WOO!");
-                    return true;
-                }
-            }
+//            for (Direction d:allDirections) {
+//                if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
+//                    rc.move(d);
+//                    Comms.depositFlag();
+//                    Debug.println("I DEPOSITED FLAG WOO!");
+//                    return true;
+//                }
+//            }
             bugNav.move(closestSpawn);
             if (spawnSet.contains(rc.getLocation())) {
-                rc.resign();
+//                rc.resign();
                 Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag();
             }
@@ -111,7 +111,7 @@ public class Attacker extends Robot{
     public Boolean crumbMovementLogic() throws GameActionException {
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
         if (crummy.length > 0 && roundNumber < 250) {
-            bugNav.move(crummy[0]);
+            BFSController.move(rc, crummy[0]);
             return true;
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/2){
@@ -376,9 +376,7 @@ public class Attacker extends Robot{
     public void attackLogic() throws GameActionException {
         if (!rc.isActionReady()) return;
         MapLocation attackLoc = findBestAttackLocation();
-        rc.setIndicatorString("best attack loc "  + attackLoc);
         if(attackLoc!=null&&rc.canAttack(attackLoc)){
-            rc.setIndicatorString("I attacked " + attackLoc);
             rc.attack(attackLoc);
         }
     }
@@ -395,7 +393,7 @@ public class Attacker extends Robot{
         }
     }
 
-    public boolean attackMicro() {
+    public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
         if (enemyRobots.length == 0) return false;
 
@@ -405,17 +403,20 @@ public class Attacker extends Robot{
         for(RobotInfo ri : closeFriendlyRobots){
             mosthealth = Math.max(mosthealth, ri.getHealth());
         }
-        MapLocation opposite = myLoc.add(myLoc.directionTo(closestEnemy).opposite());
+        Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
+        MapLocation opposite = myLoc.add(oppdir).add(oppdir);
 
         if(rc.getHealth()<mosthealth&&!tooCloseToSpawn){
             bugNav.move(opposite);
+//            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
             // else return true;
         }
 
         if(deadMeat>0){
-            bugNav.move(opposite);
+//            bugNav.move(opposite);
+            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
             // else return true;
@@ -424,27 +425,36 @@ public class Attacker extends Robot{
         if (weakestEnemy != null) {
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {
-                    bugNav.move(weakestEnemy); return true;
+                    BFSController.move(rc, weakestEnemy); return true;
                 }else if(minEnemyDist<2&&!tooCloseToSpawn){
-                    bugNav.move(opposite); return true;
+                    bugNav.move(opposite);
+                    return true;
+//                    BFSController.move(rc,opposite); return true;
                 }
             }
             else if (cooldown < 20) {
                 if (minEnemyDist > 9) {
-                    bugNav.move(weakestEnemy); return true;
+                    BFSController.move(rc, weakestEnemy); return true;
                 }
                 if (minEnemyDist <=4&&!tooCloseToSpawn) {
-                    bugNav.move(opposite); return true;
+                    bugNav.move(opposite);
+                    return true;
+//                    BFSController.move(rc,opposite); return true;
                 }
             }
             else if(cooldown<30){
                 if (minEnemyDist < 12&&!tooCloseToSpawn) {
-                    bugNav.move(opposite); return true;
+                    bugNav.move(opposite);
+                    return true;
+//                    BFSController.move(rc,opposite); return true;
                 }else{
-                    bugNav.move(weakestEnemy); return true;
+                    BFSController.move(rc, weakestEnemy); return true;
                 }
             }else{
-                bugNav.move(opposite); return true;
+                bugNav.move(opposite);
+                return true;
+
+//                BFSController.move(rc, opposite); return true;
             }
         }
         return false;
