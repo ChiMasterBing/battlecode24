@@ -132,9 +132,9 @@ public class Attacker extends Robot{
 
         if (attackMicro())
             return;
-        if(rc.getHealth()<=750&&closeFriendlyRobots.length>0){
-            return;
-        }
+//        if(rc.getHealth()<=750&&closeFriendlyRobots.length>0){
+//            return;
+//        }
         for(RobotInfo i: closeFriendlyRobots){
             if(i.getHealth()<=750){
                 return;
@@ -256,21 +256,21 @@ public class Attacker extends Robot{
             }
         }
         //try healing yourself
-        int hp = rc.getHealth();
-        if (hp < 1000) {
-            int score = (1000 - hp);
-            if (hp + myHeal > 750) {
-                score += 250;
-            }
-            else if (hp + myHeal > 150) {
-                score += 500;
-            }
-            score += (rc.getLevel(SkillType.HEAL) + rc.getLevel(SkillType.ATTACK)) * 50;
-            if (score > bestScore) {
-                bestScore = score;
-                bestHeal = myLoc;
-            }
-        }
+//        int hp = rc.getHealth();
+//        if (hp < 1000) {
+//            int score = (1000 - hp);
+//            if (hp + myHeal > 750) {
+//                score += 250;
+//            }
+//            else if (hp + myHeal > 150) {
+//                score += 500;
+//            }
+//            score += (rc.getLevel(SkillType.HEAL) + rc.getLevel(SkillType.ATTACK)) * 50;
+//            if (score > bestScore) {
+//                bestScore = score;
+//                bestHeal = myLoc;
+//            }
+//        }
 
         if(bestHeal != null && rc.canHeal(bestHeal)) {
             rc.heal(bestHeal);
