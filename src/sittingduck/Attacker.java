@@ -61,11 +61,7 @@ public class Attacker extends Robot{
                 }
             }
             bugNav.move(closestSpawn);
-            if (spawnSet.contains(rc.getLocation())) {
-                rc.resign();
-                Debug.println("I DEPOSITED FLAG WOO!");
-                Comms.depositFlag();
-            }
+
             return true;
         }
 
@@ -114,6 +110,8 @@ public class Attacker extends Robot{
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
         if (crummy.length > 0 && roundNumber < 250) {
             bugNav.move(crummy[0]);
+            rc.setIndicatorDot(myLoc, 255, 100, 255);
+            rc.setIndicatorDot(crummy[0], 255, 100, 255);
             return true;
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/2){
@@ -159,7 +157,7 @@ public class Attacker extends Robot{
         tooCloseToSpawn= false;
 
         if (currentTarget != null) {
-            if(enemyRobots.length>0 && roundNumber>200&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
+            if(enemyRobots.length>0 && roundNumber>200 && myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
                 tooCloseToSpawn = true;
             }
         }
@@ -368,8 +366,30 @@ public class Attacker extends Robot{
             currentTarget = mirrorFlags[0]; //by symmetry
         }
 
-        if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
-            currentTarget = broadcastLocations[0];
+        if (broadcastLocations.length>0) {
+            int d1 = 100000, d2 = d1, d3 = d1;
+            if (broadcastLocations.length >= 1 && broadcastLocations[0] != null) {
+                d1 = myLoc.distanceSquaredTo(broadcastLocations[0]);
+            }
+            if (broadcastLocations.length >= 2 && broadcastLocations[1] != null) {
+                d2 = myLoc.distanceSquaredTo(broadcastLocations[1]);
+            }
+            if (broadcastLocations.length >= 3 && broadcastLocations[2] != null) {
+                d3 = myLoc.distanceSquaredTo(broadcastLocations[2]);
+            }
+            int d4 = Math.min(d1, Math.min(d2, d3));
+            if (d4 == d1) {
+                currentTarget = broadcastLocations[0];
+            }
+            else if (d4 == d2) {
+                currentTarget = broadcastLocations[1];
+            }
+            else if (d4 == d3) {
+                currentTarget = broadcastLocations[2];
+            }
+            if (currentTarget == null) {
+                rc.resign();
+            }
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();

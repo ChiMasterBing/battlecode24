@@ -4,7 +4,6 @@ import sittingduck.fast.FastLocSet;
 import battlecode.common.*;
 
 public class SittingDuck extends Robot {
-    int myFlagNum = 0;
 
     MapLocation myLoc;
     FastLocSet spawnSet = new FastLocSet();
@@ -40,34 +39,39 @@ public class SittingDuck extends Robot {
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
         if (rc.canSenseLocation(myFlags[myFlagNum])) { //im in distance of my flag
             boolean isFlagPresent = false;
+            boolean isPickedUp = false;
             for (FlagInfo f:flags) {
                 if (f.getID() == flagIDs[myFlagNum]) {
-                    isFlagPresent = true; break;
+                    isFlagPresent = true; 
+                    if (f.isPickedUp()) isPickedUp = true;
+                    break;
                 }
             }
 
+            //want persistent friendly robots engaged in battle
+
             int score = Math.min(Math.max(friendlyRobots.length - enemyRobots.length + 8, 0), 15);
             if (enemyRobots.length > 0) {
-                score = Math.max(score-1, 0);
+                score = Math.max(score-4, 0);
             }
             if (isFlagPresent) { 
                 Comms.writeFlagStatus(myFlagNum, score);
             }
             else {
-                Debug.println("OUR FLAG IS GONE --> DONT WRITE DISTRESS");
-                rc.resign();
+                //Debug.println("OUR FLAG IS GONE --> DONT WRITE DISTRESS");
+                //rc.resign();
                 Comms.writeFlagStatus(myFlagNum, 15); //we dont care about defending if flag aint there
             }
 
             
-            rc.setIndicatorString(score + " ");
+            rc.setIndicatorString(Comms.readFlagStatus(myFlagNum) + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
 
             turnsSpentAway = 0;
         }
         else {
             turnsSpentAway++;
             if (turnsSpentAway > 26) { //if we've been away for too long, dont want to keep panicking
-                Comms.writeFlagStatus(myFlagNum, 0 + 8);
+                Comms.writeFlagStatus(myFlagNum, 15);
             }
         }
         movement();
@@ -112,7 +116,7 @@ public class SittingDuck extends Robot {
     }
 
     public boolean visionInRange(MapLocation a, MapLocation b) {
-        if (a.distanceSquaredTo(b) <= 10) return true;
+        if (a.distanceSquaredTo(b) <= 5) return true;
         return false;
     }
 
