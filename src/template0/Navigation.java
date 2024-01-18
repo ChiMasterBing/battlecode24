@@ -15,6 +15,7 @@ public class Navigation {
     static RobotController rc;
     static BugNav bugNav;
     static MapInfo[][] mapInfo;
+    static Sector[][] sectorInfo;
 
     // self info
     static MapLocation targetLocation;
@@ -27,5 +28,9 @@ public class Navigation {
         bugNav = new BugNav(r);
 
     }
+
+}
+
+class Sector {
 
 }

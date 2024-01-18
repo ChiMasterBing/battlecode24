@@ -25,42 +25,56 @@ public class BugNav {
     static boolean rotateLeft = true;
     static boolean rotateReverse = false;
 
-    public BugNav(RobotController r) {
+    public BugNav(RobotController r) throws GameActionException {
         rc = r;
     }
 
-    public static MapLocation setTarget(MapLocation newTarget) {
+    public static MapLocation setTarget(MapLocation newTarget) throws GameActionException {
+        if (isBugging) endBugging();
         MapLocation oldTarget = target;
         target = newTarget;
         return oldTarget;
     }
 
-    public static Direction greedyMove() {
-        return rc.getLocation().directionTo(target);
+    public static Direction getGreedyMove() throws GameActionException {
+        Direction bestDir = rc.getLocation().directionTo(target);
+        if (bestDir.equals(Direction.CENTER)) {
+            return null;
+        }
+        if (rc.canMove(bestDir)) {
+            return bestDir;
+        }
+        Direction leftDir = bestDir.rotateLeft();
+        if (rc.canMove(leftDir)) {
+            return leftDir;
+        }
+        Direction rightDir = bestDir.rotateRight();
+        if (rc.canMove(rightDir)) {
+            return rightDir;
+        }
+        return null;
     }
 
-    public static Direction navigate() {
+    public static Direction navigate() throws GameActionException {
         assert target != null : "No target";
-        Direction output = Direction.CENTER;
+        Direction directionToMove = Direction.CENTER;
 
-        // try greedy move
+        // try 3 greedy moves
         if (!isBugging) {
-            output = greedyMove();
-            if (output.equals(Direction.CENTER) || rc.canMove(output)) return output;
-            if (rc.canMove(output)) return output;
+            directionToMove = getGreedyMove();
         }
 
-        //only reaches if blocked or if bugging
+        // only reaches if blocked or if bugging
 
-        return output;
+        return directionToMove;
     }
 
-    public static void startBugging() {
+    public static void startBugging() throws GameActionException {
         assert isBugging == false : "can't start bugging if u already bugging";
         isBugging = true;
     }
 
-    public static void endBugging() {
+    public static void endBugging() throws GameActionException {
         assert isBugging == true : "can't stop bugging if u not bugging";
         isBugging = false;
     }
