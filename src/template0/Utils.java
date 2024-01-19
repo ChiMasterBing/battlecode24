@@ -88,8 +88,15 @@ public class Utils {
     }
 
 
-    // methods
+// METHODS
+//
+
     // navigation
+
+    public static int mapLocationToSector (MapLocation location) {
+        return 0;
+    }
+ 
     public static int mapLocationToInt(MapLocation location) {
         return (location.x * MAP_WIDTH + location.y);
     }
@@ -99,6 +106,7 @@ public class Utils {
     }
 
     // comms
+
     public static int encodeRound() throws GameActionException{
         return (rc.getRoundNum()%80)/5;
     }

@@ -15,21 +15,31 @@ public class BugNav {
     static RobotController rc;
 
     // constants
-    static boolean lineNav = true;
-    static boolean detectDeadEnds = false;
-    static boolean radiusNav = false;
+    static boolean lineNav;
+    static boolean detectDeadEnds;
+    static boolean radiusNav;
+    static boolean preferLeftHand;
 
     // running info
-    static boolean isBugging = false;
-    static MapLocation target = null;
-    static MapLocation wallPivot = null;
-    static boolean rotateLeft = true;
-    static boolean rotateReverse = false;
+    static MapLocation target;
+    static boolean isBugging;
+    static BugNavTracker bugNavTracker;
 
-    public BugNav(RobotController r) throws GameActionException {
+    // init
+    public static void init(RobotController r) throws GameActionException {
         rc = r;
+
+        lineNav = true;
+        detectDeadEnds = false;
+        radiusNav = false;
+        preferLeftHand = true;
+
+        target = null;
+        isBugging = false;
+        bugNavTracker = null;
     }
 
+    // returns previous target
     public static MapLocation setTarget(MapLocation newTarget) throws GameActionException {
         if (isBugging) endBugging();
         MapLocation oldTarget = target;
@@ -82,3 +92,14 @@ public class BugNav {
 
 }
 
+class BugNavTracker {
+    MapLocation wallPivot;
+    boolean leftHand;
+    boolean rotateReverse;
+
+    public BugNavTracker(MapLocation wallPivot) {
+        this.wallPivot = wallPivot;
+        this.leftHand = BugNav.preferLeftHand;
+        rotateReverse = false;
+    }
+}

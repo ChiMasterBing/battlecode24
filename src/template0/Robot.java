@@ -13,10 +13,11 @@ public class Robot {
     static RobotController rc;
     static int turn_num = 0;
     static int id = -1;
+    static int status;
+    static MapLocation location;
 
     // map data
     static MapLocation[] spawn_zones;
-    static MapLocation location;
     static MapLocation[] friendly_flags;
     static MapLocation[] enemy_flags;
     static MapLocation closestSpawn;

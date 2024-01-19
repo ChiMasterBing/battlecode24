@@ -13,9 +13,7 @@ import template0.Utils.*;
 
 public class Navigation {
     static RobotController rc;
-    static BugNav bugNav;
-    static MapInfo[] mapInfo;
-    static SectorInfo[] sectorInfo;
+    static MapData[] mapInfo;
 
     // self info
     static MapLocation targetLocation;
@@ -23,14 +21,24 @@ public class Navigation {
     static boolean isStuck;
     static boolean isBugging;
 
-    public Navigation(RobotController r) {
+    public void init(RobotController r) throws GameActionException {
         rc = r;
-        bugNav = new BugNav(r);
+        BugNav.init(rc);
 
     }
 
 }
 
+class MapData {
+    MapInfo mapInfo;
+    
+}
+
+class Sector {
+    
+}
+
+// unused
 class Grid2x2 {
 // 
 

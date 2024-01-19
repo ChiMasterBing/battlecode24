@@ -29,31 +29,49 @@ Sector updates (danger level, pathing blockage, etc.)
 first two bits: 00 --> flag stolen
 consider round info as recent --> will only be tens and ones digit of current rounds
 100 turns --> 5 turn buckets --> 20 --> 4 bits
+S28     queue usage idx, left (5), length (5)
+S29-48  queue for updates
 
 INDIV   49 -> 58
 S49-58  Bot status
 
-UNUSED  59
 
-BUILD   60 -> 62
+BUILD   59 -> 61
 Info for builders
 
-BOT     63
-S4 --> bot id for | bot # = turn mod 50
+UNUSED  62, 63
+
 */
 
 public class Comms {
+// VARIABLES
+//
+
     private static RobotController rc;
     
-// constants
+    // constants
+
     static int MASKS[];
+
+    final static int MAIN_IDX = 0;
+    final static int ALLY_FLAG_IDX = 1;
+    final static int ENEMY_FLAG_IDX = 4;
+
+    final static int SQUADRON_QUEUE_HEADER = 7;
+    final static int SQUADRON_QUEUE_IDX = 8;
+    final static int SQUADRON_QUEUE_LEN = 20;
+
+    final static int SECTOR_QUEUE_HEADER = 28;
+    final static int SECTOR_QUEUE_IDX = 29;
+    final static int SECTOR_QUEUE_LEN = 20;
 
     // currently uses 10 ints to store 3 bits per, each int holds 5 bots
     final static int ALLY_STATUS_IDX = 49;
     final static int ALLY_STATUS_PERSLOT = 5;
     final static int ALLY_STATUS_BITLEN = 3;
 
-// stored data
+    // stored comms data
+
     static int intToID[];
     static FastIntIntMap IDToInt;
     static BotInfo allyBotInfo[];
@@ -62,19 +80,22 @@ public class Comms {
     static EnemyFlagInfo enemyFlagInfo[];
 
     static SectorInfo sectorInfo[];
-    static int sectorMessagesSent;
     static SquadronInfo squadronInfo[];
-    static int squadronMessagesSent;
 
-// messaging
+    // messaging variables
+
     static FastQueue<Integer> messageQueue;
     static FastQueue<Integer> priorityMessageQueue;
+    static int sectorMessagesSent;
+    static int squadronMessagesSent;
     
     private static int[] bufferPool;
     private static boolean[] dirtyFlags;
 
-// init
-    public void init(RobotController r) throws GameActionException {
+// INIT
+//
+
+    public static void init(RobotController r) throws GameActionException {
         rc = r;
         
         intToID = new int[50];
@@ -96,20 +117,34 @@ public class Comms {
         priorityMessageQueue = new FastQueue<Integer>(64);
     }
 
-// public methods
+// PUBLIC METHODS
+//
+
     public static void commsStartTurn() throws GameActionException {
         initBufferPool();
 
+        if (Robot.turn_num == 1) {
+            writeBotID();
+        } else if (Robot.turn_num == 2) {
+            readBotID();
+        }
+
         // read in all pertinent messages to data
+        readMainInfo();
+        readAllyFlags();
+        readEnemyFlags();
         readAllyStatus();
+
         if (Robot.turn_num > 50) {
             readSectorMessages();
             readSquadronMessages();
         }
+
+        readBuilderMessages();
     }
 
     public static void commsEndTurn() throws GameActionException {
-        writeRegularUpdate();
+        if (Robot.turn_num > 2) writeRegularUpdate();
         flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
 
@@ -118,8 +153,12 @@ public class Comms {
     }
 
 
-// private methods
+// PRIVATE METHODS
+//
+
     // primary methods
+    //
+
     private static void writeToBufferPool(int idx, int message) throws GameActionException {
         bufferPool[idx] = message;
         dirtyFlags[idx] = true;
@@ -326,7 +365,13 @@ public class Comms {
     }
 
     // write methods: write various messages to buffer
+    //
+
+    private static void writeBotID()
+
     private static void writeRegularUpdate() throws GameActionException {
+        // regular update contains:
+        // status update
 
     }
 
@@ -342,69 +387,16 @@ public class Comms {
         }
     }
     
-    // read methods: read buffer ints for data
-    private static void readAllyStatus() {
-        // 5 statuses per int
-        // status length 3 bits
-        allyBotInfo[0].status = (bufferPool[_rAS0(0)] >> _rAS1(0)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[1].status = (bufferPool[_rAS0(1)] >> _rAS1(1)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[2].status = (bufferPool[_rAS0(2)] >> _rAS1(2)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[3].status = (bufferPool[_rAS0(3)] >> _rAS1(3)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[4].status = (bufferPool[_rAS0(4)] >> _rAS1(4)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[5].status = (bufferPool[_rAS0(5)] >> _rAS1(5)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[6].status = (bufferPool[_rAS0(6)] >> _rAS1(6)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[7].status = (bufferPool[_rAS0(7)] >> _rAS1(7)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[8].status = (bufferPool[_rAS0(8)] >> _rAS1(8)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[9].status = (bufferPool[_rAS0(9)] >> _rAS1(9)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[10].status = (bufferPool[_rAS0(10)] >> _rAS1(10)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[11].status = (bufferPool[_rAS0(11)] >> _rAS1(11)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[12].status = (bufferPool[_rAS0(12)] >> _rAS1(12)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[13].status = (bufferPool[_rAS0(13)] >> _rAS1(13)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[14].status = (bufferPool[_rAS0(14)] >> _rAS1(14)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[15].status = (bufferPool[_rAS0(15)] >> _rAS1(15)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[16].status = (bufferPool[_rAS0(16)] >> _rAS1(16)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[17].status = (bufferPool[_rAS0(17)] >> _rAS1(17)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[18].status = (bufferPool[_rAS0(18)] >> _rAS1(18)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[19].status = (bufferPool[_rAS0(19)] >> _rAS1(19)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[20].status = (bufferPool[_rAS0(20)] >> _rAS1(20)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[21].status = (bufferPool[_rAS0(21)] >> _rAS1(21)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[22].status = (bufferPool[_rAS0(22)] >> _rAS1(22)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[23].status = (bufferPool[_rAS0(23)] >> _rAS1(23)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[24].status = (bufferPool[_rAS0(24)] >> _rAS1(24)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[25].status = (bufferPool[_rAS0(25)] >> _rAS1(25)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[26].status = (bufferPool[_rAS0(26)] >> _rAS1(26)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[27].status = (bufferPool[_rAS0(27)] >> _rAS1(27)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[28].status = (bufferPool[_rAS0(28)] >> _rAS1(28)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[29].status = (bufferPool[_rAS0(29)] >> _rAS1(29)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[30].status = (bufferPool[_rAS0(30)] >> _rAS1(30)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[31].status = (bufferPool[_rAS0(31)] >> _rAS1(31)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[32].status = (bufferPool[_rAS0(32)] >> _rAS1(32)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[33].status = (bufferPool[_rAS0(33)] >> _rAS1(33)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[34].status = (bufferPool[_rAS0(34)] >> _rAS1(34)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[35].status = (bufferPool[_rAS0(35)] >> _rAS1(35)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[36].status = (bufferPool[_rAS0(36)] >> _rAS1(36)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[37].status = (bufferPool[_rAS0(37)] >> _rAS1(37)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[38].status = (bufferPool[_rAS0(38)] >> _rAS1(38)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[39].status = (bufferPool[_rAS0(39)] >> _rAS1(39)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[40].status = (bufferPool[_rAS0(40)] >> _rAS1(40)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[41].status = (bufferPool[_rAS0(41)] >> _rAS1(41)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[42].status = (bufferPool[_rAS0(42)] >> _rAS1(42)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[43].status = (bufferPool[_rAS0(43)] >> _rAS1(43)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[44].status = (bufferPool[_rAS0(44)] >> _rAS1(44)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[45].status = (bufferPool[_rAS0(45)] >> _rAS1(45)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[46].status = (bufferPool[_rAS0(46)] >> _rAS1(46)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[47].status = (bufferPool[_rAS0(47)] >> _rAS1(47)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[48].status = (bufferPool[_rAS0(48)] >> _rAS1(48)) & MASKS[ALLY_STATUS_BITLEN];
-        allyBotInfo[49].status = (bufferPool[_rAS0(49)] >> _rAS1(49)) & MASKS[ALLY_STATUS_BITLEN];
+    // read methods: analyzes buffer ints for data
+    //
+    
+    private static void readAllyFlags() {
+
     }
-        // helper: converts bot index (0-49) to index for buffer pool
-        private static int _rAS0(int idx) {
-            return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
-        }
-        // helper: converts bot index to shift used
-        private static int _rAS1(int idx) {
-            return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
-        }
+
+    private static void readEnemyFlags() {
+
+    }
 
     private static void readSectorMessages() throws GameActionException {
 
@@ -413,7 +405,77 @@ public class Comms {
     private static void readSquadronMessages() throws GameActionException {
 
     }
+
+    // may be a lot of bytecode? idk
+    private static void readAllyStatus() {
+        // 5 statuses per int, status length 3 bits
+        allyBotInfo[0].status = getAllyStatus(0);
+        allyBotInfo[1].status = getAllyStatus(1);
+        allyBotInfo[2].status = getAllyStatus(2);
+        allyBotInfo[3].status = getAllyStatus(3);
+        allyBotInfo[4].status = getAllyStatus(4);
+        allyBotInfo[5].status = getAllyStatus(5);
+        allyBotInfo[6].status = getAllyStatus(6);
+        allyBotInfo[7].status = getAllyStatus(7);
+        allyBotInfo[8].status = getAllyStatus(8);
+        allyBotInfo[9].status = getAllyStatus(9);
+        allyBotInfo[10].status = getAllyStatus(10);
+        allyBotInfo[11].status = getAllyStatus(11);
+        allyBotInfo[12].status = getAllyStatus(12);
+        allyBotInfo[13].status = getAllyStatus(13);
+        allyBotInfo[14].status = getAllyStatus(14);
+        allyBotInfo[15].status = getAllyStatus(15);
+        allyBotInfo[16].status = getAllyStatus(16);
+        allyBotInfo[17].status = getAllyStatus(17);
+        allyBotInfo[18].status = getAllyStatus(18);
+        allyBotInfo[19].status = getAllyStatus(19);
+        allyBotInfo[20].status = getAllyStatus(20);
+        allyBotInfo[21].status = getAllyStatus(21);
+        allyBotInfo[22].status = getAllyStatus(22);
+        allyBotInfo[23].status = getAllyStatus(23);
+        allyBotInfo[24].status = getAllyStatus(24);
+        allyBotInfo[25].status = getAllyStatus(25);
+        allyBotInfo[26].status = getAllyStatus(26);
+        allyBotInfo[27].status = getAllyStatus(27);
+        allyBotInfo[28].status = getAllyStatus(28);
+        allyBotInfo[29].status = getAllyStatus(29);
+        allyBotInfo[30].status = getAllyStatus(30);
+        allyBotInfo[31].status = getAllyStatus(31);
+        allyBotInfo[32].status = getAllyStatus(32);
+        allyBotInfo[33].status = getAllyStatus(33);
+        allyBotInfo[34].status = getAllyStatus(34);
+        allyBotInfo[35].status = getAllyStatus(35);
+        allyBotInfo[36].status = getAllyStatus(36);
+        allyBotInfo[37].status = getAllyStatus(37);
+        allyBotInfo[38].status = getAllyStatus(38);
+        allyBotInfo[39].status = getAllyStatus(39);
+        allyBotInfo[40].status = getAllyStatus(40);
+        allyBotInfo[41].status = getAllyStatus(41);
+        allyBotInfo[42].status = getAllyStatus(42);
+        allyBotInfo[43].status = getAllyStatus(43);
+        allyBotInfo[44].status = getAllyStatus(44);
+        allyBotInfo[45].status = getAllyStatus(45);
+        allyBotInfo[46].status = getAllyStatus(46);
+        allyBotInfo[47].status = getAllyStatus(47);
+        allyBotInfo[48].status = getAllyStatus(48);
+        allyBotInfo[49].status = getAllyStatus(49);
+    }
+    
+    // can use individually
+    private static int getAllyStatus(int idx) {
+        return (bufferPool[allyIdxToStatusBufferSlot(idx)] >> allyIdxToStatusBitShift(idx)) & MASKS[ALLY_STATUS_BITLEN];
+    }
+        // helper: converts bot index (0-49) to index for buffer pool
+        private static int allyIdxToStatusBufferSlot(int idx) {
+            return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
+        }
+        // helper: converts bot index to shift used
+        private static int allyIdxToStatusBitShift(int idx) {
+            return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
+        }
+
 }
+
 
 class BotInfo {
     final int NEUTRAL = 0;
@@ -432,18 +494,46 @@ class BotInfo {
 }
 
 class SquadronInfo {
+    Sector sectorLocation;
 
+    public SquadronInfo() {
+
+    }
 }
 
 
 class SectorInfo {
 
+    public SectorInfo() {
+
+    }
 }
 
 class AllyFlagInfo {
+    boolean captured;
 
+    MapLocation spawnLocation;
+    boolean stolen;
+    MapLocation currentLocation;
+
+    public AllyFlagInfo(MapLocation spawn) {
+        captured = false;
+        spawnLocation = spawn;
+        stolen = true;
+    }
 }
 
 class EnemyFlagInfo {
+    boolean captured;
 
+    boolean spawnKnown;
+    MapLocation spawnLocation;
+    boolean stealing;
+    MapLocation currentLocation;
+
+    public EnemyFlagInfo() {
+        captured = false;
+        spawnKnown = false;
+        stealing = false;
+    }
 }
