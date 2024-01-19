@@ -130,7 +130,7 @@ public abstract class Robot {
     }
 
     public abstract void turn() throws GameActionException;
-    public int MYTYPE;
+    public int MYTYPE, myFlagNum;
 
     public void processMessages() {
         if (roundNumber <= 50) return;
@@ -209,6 +209,7 @@ public abstract class Robot {
     private boolean trySpawn() throws GameActionException {
         MapLocation choice = null;
         if (roundNumber < 200) {
+        
             choice = spawnLocs[myMoveNumber % spawnLocs.length];
             if (rc.canSpawn(choice)) {
                 rc.spawn(choice);
@@ -234,7 +235,12 @@ public abstract class Robot {
                 center = myFlags[2];
             }
 
-            if (center != null) {
+            if (MYTYPE == 1) {
+                center = myFlags[myFlagNum];
+                //Debug.println("IM SPAWNING @ " + center + " " + myFlagNum + " " + Arrays.toString(myFlags));
+            }
+
+            if ((min < 8 || roundNumber % 5 == 0) && (center != null)) {
                 for (Direction d:allDirections) {
                     if (rc.canSpawn(center.add(d))) {
                         rc.spawn(center.add(d));

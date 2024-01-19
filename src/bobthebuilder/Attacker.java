@@ -24,10 +24,11 @@ public class Attacker extends Robot{
     }
 
     public void turn() throws GameActionException{
+        updateCurrentTarget();
         premoveSetGlobals();
         checkPickupFlag();
         checkBuildTraps();
-        updateCurrentTarget();
+        
         attackLogic();
         if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3) {
             tryHeal();
@@ -184,6 +185,26 @@ public class Attacker extends Robot{
             if(cdist<dist){
                 dist = cdist;
                 closestSpawn = spawn;
+            }
+        }
+
+        if (currentTarget == null) {
+            Debug.println(mirrorFlags[0] + " ");
+            rc.resign();
+        }
+
+        if(roundNumber>200&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
+            tooCloseToSpawn = true;
+        }
+
+
+
+        int lowestHealth = 1000;
+        lowestHealthLoc = null;
+        for(RobotInfo ri : friendlyRobots){
+            if(ri.getHealth()<lowestHealth){
+                lowestHealth = ri.getHealth();
+                lowestHealthLoc = ri.getLocation();
             }
         }
 
