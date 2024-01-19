@@ -60,6 +60,7 @@ public abstract class Robot {
         MapLocation target = new MapLocation(30, 15);
         bugNav.move(target);
         MapLocation center = new MapLocation(29, 16);
+    
         if (rc.getRoundNum() == 230) {
             if (rc.canBuild(TrapType.EXPLOSIVE, target)) {
                 rc.build(TrapType.EXPLOSIVE, center);

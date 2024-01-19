@@ -1,38 +1,34 @@
-package sittingduck;
+package bobnobuilder;
 import java.util.Arrays;
-
 import battlecode.common.*;
 import bobthebuilder.fast.FastQueue;
 
 public class macroPath {
+    
     static RobotController rc;
 
     static final int UNKNOWN = 0;
     static final int EMPTY = 1;
     static final int WATER = 2;
     static final int WALL = 3;
-    public static final int H_SYM = 0;
-    public static final int V_SYM = 1;
-    public static final int R_SYM = 2;
-    static final int NO_WATER_ROUND = 0; 
-    static final int SYMM_BYTECODE = 5000; // do not run this if < 5000 bc
-
-    static boolean[] symmetries = {true, true, true};
-    static int[] spawnScores = {0, 0, 0};
-    private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); 
 
     static int WIDTH, HEIGHT;
     static int[][] map;
+    static int[][] obstacleID;
     static short[][] dam;
+    static DSU dsu;
+    static int maxObstacleID = 1;
     public static void init(RobotController r) {
         rc = r;
         WIDTH = rc.getMapWidth();
         HEIGHT = rc.getMapHeight();
         dam = new short[WIDTH][HEIGHT];
         map = new int[WIDTH][HEIGHT];
+        //obstacleID = new int[WIDTH][HEIGHT];
+        //dsu = new DSU(100); //can change later
     }
 
-    public static void fetchSymmetries() { //Fetches symmetries from communication
+    public static void scout() {
         if (symmetries[V_SYM]) {
             if (!Comms.isSymmetry(V_SYM)) symmetries[V_SYM] = false;
         }
@@ -42,17 +38,14 @@ public class macroPath {
         if (symmetries[R_SYM]) {
             if (!Comms.isSymmetry(R_SYM)) symmetries[R_SYM] = false;
         }
-    }
 
-    public static void scout() { //Scouts surrounding squares and updates symmetry
-        fetchSymmetries();
         MapInfo[] tiles = rc.senseNearbyMapInfos();
         for (MapInfo tile:tiles) {
             updateTile(tile);
         }
     }
     
-    public static void updateTile(MapInfo m) { //updates each new tiles seen, pushes unseen tiles to queue to process symmetry
+    public static void updateTile(MapInfo m) {
         int type = 3;
         MapLocation pos = m.getMapLocation();
         if (m.isWall()) {
@@ -84,10 +77,20 @@ public class macroPath {
         if (toAdd) symmQueue.add(pos);
     }
 
+    //-----------------------------------------
+    //SYMMETRY MANAGEMENT
+    public static final int H_SYM = 0;
+    public static final int V_SYM = 1;
+    public static final int R_SYM = 2;
+    static final int NO_WATER_ROUND = 0; //anything before this our robots will not dig
+    static boolean[] symmetries = {true, true, true};
+    private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); //the squares to check symmetry
+
     static MapLocation getHSym(MapLocation loc){ return new MapLocation (WIDTH - loc.x - 1, loc.y); }
     static MapLocation getVSym(MapLocation loc){ return new MapLocation (loc.x, HEIGHT - loc.y - 1); }
     static MapLocation getRSym(MapLocation loc){ return new MapLocation (WIDTH - loc.x - 1, HEIGHT - loc.y - 1); }
-    
+
+    static final int SYMM_BYTECODE = 5000; // do not run this if < 5000 bc
     public static void updateSymm() throws GameActionException {
         while (!symmQueue.isEmpty()) {
             if (Clock.getBytecodesLeft() < SYMM_BYTECODE) return;
@@ -190,75 +193,62 @@ public class macroPath {
             }
         }  
     }
+}
 
-    //returns the minimum of distances of a to (b, c, d).
-    public static int getTripleMinDist(MapLocation a, MapLocation b, MapLocation c, MapLocation d) {
-        return Math.min(a.distanceSquaredTo(b), Math.min(a.distanceSquaredTo(c), a.distanceSquaredTo(d)));
-    }
-
-    //returns the index of minimum of distances of a to (b, c, d)
-    public static int getClosestSpawnNumber(MapLocation a, MapLocation b, MapLocation c, MapLocation d) {
-        int d1 = a.distanceSquaredTo(b);
-        int d2 = a.distanceSquaredTo(c);
-        int d3 = a.distanceSquaredTo(d);
-        int d4 = Math.min(d1, Math.min(d2, d3));
-        if (d4 == d1) return 0;
-        else if (d4 == d2) return 1;
-        else return 2;
-    }
-
-    public static void eliminateSpawnSymmetries(MapLocation s1, MapLocation s2, MapLocation s3) throws GameActionException {
-        MapLocation o1, o2, o3;
-        //H_SYM
-        o1 = getHSym(s1);
-        o2 = getHSym(s2);
-        o3 = getHSym(s3);
-        if (getTripleMinDist(o1, s1, s2, s3) < 36 || getTripleMinDist(o2, s1, s2, s3) < 36 || getTripleMinDist(o3, s1, s2, s3) < 36) {
-            Comms.invalidateSymmetry(H_SYM);
-        }
-
-        //V_SYM
-        o1 = getVSym(s1);
-        o2 = getVSym(s2);
-        o3 = getVSym(s3);
-        if (getTripleMinDist(o1, s1, s2, s3) < 36 || getTripleMinDist(o2, s1, s2, s3) < 36 || getTripleMinDist(o3, s1, s2, s3) < 36) {
-            Comms.invalidateSymmetry(V_SYM);
-        }
-
-        //R_SYM
-        o1 = getRSym(s1);
-        o2 = getRSym(s2);
-        o3 = getRSym(s3);
-        if (getTripleMinDist(o1, s1, s2, s3) < 36 || getTripleMinDist(o2, s1, s2, s3) < 36 || getTripleMinDist(o3, s1, s2, s3) < 36) {
-            Comms.invalidateSymmetry(R_SYM);
-        }
-    }
-
-    public static void calculateSpawnDistribution(MapLocation s1, MapLocation s2, MapLocation s3) {
-        MapLocation o1, o2, o3;
-        if (Comms.isSymmetry(H_SYM)) {
-            o1 = getHSym(s1);
-            o2 = getHSym(s2);
-            o3 = getHSym(s3);
-            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
-        }
-        if (Comms.isSymmetry(V_SYM)) {
-            o1 = getVSym(s1);
-            o2 = getVSym(s2);
-            o3 = getVSym(s3);
-            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
-        }
-        if (Comms.isSymmetry(R_SYM)) {
-            o1 = getRSym(s1);
-            o2 = getRSym(s2);
-            o3 = getRSym(s3);
-            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
-            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
-        }
-    }
+//My Codeforces impl of DSU, is not good
+//can replace later
+class DSU {
+	int[] rank, parent, size;
+	int n;
+	public DSU(int n) {
+		this.n = n;
+		rank = new int[n];
+		parent = new int[n];
+		size = new int[n];
+		for (int i=0; i<n; i++) {
+			parent[i] = i;
+			size[i]++;
+		}
+	}
+	public DSU(int n, int[] p, int[] r, int[] s) {
+		rank = new int[n];
+		parent = new int[n];
+		size = new int[n];
+		for (int i=0; i<n; i++) {
+			rank[i] = r[i];
+			parent[i] = p[i];
+			size[i] = s[i];
+		}
+	}
+	int get(int x) {
+		if (parent[x] != x) {
+			parent[x] = get(parent[x]); //path compression
+			return parent[x];
+		}
+		else {
+			return x;
+		}
+	}
+	void merge(int x, int y) {
+		int a = get(x), b = get(y);
+		if (a == b) {
+			return;
+		}
+		if (rank[a] < rank[b]) {
+			parent[a] = b;
+			size[b] += size[a];
+			size[a] = 0;
+		}
+		else if (rank[b] > rank[a]) {
+			parent[b] = a;
+			size[a] += size[b];
+			size[b] = 0;
+		}
+		else {
+			parent[a] = b;
+			rank[b]++;
+			size[b] += size[a];
+			size[a] = 0;
+		}
+	}
 }
