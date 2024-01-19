@@ -7,10 +7,10 @@ public strictfp class RobotPlayer {
     static final Random rng = new Random(6147);
 
     public static void run(RobotController rc) throws GameActionException {
-        Robot robot; //= new Attacker(rc); //~6000 bytecode
+        Robot robot = null; //= new Attacker(rc); //~6000 bytecode
         int currentMoveNumber = rc.readSharedArray(0);
         if (currentMoveNumber == 2 || currentMoveNumber == 12 || currentMoveNumber == 22) {
-            robot = new SittingDuck(rc);
+            robot = new Attacker(rc);
         }
         else {
             robot = new Attacker(rc); //~6000 bytecode
@@ -19,7 +19,7 @@ public strictfp class RobotPlayer {
         int totalByteCode = 0;
 
         int turn = rc.getRoundNum();
-        while(true){
+        while(robot != null){
             robot.play();
 
             if (turn != rc.getRoundNum()) {

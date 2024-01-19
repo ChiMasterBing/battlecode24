@@ -32,7 +32,7 @@ public class teammateTracker {
     }
 
     public static void preTurn() throws GameActionException {
-        teammates = rc.senseNearbyRobots(-1, rc.getTeam());
+        teammates = rc.senseNearbyRobots(4, rc.getTeam());
     }
 
     public static void postTurn() {

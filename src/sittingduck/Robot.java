@@ -39,6 +39,47 @@ public abstract class Robot {
     FlagInfo[] flags = null;
     public void senseGlobals() throws GameActionException {
         flags = rc.senseNearbyFlags(-1);
+        if (roundNumber > 10) {
+            boolean[] tmp = {false, false, false};
+            for (FlagInfo f:flags) {
+                if (f.getTeam() == rc.getTeam()) {
+                    if (f.getID() == flagIDs[0]) {
+                        tmp[0] = true;
+                    } else if (f.getID() == flagIDs[1]) {
+                        tmp[1] = true;
+                    } else if (f.getID() == flagIDs[2]) {
+                        tmp[2] = true;
+                    }
+                }
+            }
+            if (rc.canSenseLocation(myFlags[0])) {
+                if (tmp[0]) {
+                    Comms.writeMyFlag(0, 1);
+                }
+                else {
+                    Comms.writeMyFlag(0, 0);
+                    Comms.writeFlagStatus(0, 15);
+                }
+            }
+            if (rc.canSenseLocation(myFlags[1])) {
+                if (tmp[1]) {
+                    Comms.writeMyFlag(1, 1);
+                }
+                else {
+                    Comms.writeMyFlag(1, 0);
+                    Comms.writeFlagStatus(1, 15);
+                }
+            }
+            if (rc.canSenseLocation(myFlags[2])) {
+                if (tmp[2]) {
+                    Comms.writeMyFlag(2, 1);
+                }
+                else {
+                    Comms.writeMyFlag(2, 0);
+                    Comms.writeFlagStatus(2, 15);
+                }
+            }
+        }
     }
 
     private void populateTeamIDS() throws GameActionException {
@@ -111,25 +152,10 @@ public abstract class Robot {
         }
     }
 
-    public void checkStolenFlags() throws GameActionException {
-
-        for (FlagInfo f:flags) {
-            if (f.getTeam() != rc.getTeam()) continue;
-            if (f.isPickedUp()) {
-                if (flagIDs[0] == f.getID()) {
-                    Comms.distressFlag(0, f.getLocation());
-                }
-                else if (flagIDs[1] == f.getID()) {
-                    Comms.distressFlag(1, f.getLocation());
-                }
-                else if (flagIDs[2] == f.getID()) {
-                    Comms.distressFlag(2, f.getLocation());
-                }
-            }
-        }
-    }
+    
 
     public abstract void turn() throws GameActionException;
+    public abstract void deadFunctions() throws GameActionException;
     public int MYTYPE, myFlagNum;
 
     public void processMessages() {
@@ -153,6 +179,10 @@ public abstract class Robot {
 
     public void spawnedTurn() throws GameActionException {
         senseGlobals();
+        if (roundNumber == 2) {
+            commFlagID();
+        }
+
 
         teammateTracker.preTurn();
         turn();
@@ -171,10 +201,11 @@ public abstract class Robot {
             }
         }
 
-        if (Clock.getBytecodesLeft() > 5000) {
-            checkStolenFlags();
-        }
     }
+
+    // todo for me:
+    // choose correct place
+    // dont overcrowd crums
 
     private void buyUpgrades() throws GameActionException {
         if (roundNumber == 600 && rc.canBuyGlobal(GlobalUpgrade.HEALING)) rc.buyGlobal(GlobalUpgrade.HEALING);
@@ -186,9 +217,13 @@ public abstract class Robot {
         switch (roundNumber) {
             case 2:
                 populateTeamIDS();
-                if (rc.isSpawned()) commFlagID();
+                Comms.writeToBufferPool(0, 0);
                 break;
             case 3:
+                if (!rc.isSpawned()) {
+                    macroPath.eliminateSpawnSymmetries(myFlags[0], myFlags[1], myFlags[2]);
+                    macroPath.calculateSpawnDistribution(myFlags[0], myFlags[1], myFlags[2]);
+                }
                 readCommFlagID();
                 break;
             case 4:
@@ -197,7 +232,12 @@ public abstract class Robot {
                     Comms.writeToBufferPool(myMoveNumber+50, 0);
                 }
                 break;
-
+            case 5:
+                Comms.writeFlagStatus(myMoveNumber%3, 8);
+                break;
+            // case 200:
+            //     rc.resign();
+            //     break;
             default:
                 if (roundNumber % 3 == 0 && roundNumber >= 50) {
                     Comms.readAllSectorMessages();
@@ -206,14 +246,41 @@ public abstract class Robot {
         }
     }
 
+    int mySpawn = -1;
     private boolean trySpawn() throws GameActionException {
-        MapLocation choice = null;
         if (roundNumber < 200) {
-        
-            choice = spawnLocs[myMoveNumber % spawnLocs.length];
-            if (rc.canSpawn(choice)) {
-                rc.spawn(choice);
-                return true;
+            if (roundNumber == 1) {
+                if (myMoveNumber < 3) {
+                    mySpawn = myMoveNumber;
+                    rc.spawn(spawnLocs[myMoveNumber * 9]);
+                    //find closest you can get to your opp via dam
+                }
+            }
+            else if (roundNumber > 5) {
+                int tot = macroPath.spawnScores[0] + macroPath.spawnScores[1] + macroPath.spawnScores[2];
+                //System.out.println(macroPath.spawnScores[0] + " " + macroPath.spawnScores[1] + " " + macroPath.spawnScores[2]);
+                int r1 = (macroPath.spawnScores[0] * 47) / tot;
+                int r2 = (macroPath.spawnScores[1] * 47) / tot;
+                MapLocation center = null;
+                if (myMoveNumber < r1 + 3) {
+                    mySpawn = 0;
+                    center = myFlags[0];
+                }
+                else if (myMoveNumber < r1 + r2 + 3 && myMoveNumber >= r1 + 3) {
+                    mySpawn = 1;
+                    center = myFlags[1];
+                }
+                else {
+                    mySpawn = 2;
+                    center = myFlags[2];
+                }
+
+                for (Direction d:allDirections) {
+                    if (rc.canSpawn(center.add(d))) {
+                        rc.spawn(center.add(d));
+                        return true;
+                    }
+                }
             }
         }
         else if (roundNumber > 200) {
@@ -227,20 +294,18 @@ public abstract class Robot {
 
             if (min == a) {
                 center = myFlags[0];
+                mySpawn = 0;
             }
             else if (min == b) {
                 center = myFlags[1];
+                mySpawn = 1;
             }
             else if (min == c) {
                 center = myFlags[2];
+                mySpawn = 2;
             }
 
-            if (MYTYPE == 1) {
-                center = myFlags[myFlagNum];
-                //Debug.println("IM SPAWNING @ " + center + " " + myFlagNum + " " + Arrays.toString(myFlags));
-            }
-
-            if ((min < 8 || roundNumber % 5 == 0) && (center != null)) {
+            if ((min < 8 || roundNumber % 3 == 0) && (center != null)) {
                 for (Direction d:allDirections) {
                     if (rc.canSpawn(center.add(d))) {
                         rc.spawn(center.add(d));
@@ -265,7 +330,9 @@ public abstract class Robot {
         doPreRoundTasks();
 
         if (!rc.isSpawned()){
+            mySpawn = -1;
             if (trySpawn()) spawnedTurn();
+            else deadFunctions();
         }else {
             spawnedTurn();
         }
@@ -290,5 +357,7 @@ public abstract class Robot {
         }
 
         processMessages();
+
+        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
     }
 }

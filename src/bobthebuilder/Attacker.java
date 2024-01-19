@@ -24,11 +24,10 @@ public class Attacker extends Robot{
     }
 
     public void turn() throws GameActionException{
-        updateCurrentTarget();
         premoveSetGlobals();
         checkPickupFlag();
         checkBuildTraps();
-        
+        updateCurrentTarget();
         attackLogic();
         if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3) {
             tryHeal();
@@ -113,8 +112,16 @@ public class Attacker extends Robot{
     }
     public Boolean crumbMovementLogic() throws GameActionException {
         MapLocation[] crummy = rc.senseNearbyCrumbs(-1);
+        int closestCrum = 10000;
+        MapLocation crum = null;
+        for(MapLocation mi: crummy){
+            if(closestCrum>mi.distanceSquaredTo(myLoc)) {
+                crum = mi;
+                closestCrum = mi.distanceSquaredTo(myLoc);
+            }
+        }
         if (crummy.length > 0 && roundNumber < 250) {
-            BFSController.move(rc, crummy[0]);
+            BFSController.move(rc, crum);
             return true;
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/2){
@@ -177,26 +184,6 @@ public class Attacker extends Robot{
             if(cdist<dist){
                 dist = cdist;
                 closestSpawn = spawn;
-            }
-        }
-
-        if (currentTarget == null) {
-            Debug.println(mirrorFlags[0] + " ");
-            rc.resign();
-        }
-
-        if(roundNumber>200&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
-            tooCloseToSpawn = true;
-        }
-
-
-
-        int lowestHealth = 1000;
-        lowestHealthLoc = null;
-        for(RobotInfo ri : friendlyRobots){
-            if(ri.getHealth()<lowestHealth){
-                lowestHealth = ri.getHealth();
-                lowestHealthLoc = ri.getLocation();
             }
         }
 
@@ -287,33 +274,43 @@ public class Attacker extends Robot{
     }
 
     public void checkBuildTraps() throws GameActionException{
-        MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(4);
-        int expl = 0, stun = 0;
+        MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(9);
+        int expl = 0;
         for (MapInfo mi:nearbyInfo) {
             if (mi.getTrapType() == TrapType.EXPLOSIVE) {
                 expl++;
             }
-            else if (mi.getTrapType() == TrapType.STUN) {
-                stun++;
-            }
         }
         if(roundNumber>200) {
             MapLocation nxt;
-            int threshold = Math.max(1, 7- rc.getCrumbs()/500);
+            int threshold = Math.max(0, 7- rc.getCrumbs()/500);
+            int threshold2 = Math.max(1, 7- rc.getCrumbs()/1000);
             for (Direction d:allDirections) {
                 nxt = myLoc.add(d);
-                if (rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold) {
+                if(nxt.x%3==1&&nxt.y%3==1) {
+                    if (enemyRobots.length >= threshold&&closeFriendlyRobots.length>3) {
 //                    if((closeFriendlyRobots.length-enemyRobots.length > 2 || rc.getCrumbs()<250)) {
 
-                    if((friendlyRobots.length > 6 || rc.getCrumbs()<250)) {
-                        if(stun>0){
-                            return;
-                        }
-                        if(rc.canBuild(TrapType.STUN, nxt)) {
-                            rc.build(TrapType.STUN, nxt);
-                        }
-                    }else if(expl<2&&rc.canBuild(TrapType.EXPLOSIVE, nxt)){
+//                        if (friendlyRobots.length>4) {
+                            if (rc.canBuild(TrapType.STUN, nxt)) {
+                                rc.build(TrapType.STUN, nxt);
+                            }
+//                        }
+                    }
+                }else if (expl<2&&rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold2) {
+                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
                         rc.build(TrapType.EXPLOSIVE, nxt);
+                    }
+                }
+            }
+            if(myLoc.x%3==1&&myLoc.y%3==1){
+                if (enemyRobots.length >= threshold) {
+//                    if((closeFriendlyRobots.length-enemyRobots.length > 2 || rc.getCrumbs()<250)) {
+
+                    if ((friendlyRobots.length > 4 || rc.getCrumbs() < 250)) {
+                        if (rc.canBuild(TrapType.STUN, myLoc)) {
+                            rc.build(TrapType.STUN, myLoc);
+                        }
                     }
                 }
             }

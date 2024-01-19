@@ -29,53 +29,64 @@ public class SittingDuck extends Robot {
     RobotInfo[] enemyRobots, friendlyRobots, closeFriendlyRobots, closeEnemyRobots;
 
     int turnsSpentAway = 0;
+    int isPickedUpCooldown = 0;
+    boolean isFlagPresent = false;
+    int myInfoUsed = -1;
+    
     public void turn() throws GameActionException {
-        if (roundNumber < 10) return;
+        // bugNav.move(new MapLocation(58, 15));
+        // if (myMoveNumber != 1) return;
 
+        if (roundNumber < 10) return;
         myLoc = rc.getLocation();
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
         closeFriendlyRobots = rc.senseNearbyRobots(4, rc.getTeam());
         enemyRobots = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
         friendlyRobots = rc.senseNearbyRobots(-1, rc.getTeam());
+        
         if (rc.canSenseLocation(myFlags[myFlagNum])) { //im in distance of my flag
-            boolean isFlagPresent = false;
-            boolean isPickedUp = false;
+            isFlagPresent = false;
             for (FlagInfo f:flags) {
                 if (f.getID() == flagIDs[myFlagNum]) {
                     isFlagPresent = true; 
-                    if (f.isPickedUp()) isPickedUp = true;
+                    if (f.isPickedUp()) {
+                        isPickedUpCooldown = 0;
+                    }
                     break;
                 }
             }
-
-            //want persistent friendly robots engaged in battle
-
-            int score = Math.min(Math.max(friendlyRobots.length - enemyRobots.length + 8, 0), 15);
-            if (enemyRobots.length > 0) {
-                score = Math.max(score-4, 0);
-            }
-            if (isFlagPresent) { 
-                Comms.writeFlagStatus(myFlagNum, score);
+            //sitting duck is more pessimisstic
+            int score = Math.min(Math.max(friendlyRobots.length - enemyRobots.length * 2 + 8, 0), 15);
+            if (isFlagPresent) {
+                Comms.writeMyFlag(myFlagNum, 1);
+                int cur = Comms.readFlagStatus(myFlagNum);
+                if (score < cur || roundNumber < 190 || cur == 8 || cur == myInfoUsed) { //|| myInfoUsed != -1
+                    Comms.writeFlagStatus(myFlagNum, score);
+                    myInfoUsed = score;
+                } else {
+                    myInfoUsed = -1;
+                }
             }
             else {
-                //Debug.println("OUR FLAG IS GONE --> DONT WRITE DISTRESS");
-                //rc.resign();
-                Comms.writeFlagStatus(myFlagNum, 15); //we dont care about defending if flag aint there
-            }
-
-            
-            rc.setIndicatorString(Comms.readFlagStatus(myFlagNum) + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
-
-            turnsSpentAway = 0;
-        }
-        else {
-            turnsSpentAway++;
-            if (turnsSpentAway > 26) { //if we've been away for too long, dont want to keep panicking
+                Comms.writeMyFlag(myFlagNum, 0);
                 Comms.writeFlagStatus(myFlagNum, 15);
             }
+
+
+            rc.setIndicatorString(Comms.readFlagStatus(myFlagNum) + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2) + " " + myInfoUsed + " " + Comms.myFlagExists(myFlagNum));
+            isPickedUpCooldown++;
+            turnsSpentAway = 0;
         }
+
         movement();
         tryHeal();
+    }
+
+    public void deadFunctions() throws GameActionException {
+        if (myInfoUsed == Comms.readFlagStatus(myFlagNum)) {
+            Comms.writeFlagStatus(myFlagNum, 8);
+            myInfoUsed = -1;
+        }
     }
 
     int[] healUpgrade = {80, 82, 84, 86, 88, 92, 100};
@@ -108,13 +119,6 @@ public class SittingDuck extends Robot {
         }
     }
 
-    public void buildTrap() {
-
-
-
-
-    }
-
     public boolean visionInRange(MapLocation a, MapLocation b) {
         if (a.distanceSquaredTo(b) <= 5) return true;
         return false;
@@ -137,25 +141,27 @@ public class SittingDuck extends Robot {
                 }
             }
 
-            int stun = 0;
-            MapInfo[] nearbyTraps = rc.senseNearbyMapInfos(4);
-            for (MapInfo t:nearbyTraps) {
-                if (t.getTrapType() == TrapType.STUN) {
-                    stun++;
-                }
-            }
-
-            if (stun < 1 && spawnSet.contains(myLoc)) {
-                if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot)))) {
-                    rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot)));
-                }
-                
-                if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateLeft()))) {
-                    rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateLeft()));
+            if (isFlagPresent) {
+                int stun = 0;
+                MapInfo[] nearbyTraps = rc.senseNearbyMapInfos(4);
+                for (MapInfo t:nearbyTraps) {
+                    if (t.getTrapType() == TrapType.STUN) {
+                        stun++;
+                    }
                 }
 
-                if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateRight()))) {
-                    rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateRight()));
+                if (stun < 1 && spawnSet.contains(myLoc)) {
+                    if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot)))) {
+                        rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot)));
+                    }
+                    
+                    else if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateLeft()))) {
+                        rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateLeft()));
+                    }
+
+                    else if (rc.canBuild(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateRight()))) {
+                        rc.build(TrapType.STUN, myLoc.add(myLoc.directionTo(closestEnemyRobot).rotateRight()));
+                    }
                 }
             }
 
