@@ -181,16 +181,25 @@ public class Comms {
 
     final static int[] troopBuckets = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-    public static void writeFlagStatus(int flagnum, int counts) throws GameActionException {
+    public static boolean myFlagExists(int flagnum) {
+        return isBitSet(flagnum, 5);
+    }
+
+    public static void writeMyFlag(int flagnum, int exists) throws GameActionException {
+        int mask = (read(flagnum) & 0xffdf) | (exists << 5);
+        writeToBufferPool(flagnum, mask);
+    }
+
+    public static void writeFlagStatus(int flagnum, int counts) throws GameActionException { 
         //bits: 4 bits each
-        int basemask = 0xf << (4 * flagnum);
-        int mask = (read(1) & (0xffff ^ basemask)) | (counts << (4 * flagnum));
-        writeToBufferPool(1, mask);
+        int basemask = 0xf; //<< (4 * flagnum);
+        int mask = (read(1 + flagnum) & (0xffff ^ basemask)) | (counts); //<< (4 * flagnum)
+        writeToBufferPool(1 + flagnum, mask);
     }
 
     public static int readFlagStatus(int flagnum) { //returns true if theres more enemy ducks at flag then friendly ducks AND that flag still exists
-        int basemask = 0xf << (4 * flagnum);
-        int mask = (read(1) & basemask) >> (4 * flagnum);
+        int basemask = 0xf; // << (4 * flagnum);
+        int mask = (read(1 + flagnum) & basemask);
         return mask;
     }
 
