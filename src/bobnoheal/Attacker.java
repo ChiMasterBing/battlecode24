@@ -299,9 +299,9 @@ public class Attacker extends Robot{
 //                        }
                     }
                 }else if (expl<2&&rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold2) {
-                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
-                        rc.build(TrapType.EXPLOSIVE, nxt);
-                    }
+//                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
+//                        rc.build(TrapType.EXPLOSIVE, nxt);
+//                    }
                 }
             }
             if(myLoc.x%3==1&&myLoc.y%3==1){

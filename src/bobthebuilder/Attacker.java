@@ -158,8 +158,10 @@ public class Attacker extends Robot{
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
 
-        if(currentTarget!=null)
+        if(currentTarget!=null) {
+            rc.setIndicatorString("moving towards curernt target");
             bugNav.move(currentTarget);
+        }
     }
     public void premoveSetGlobals() throws GameActionException {
         myLoc = rc.getLocation();
@@ -176,6 +178,10 @@ public class Attacker extends Robot{
         for(RobotInfo ri : friendlyRobots){
             if(ri.getHealth()<lowestHealth){
                 lowestHealth = ri.getHealth();
+                lowestHealthLoc = ri.getLocation();
+            }
+            if(ri.getBuildLevel()==6){
+                lowestHealth = -1000;
                 lowestHealthLoc = ri.getLocation();
             }
         }
@@ -438,10 +444,15 @@ public class Attacker extends Robot{
         if (weakestEnemy != null) {
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {
-                    if(rc.getLevel(SkillType.HEAL)>3){
-                        return false;
-                    }
-                    BFSController.move(rc, weakestEnemy); return true;
+//                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
+//                        return false;
+//                    }
+//                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
+                        rc.setIndicatorString("moving twoards weakest");
+                        BFSController.move(rc, weakestEnemy);
+//                    }
+                    return true;
+
                 }else if(minEnemyDist<2&&!tooCloseToSpawn){
                     bugNav.move(opposite);
                     return true;
@@ -450,14 +461,19 @@ public class Attacker extends Robot{
             }
             else if (cooldown < 20) {
                 if (minEnemyDist > 9) {
-                    if(rc.getLevel(SkillType.HEAL)>3){
+                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
                         return false;
                     }
-                    BFSController.move(rc, weakestEnemy); return true;
+                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
+                        rc.setIndicatorString("moving twoards weakest");
+                        BFSController.move(rc, weakestEnemy);
+                    }
+                    return true;
                 }
                 if (minEnemyDist <=4&&!tooCloseToSpawn) {
                     bugNav.move(opposite);
                     return true;
+
 //                    BFSController.move(rc,opposite); return true;
                 }
             }
@@ -467,10 +483,14 @@ public class Attacker extends Robot{
                     return true;
 //                    BFSController.move(rc,opposite); return true;
                 }else{
-                    if(rc.getLevel(SkillType.HEAL)>3){
+                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
                         return false;
                     }
-                    BFSController.move(rc, weakestEnemy); return true;
+                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
+                        rc.setIndicatorString("moving twoards weakest");
+                        BFSController.move(rc, weakestEnemy);
+                    }
+                    return true;
                 }
             }else{
                 bugNav.move(opposite);

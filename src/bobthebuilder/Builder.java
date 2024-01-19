@@ -54,8 +54,8 @@ public class Builder extends Robot{
             broadcastLocations = arr;
         }
     }
-    public void buildBest(int explosiveTraps, MapLocation trapLocation) throws GameActionException {
-        if(explosiveTraps>=4||rc.senseNearbyRobots(trapLocation, 8, rc.getTeam()).length<Math.max(5+rc.getCrumbs()/500, 2)){
+    public void buildBest(int explosiveTraps,int stunTraps, MapLocation trapLocation) throws GameActionException {
+        if(stunTraps>0||explosiveTraps>2||rc.senseNearbyRobots(trapLocation, 13, rc.getTeam().opponent()).length<Math.max(5-rc.getCrumbs()/500, 1)){
             return;
         }
         if(rc.canBuild(TrapType.EXPLOSIVE, trapLocation)){
@@ -78,27 +78,33 @@ public class Builder extends Robot{
             return;
         }
         int explosiveTraps = 0;
-
-        MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(myLoc, 16);
+        int stunTraps = 0;
+        MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(myLoc, 9);
         for (MapInfo mi:nearbyInfo) {
             if (mi.getTrapType() == TrapType.EXPLOSIVE) {
                 explosiveTraps++;
+            }else if(mi.getTrapType()==TrapType.STUN){
+                stunTraps++;
             }
         }
 
-        int threshold = Math.max(2, 5- rc.getCrumbs()/250);
+        int threshold = Math.max(1, 5- rc.getCrumbs()/250);
         for(Direction d: allDirections){
             MapLocation nxt = myLoc.add(d);
-            if(nxt.x%3==1&&nxt.y%3==1) {
-                if (closeFriendlyRobots.length >= threshold) {
-                    if (rc.canBuild(TrapType.STUN, nxt)) {
-                        rc.build(TrapType.STUN, nxt);
-                    }
+//            if(){
+                if(nxt.x%3==1&&nxt.y%3==1) {
+//                    if (closeFriendlyRobots.length > threshold) {
+                        if (rc.canBuild(TrapType.STUN, nxt)) {
+                            rc.build(TrapType.STUN, nxt);
+                            stunTraps++;
+                        }
+//                    }
                 }
-            }
-            if(explosive) {
-                buildBest(explosiveTraps, nxt);
-            }
+                if(explosive) {
+                    buildBest(explosiveTraps,stunTraps, nxt);
+                    explosiveTraps++;
+                }
+//            }
         }
 
     }
@@ -149,9 +155,11 @@ public class Builder extends Robot{
         if (closestAttacker != null) {
             Direction oppDir = myLoc.directionTo(closestAttacker).opposite();
             MapLocation opposite = myLoc.add(oppDir).add(oppDir);
-            if(myLoc.distanceSquaredTo(closestAttacker)<20){
+            if(myLoc.distanceSquaredTo(closestAttacker)<16){
                 rc.setIndicatorString("running away bc too close");
                 bugNav.move(opposite);
+            }else{
+//                bugNav.move(closestAttacker);
             }
 
         }
@@ -179,44 +187,57 @@ public class Builder extends Robot{
     public void followFriendly() throws GameActionException {
         MapLocation closestFriend =null;
         int mindist = 100000;
-
+        MapLocation enemyLocation = closestAttacker;
         if(closestAttacker==null){
-            closestAttacker = currentTarget;
+            enemyLocation = currentTarget;
         }
-        int myDistToAttacker = myLoc.distanceSquaredTo(closestAttacker);
-        Direction oppDir = myLoc.directionTo(closestAttacker);
-        MapLocation oppositeLocation = myLoc.add(oppDir).add(oppDir);
+        int myDistToAttacker = myLoc.distanceSquaredTo(enemyLocation);
 
         for(RobotInfo i: friendlyRobots){
-            int distToMe = i.getLocation().distanceSquaredTo(closestAttacker);
-            if(distToMe<myDistToAttacker){
-                bugNav.move(oppositeLocation);
-            }
 
+            int friendlyBotDist = i.getLocation().distanceSquaredTo(enemyLocation);
+            if (friendlyBotDist < myDistToAttacker) {
+                if(enemyRobots.length==0) {
+                    rc.setIndicatorString("moving towards enemy");
+                    BFSController.move(rc, enemyLocation);
+                }else{
+                    return;
+                }
+            }
             int cval = i.getLocation().distanceSquaredTo(myLoc);
             if(i.getBuildLevel()<4&&cval<mindist){
                 mindist = cval;
                 closestFriend = i.getLocation();
             }
         }
-        if(mindist!=100000) {
-            bugNav.move(closestFriend);
+        if(mindist>4&&closestFriend!=null) {
+            rc.setIndicatorString("moving to friend");
+//            BFSController.move(rc, closestFriend);
         }
     }
     public void movement() throws GameActionException {
         if(rc.getRoundNum()>200){
             dodgeEnemies();
-
+            if(enemyRobots.length==0) {
+                if (avoidOtherBuilders())
+                    return;
+            }
+            if(rc.getHealth()<200&&enemyRobots.length>0){
+                rc.setIndicatorString("running away bc too low on health");
+                Direction oppDir = myLoc.directionTo(closestAttacker).opposite();
+                MapLocation opposite = myLoc.add(oppDir).add(oppDir);
+                BFSController.move(rc, opposite);
+                return;
+            }
             if(friendlyRobots.length>1) {
                 followFriendly();
+//                return;
             }
         }
         if(crumbMovementLogic())
             return;
 
 
-        if(avoidOtherBuilders())
-            return;
         if(currentTarget!=null) {
             if(rc.getMovementCooldownTurns()==0) {
                 rc.setIndicatorString("attacking towards " + currentTarget);
@@ -321,10 +342,14 @@ public class Builder extends Robot{
         rc.setIndicatorString("");
         setGlobals();//needs to be updated
         updateCurrentTarget();
-        attemptBuildTraps(false);
+        if(enemyRobots.length>0) {
+            attemptBuildTraps(true);
+        }
         movement();
         setGlobals();
-        attemptBuildTraps(true);
+        if(enemyRobots.length>0) {
+            attemptBuildTraps(true);
+        }
         selfPreservation();
 //        tryHeal();
 
