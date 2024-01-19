@@ -14,8 +14,8 @@ import template0.Utils.*;
 public class Navigation {
     static RobotController rc;
     static BugNav bugNav;
-    static MapInfo[][] mapInfo;
-    static Sector[][] sectorInfo;
+    static MapInfo[] mapInfo;
+    static SectorInfo[] sectorInfo;
 
     // self info
     static MapLocation targetLocation;
@@ -31,6 +31,7 @@ public class Navigation {
 
 }
 
-class Sector {
+class Grid2x2 {
+// 
 
 }

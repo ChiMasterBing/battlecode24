@@ -71,7 +71,7 @@ public class Robot {
     public boolean move_off_spawn() throws GameActionException {
         for (Direction dir: Utils.DIRECTIONS) {
             MapLocation target = rc.getLocation().translate(dir.dx, dir.dy);
-            if (!Utils.spawn_intmaplocs.contains(Utils.maplocation_to_int(target))) {
+            if (!Utils.spawnIntLocations.contains(Utils.mapLocationToInt(target))) {
                 rc.move(dir);
                 return true;
             }

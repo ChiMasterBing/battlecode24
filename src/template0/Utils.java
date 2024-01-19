@@ -15,11 +15,14 @@ public class Utils {
     static Random rng;
     
     // constants that vary by game
+    static int roundNumber;
+
     static int MAP_WIDTH;
     static int MAP_HEIGHT;
     static int MAP_AREA;
-    static FastIntSet spawn_intmaplocs = new FastIntSet();
+    static FastIntSet spawnIntLocations = new FastIntSet();
 
+    // constants that do not vary, e.g. specialization info
     static final Direction[] DIRECTIONS = {
         Direction.NORTH,
         Direction.NORTHEAST,
@@ -56,20 +59,21 @@ public class Utils {
         Direction.EAST,
         Direction.SOUTH,
         Direction.WEST,
-    };   
+    };
 
-    // constants that do not vary, e.g. specialization info
+    static final int[] MASKS = {
+        0b0, 0b1, 0b11, 0b111, 0b1111, 
+        0b11111, 0b111111, 0b1111111,
+        0b11111111,0b111111111,
+        0b1111111111, 0b11111111111,
+        0b111111111111, 0b1111111111111,
+        0b11111111111111,
+        0b111111111111111,
+        0b1111111111111111,
+    };
 
+    // init
 
-    // methods
-    public static int maplocation_to_int(MapLocation location) {
-        return (location.x * MAP_WIDTH + location.y);
-    }
-
-    public static MapLocation locationDelta(MapLocation from, MapLocation to) {
-        return new MapLocation(to.x - from.x, to.y - from.y);
-    }
-    
     static void init(RobotController r) {
         rc = r;
         rng = new Random(rc.getRoundNum() * 23981 + rc.getID() * 10289);
@@ -79,7 +83,25 @@ public class Utils {
         MAP_AREA = MAP_HEIGHT * MAP_WIDTH;
 
         for (MapLocation m: rc.getAllySpawnLocations()) {
-            spawn_intmaplocs.add(maplocation_to_int(m));
+            spawnIntLocations.add(mapLocationToInt(m));
         }
     }
+
+
+    // methods
+    // navigation
+    public static int mapLocationToInt(MapLocation location) {
+        return (location.x * MAP_WIDTH + location.y);
+    }
+
+    public static MapLocation locationDelta(MapLocation from, MapLocation to) {
+        return new MapLocation(to.x - from.x, to.y - from.y);
+    }
+
+    // comms
+    public static int encodeRound() throws GameActionException{
+        return (rc.getRoundNum()%80)/5;
+    }
+    
+    
 }

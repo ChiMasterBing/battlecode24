@@ -14,6 +14,7 @@ import template0.Utils.*;
 public class BugNav {
     static RobotController rc;
 
+    // constants
     static boolean lineNav = true;
     static boolean detectDeadEnds = false;
     static boolean radiusNav = false;
