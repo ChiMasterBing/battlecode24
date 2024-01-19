@@ -10,7 +10,7 @@ public strictfp class RobotPlayer {
         Robot robot; //= new Attacker(rc); //~6000 bytecode
         int currentMoveNumber = rc.readSharedArray(0);
         if (currentMoveNumber == 11 || currentMoveNumber == 21 || currentMoveNumber == 1) {
-            robot = new Attacker(rc);
+            robot = new Builder(rc);
         }
         else {
             robot = new Attacker(rc); //~6000 bytecode
