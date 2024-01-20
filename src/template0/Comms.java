@@ -46,12 +46,9 @@ UNUSED  62, 63
 public class Comms {
 // VARIABLES
 //
-
     private static RobotController rc;
     
     // constants
-
-    static int MASKS[];
 
     final static int MAIN_IDX = 0;
     final static int ALLY_FLAG_IDX = 1;
@@ -72,8 +69,9 @@ public class Comms {
 
     // stored comms data
 
-    static int intToID[];
-    static FastIntIntMap IDToInt;
+    static int moveOrderToID[];
+    static FastIntIntMap IDToMoveOrder;
+
     static BotInfo allyBotInfo[];
 
     static AllyFlagInfo allyFlagInfo[];
@@ -82,11 +80,18 @@ public class Comms {
     static SectorInfo sectorInfo[];
     static SquadronInfo squadronInfo[];
 
+    static FastQueue<Integer> sectorMessages;
+    static FastQueue<Integer> squadronMessages;
+
     // messaging variables
 
-    static FastQueue<Integer> messageQueue;
-    static FastQueue<Integer> priorityMessageQueue;
+    private static FastQueue<Integer> messageQueue;
+    //private static FastQueue<Integer> priorityMessageQueue;
+    static int sectorMessagesOffset;
+    static int sectorMessagesLen;
     static int sectorMessagesSent;
+    static int squadronMessagesOffset;
+    static int squadronMessagesLen;
     static int squadronMessagesSent;
     
     private static int[] bufferPool;
@@ -98,60 +103,96 @@ public class Comms {
     public static void init(RobotController r) throws GameActionException {
         rc = r;
         
-        intToID = new int[50];
-        IDToInt = new FastIntIntMap();
+        moveOrderToID = new int[50];
+        IDToMoveOrder = new FastIntIntMap();
 
         allyBotInfo = new BotInfo[50];
         allyFlagInfo = new AllyFlagInfo[3];
         enemyFlagInfo = new EnemyFlagInfo[3];
     
-        sectorInfo = new SectorInfo[225];
+        sectorInfo = new SectorInfo[400];
+        sectorMessagesOffset = 0;
+        sectorMessagesLen = 0;
         sectorMessagesSent = 0;
         squadronInfo = new SquadronInfo[10];
         squadronMessagesSent = 0;
+        squadronMessagesOffset = 0;
+        squadronMessagesLen = 0;
 
         bufferPool = new int[64];
         dirtyFlags = new boolean[64];
 
         messageQueue = new FastQueue<Integer>(64);
-        priorityMessageQueue = new FastQueue<Integer>(64);
+        //priorityMessageQueue = new FastQueue<Integer>(64);
     }
 
 // PUBLIC METHODS
 //
 
+    // methods that should run every turn
     public static void commsStartTurn() throws GameActionException {
         initBufferPool();
 
-        if (Robot.turn_num == 1) {
+        if (Robot.roundNumber == 1) {
             writeBotID();
-        } else if (Robot.turn_num == 2) {
-            readBotID();
+            return;
+        } else if (Robot.roundNumber == 2) {
+            readBotIDs();
+            return;
         }
 
         // read in all pertinent messages to data
-        readMainInfo();
-        readAllyFlags();
-        readEnemyFlags();
-        readAllyStatus();
-
-        if (Robot.turn_num > 50) {
+        parseMainInfo();
+        parseAllyFlags();
+        parseEnemyFlags();
+        parseAllyStatuses();
+        if (Robot.roundNumber > 50) {
             readSectorMessages();
             readSquadronMessages();
         }
-
-        readBuilderMessages();
+        if (true /*& Robot.type = BUILDER*/) parseBuilderMessages();
     }
 
     public static void commsEndTurn() throws GameActionException {
-        if (Robot.turn_num > 2) writeRegularUpdate();
-        flushQueue(priorityMessageQueue);
+        if (Robot.roundNumber > 2) writeRegularUpdate();
+
+        //flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
 
         // sends all messages at once
         flushBufferPool();
     }
 
+    // action methods
+    public static void depositFlag(int flagID) {
+        
+    }
+
+    public static void distressFlag() {
+
+    }
+
+    public static void invalidateSymmetry(int symm) {
+        writeToBufferPool(MAIN_IDX, bufferPool[MAIN_IDX] | (1 << symm));
+    }
+
+    public static void summonSquadron(int squadronID, int sector) {
+        
+    }
+
+    // get data methods
+
+    public static boolean isSymmetry(int symm) {
+        return !Utils.isBitOne(bufferPool[MAIN_IDX], symm);
+    }
+
+    public static int readSymmetry() { //0 bit = symm could be valid, 1 = invalid
+        if (isSymmetry(Navigation.R_SYM)) return Navigation.R_SYM;
+        if (isSymmetry(Navigation.R_SYM)) return Navigation.H_SYM;
+        if (isSymmetry(Navigation.R_SYM)) return Navigation.V_SYM;
+        //this should never happen
+        return -1;
+    }
 
 // PRIVATE METHODS
 //
@@ -159,7 +200,7 @@ public class Comms {
     // primary methods
     //
 
-    private static void writeToBufferPool(int idx, int message) throws GameActionException {
+    private static void writeToBufferPool(int idx, int message) {
         bufferPool[idx] = message;
         dirtyFlags[idx] = true;
     }
@@ -367,12 +408,104 @@ public class Comms {
     // write methods: write various messages to buffer
     //
 
-    private static void writeBotID()
+    // for turn 1 only
+    private static void writeBotID() {
+        assert Robot.roundNumber == 1 : "Attempted to write bot ID to array when not turn 1.";
+        
+        Robot.moveOrder = bufferPool[0];
+        writeToBufferPool(0, Robot.moveOrder + 1);
+        writeToBufferPool(Robot.moveOrder + 1, rc.getID());
+    }
+    // for turn 2 only
+    private static void readBotIDs() {
+        assert Robot.roundNumber == 2 : "Attempted to read bot IDs from array when not turn 2.";
+        readSingleBotID(0);
+        readSingleBotID(1);
+        readSingleBotID(2);
+        readSingleBotID(3);
+        readSingleBotID(4);
+        readSingleBotID(5);
+        readSingleBotID(6);
+        readSingleBotID(7);
+        readSingleBotID(8);
+        readSingleBotID(9);
+        readSingleBotID(10);
+        readSingleBotID(11);
+        readSingleBotID(12);
+        readSingleBotID(13);
+        readSingleBotID(14);
+        readSingleBotID(15);
+        readSingleBotID(16);
+        readSingleBotID(17);
+        readSingleBotID(18);
+        readSingleBotID(19);
+        readSingleBotID(20);
+        readSingleBotID(21);
+        readSingleBotID(22);
+        readSingleBotID(23);
+        readSingleBotID(24);
+        readSingleBotID(25);
+        readSingleBotID(26);
+        readSingleBotID(27);
+        readSingleBotID(28);
+        readSingleBotID(29);
+        readSingleBotID(30);
+        readSingleBotID(31);
+        readSingleBotID(32);
+        readSingleBotID(33);
+        readSingleBotID(34);
+        readSingleBotID(35);
+        readSingleBotID(36);
+        readSingleBotID(37);
+        readSingleBotID(38);
+        readSingleBotID(39);
+        readSingleBotID(40);
+        readSingleBotID(41);
+        readSingleBotID(42);
+        readSingleBotID(43);
+        readSingleBotID(44);
+        readSingleBotID(45);
+        readSingleBotID(46);
+        readSingleBotID(47);
+        readSingleBotID(48);
+        readSingleBotID(49);
+    }
+        // helper for readBotIDs(), writes ID data for idx
+        private static void readSingleBotID(int idx) {
+            int moveOrder = bufferPool[idx + 1];
+            allyBotInfo[idx].moveOrder = moveOrder;
+            moveOrderToID[idx] = moveOrder;
+            IDToMoveOrder.add(moveOrder, idx);
+        }
 
-    private static void writeRegularUpdate() throws GameActionException {
+    private static void writeRegularUpdate() {
         // regular update contains:
-        // status update
 
+        // status update
+        if (getAllyStatus(Robot.moveOrder) != Robot.status) {
+            int statusMessage = bufferPool[allyIdxToStatusSlot(Robot.moveOrder)] & ~(Utils.BASIC_MASKS[ALLY_STATUS_BITLEN] << allyIdxToStatusBitShift(Robot.moveOrder)) | (Robot.status << allyIdxToStatusBitShift(Robot.moveOrder));
+            writeToBufferPool(allyIdxToStatusSlot(Robot.moveOrder),  statusMessage);
+        }
+
+        // queue header update
+        writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 5));
+        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 5));
+    }
+
+    private static void writeSquadronMessageToQueue(int message) {
+        squadronMessagesSent += 1;
+        squadronMessagesLen += 1;
+
+        int bufferLocation = SQUADRON_QUEUE_IDX + (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
+        messageQueue.add(message << 5 | bufferLocation);
+    }
+
+    private static void writeSectorMessageToQueue(int message) {
+        sectorMessagesSent += 1;
+        sectorMessagesLen += 1;
+
+        int bufferLocation = SECTOR_QUEUE_IDX + (sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
+        messageQueue.add(message << 5 | bufferLocation);
     }
 
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
@@ -390,24 +523,54 @@ public class Comms {
     // read methods: analyzes buffer ints for data
     //
     
-    private static void readAllyFlags() {
+    private static void parseMainInfo() {
 
     }
 
-    private static void readEnemyFlags() {
+    private static void parseAllyFlags() {
 
     }
 
-    private static void readSectorMessages() throws GameActionException {
+    private static void parseEnemyFlags() {
 
     }
 
-    private static void readSquadronMessages() throws GameActionException {
+    private static void readSectorMessages() {
+        sectorMessagesOffset = bufferPool[SECTOR_QUEUE_HEADER] & 0b11111;
+        sectorMessagesOffset += sectorMessagesSent;
+        sectorMessagesOffset %= SECTOR_QUEUE_LEN;
+        sectorMessagesLen = (bufferPool[SECTOR_QUEUE_HEADER] >> 5) & 0b11111;
+        sectorMessagesLen -= sectorMessagesSent;
+        sectorMessagesSent = 0;
+        
+        for (int offset = sectorMessagesOffset; offset < sectorMessagesOffset + sectorMessagesLen; offset++) {
+            sectorMessages.add(bufferPool[SECTOR_QUEUE_IDX + offset % SECTOR_QUEUE_LEN]);
+        }
+    }
+
+    private static void parseSectorMessage() {
+
+    }
+
+    private static void readSquadronMessages()  {
+        squadronMessagesOffset = bufferPool[SQUADRON_QUEUE_HEADER] & 0b11111;
+        squadronMessagesOffset += squadronMessagesSent;
+        squadronMessagesOffset %= SQUADRON_QUEUE_LEN;
+        squadronMessagesLen = (bufferPool[SQUADRON_QUEUE_HEADER] >> 5) & 0b11111;
+        squadronMessagesLen -= squadronMessagesSent;
+        squadronMessagesSent = 0;
+        
+        for (int offset = squadronMessagesOffset; offset < squadronMessagesOffset + squadronMessagesLen; offset++) {
+            squadronMessages.add(bufferPool[SQUADRON_QUEUE_IDX + offset % SQUADRON_QUEUE_LEN]);
+        }
+    }
+
+    private static void parseSquadronMessage() {
 
     }
 
     // may be a lot of bytecode? idk
-    private static void readAllyStatus() {
+    private static void parseAllyStatuses() {
         // 5 statuses per int, status length 3 bits
         allyBotInfo[0].status = getAllyStatus(0);
         allyBotInfo[1].status = getAllyStatus(1);
@@ -463,16 +626,21 @@ public class Comms {
     
     // can use individually
     private static int getAllyStatus(int idx) {
-        return (bufferPool[allyIdxToStatusBufferSlot(idx)] >> allyIdxToStatusBitShift(idx)) & MASKS[ALLY_STATUS_BITLEN];
+        return (bufferPool[allyIdxToStatusSlot(idx)] >> allyIdxToStatusBitShift(idx)) & Utils.BASIC_MASKS[ALLY_STATUS_BITLEN];
     }
         // helper: converts bot index (0-49) to index for buffer pool
-        private static int allyIdxToStatusBufferSlot(int idx) {
+        private static int allyIdxToStatusSlot(int idx) {
             return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
         }
         // helper: converts bot index to shift used
         private static int allyIdxToStatusBitShift(int idx) {
             return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
         }
+
+    private static void parseBuilderMessages() {
+        // evaluate stuff
+        // resetBuilderMessage(idx);
+    }
 
 }
 
@@ -485,11 +653,12 @@ class BotInfo {
     
     int status;
     int priority;
-    int ID;
+    int moveOrder;
 
     public BotInfo() {
         status = NEUTRAL;
-        ID = 50;
+        priority = 0;
+        moveOrder = -1;
     }
 }
 
@@ -510,11 +679,12 @@ class SectorInfo {
 }
 
 class AllyFlagInfo {
-    boolean captured;
+    FlagInfo flagInfo;
 
     MapLocation spawnLocation;
     boolean stolen;
     MapLocation currentLocation;
+    boolean captured;
 
     public AllyFlagInfo(MapLocation spawn) {
         captured = false;
@@ -524,12 +694,14 @@ class AllyFlagInfo {
 }
 
 class EnemyFlagInfo {
-    boolean captured;
-
+    FlagInfo flagInfo;
+   
     boolean spawnKnown;
     MapLocation spawnLocation;
     boolean stealing;
     MapLocation currentLocation;
+    boolean captured;
+
 
     public EnemyFlagInfo() {
         captured = false;

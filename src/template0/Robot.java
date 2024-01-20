@@ -11,8 +11,8 @@ import template0.Utils.*;
 public class Robot {
     // self data
     static RobotController rc;
-    static int turn_num = 0;
-    static int id = -1;
+    static int roundNumber = 0;
+    static int moveOrder = -1;
     static int status;
     static MapLocation location;
 
@@ -37,10 +37,10 @@ public class Robot {
     }
 
     public void attempt_spawn() throws GameActionException {
-        if (id == -1) {
-            id = rc.readSharedArray(0);
-            rc.writeSharedArray(0, id+1);
-            System.out.println("my id " + String.valueOf(id));
+        if (moveOrder == -1) {
+            moveOrder = rc.readSharedArray(0);
+            rc.writeSharedArray(0, moveOrder+1);
+            System.out.println("my id " + String.valueOf(moveOrder));
         }
 
         MapLocation[] spawn_locations = rc.getAllySpawnLocations();
@@ -48,16 +48,16 @@ public class Robot {
         MapLocation spawn_attempt = spawn_locations[7];
         if (rc.canSpawn(spawn_attempt)) {
             rc.spawn(spawn_attempt);
-            System.out.println("i spone " + String.valueOf(id));
+            System.out.println("i spone " + String.valueOf(moveOrder));
         }
         
         return;
     }
 
     public void turn() throws GameActionException {
-        turn_num += 1;
-        System.out.println("am " + String.valueOf(id));
-        /*if (id == 0 && turn_num == 1) {
+        roundNumber += 1;
+        System.out.println("am " + String.valueOf(moveOrder));
+        /*if (id == 0 && turnNum == 1) {
             rc.move(Utils.DIRECTIONS[0]);
             System.out.println("i mov "  + String.valueOf(id));
         } */
@@ -72,7 +72,7 @@ public class Robot {
     public boolean move_off_spawn() throws GameActionException {
         for (Direction dir: Utils.DIRECTIONS) {
             MapLocation target = rc.getLocation().translate(dir.dx, dir.dy);
-            if (!Utils.spawnIntLocations.contains(Utils.mapLocationToInt(target))) {
+            if (!Utils.spawnIntLocations.contains(Utils.locationToInt(target))) {
                 rc.move(dir);
                 return true;
             }

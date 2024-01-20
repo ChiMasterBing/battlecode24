@@ -1,5 +1,6 @@
 package template0;
 
+import java.util.Map;
 import java.util.Random;
 
 // battlecode package
@@ -61,7 +62,7 @@ public class Utils {
         Direction.WEST,
     };
 
-    static final int[] MASKS = {
+    static final int[] BASIC_MASKS = {
         0b0, 0b1, 0b11, 0b111, 0b1111, 
         0b11111, 0b111111, 0b1111111,
         0b11111111,0b111111111,
@@ -83,7 +84,7 @@ public class Utils {
         MAP_AREA = MAP_HEIGHT * MAP_WIDTH;
 
         for (MapLocation m: rc.getAllySpawnLocations()) {
-            spawnIntLocations.add(mapLocationToInt(m));
+            spawnIntLocations.add(locationToInt(m));
         }
     }
 
@@ -93,12 +94,20 @@ public class Utils {
 
     // navigation
 
-    public static int mapLocationToSector (MapLocation location) {
-        return 0;
+    public static int locationToSector (MapLocation location) {
+        return ((location.x >> 2) << 4) | (location.y >> 2);
+    }
+
+    public static MapLocation sectorToLocation (int sector) {
+        return new MapLocation((sector >> 4) << 2 + 1, (sector & 0x7) << 2 + 1);
     }
  
-    public static int mapLocationToInt(MapLocation location) {
+    public static int locationToInt(MapLocation location) {
         return (location.x * MAP_WIDTH + location.y);
+    }
+
+    public static MapLocation intToLocation (int location) {
+        return new MapLocation(location / MAP_WIDTH, location % MAP_WIDTH);
     }
 
     public static MapLocation locationDelta(MapLocation from, MapLocation to) {
@@ -107,9 +116,17 @@ public class Utils {
 
     // comms
 
-    public static int encodeRound() throws GameActionException{
+    public static int encodeRound() throws GameActionException {
         return (rc.getRoundNum()%80)/5;
     }
+
+    public static FlagInfo getCarryingFlag() throws GameActionException {
+        if (rc.hasFlag()) return rc.senseNearbyFlags(0, rc.getTeam())[0];
+        return null;
+    }
     
-    
+    // misc
+    public static boolean isBitOne(int value, int LSBpos) {
+        return (((value >> LSBpos) & 1) == 1);
+    }
 }

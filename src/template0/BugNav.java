@@ -90,6 +90,7 @@ public class BugNav {
         isBugging = false;
     }
 
+    
 }
 
 class BugNavTracker {
