@@ -1,8 +1,8 @@
-package sittingduck;
+package attackMicroTestB;
 
 import battlecode.common.*;
-import sittingduck.fast.FastIntSet;
-import sittingduck.fast.FastLocSet;
+import bobthebuilder.fast.FastIntSet;
+import bobthebuilder.fast.FastLocSet;
 
 public class bugNav {
     static RobotController rc;

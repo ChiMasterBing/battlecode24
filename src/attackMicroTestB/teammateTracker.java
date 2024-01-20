@@ -1,9 +1,9 @@
-package sittingduck;
+package attackMicroTestB;
 
 import battlecode.common.*;
-import sittingduck.fast.FastIntIntMap;
-import sittingduck.fast.FastIntLocMap;
-import sittingduck.fast.FastQueue;
+import bobthebuilder.fast.FastIntIntMap;
+import bobthebuilder.fast.FastIntLocMap;
+import bobthebuilder.fast.FastQueue;
 
 public class teammateTracker {
     static RobotController rc;

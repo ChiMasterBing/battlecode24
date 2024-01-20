@@ -1,9 +1,9 @@
-package sittingduck;
+package attackMicroTestB;
 
 import java.util.Arrays;
 
 import battlecode.common.*;
-import sittingduck.fast.FastLocSet;
+import bobthebuilder.fast.FastLocSet;
 
 public abstract class Robot {
     RobotController rc;

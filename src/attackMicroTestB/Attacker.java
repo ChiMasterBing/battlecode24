@@ -1,6 +1,6 @@
-package sittingduck;
+package attackMicroTestB;
 import battlecode.common.*;
-import sittingduck.fast.FastLocSet;
+import bobthebuilder.fast.FastLocSet;
 
 import java.util.Random;
 
@@ -366,6 +366,7 @@ public class Attacker extends Robot{
     }
 
     public void checkBuildTraps() throws GameActionException{
+        if (myMoveNumber != -1) return;
         MapInfo[] nearbyInfo = rc.senseNearbyMapInfos(9);
         int expl = 0, stun = 0;
         for (MapInfo mi:nearbyInfo) {
@@ -382,18 +383,17 @@ public class Attacker extends Robot{
             int threshold2 = Math.max(1, 7- rc.getCrumbs()/1000);
             for (Direction d:allDirections) {
                 nxt = myLoc.add(d);
-                if (nxt.equals(myLoc) && nxt.equals(mirrorFlags[0]) || nxt.equals(mirrorFlags[1]) || nxt.equals(mirrorFlags[2])) {
-                    if (rc.canBuild(TrapType.WATER, nxt) && rc.senseNearbyFlags(-1, rc.getTeam().opponent()).length == 0) {
-                        rc.build(TrapType.WATER, nxt);
-                    }
-                }
-
-                if (rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold) {
-                    if((friendlyRobots.length > 6 || rc.getCrumbs()<250)) {
-                        if(rc.canBuild(TrapType.STUN, nxt)) {
+                if(nxt.x%3==1&&nxt.y%3==1) {
+                    if (enemyRobots.length >= threshold && friendlyRobots.length>4) {
+                        if (rc.canBuild(TrapType.STUN, nxt)) {
                             rc.build(TrapType.STUN, nxt);
                         }
-                    }else if(rc.canBuild(TrapType.EXPLOSIVE, nxt)){
+                    }
+                }else if (expl<2 && rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold2) {
+                    //roundNumber > 300 &&; DONT WANNA DO THIS IF LOW ON CRUMS
+                    //ALSO IN MAZE, WANNA PLACE TRAPS IN MID
+                    //instead of expl < X; do if the STUNS are already placed && crumbs > threshold
+                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
                         rc.build(TrapType.EXPLOSIVE, nxt);
                     }
                 }
