@@ -246,7 +246,7 @@ public abstract class Robot {
             if (roundNumber == 1) {
                 if (myMoveNumber < 3) {
                     mySpawn = myMoveNumber;
-                    rc.spawn(spawnLocs[myMoveNumber * 9]);
+                    rc.spawn(myFlags[mySpawn]);
                     //find closest you can get to your opp via dam
                 }
             }
@@ -297,6 +297,10 @@ public abstract class Robot {
             else if (min == c) {
                 center = myFlags[2];
                 mySpawn = 2;
+            }
+
+            if (myMoveNumber < 6) {
+                center = myFlags[myMoveNumber%3]; //always try spawning stuff at other spawns to lessen getting sniped
             }
 
             if ((min < 8 || roundNumber % 3 == 0) && (center != null)) {

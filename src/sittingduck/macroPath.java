@@ -281,4 +281,32 @@ public class macroPath {
             spawnHeuristic(o3, s1, s2, s3);
         }
     }
+    
+    // public static void calculateSpawnDistribution(MapLocation s1, MapLocation s2, MapLocation s3) {
+    //     MapLocation o1, o2, o3;
+    //     if (Comms.isSymmetry(H_SYM)) {
+    //         o1 = getHSym(s1);
+    //         o2 = getHSym(s2);
+    //         o3 = getHSym(s3);
+    //         spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
+    //     }
+    //     if (Comms.isSymmetry(V_SYM)) {
+    //         o1 = getVSym(s1);
+    //         o2 = getVSym(s2);
+    //         o3 = getVSym(s3);
+    //         spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
+    //     }
+    //     if (Comms.isSymmetry(R_SYM)) {
+    //         o1 = getRSym(s1);
+    //         o2 = getRSym(s2);
+    //         o3 = getRSym(s3);
+    //         spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+    //         spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
+    //     }
+    // }
 }
