@@ -1,6 +1,6 @@
-package sittingduck;
+package attackMicroTestA;
 
-import sittingduck.fast.FastQueue;
+import bobthebuilder.fast.FastQueue;
 import battlecode.common.*;
 
 public class Comms {

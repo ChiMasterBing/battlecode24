@@ -1,8 +1,8 @@
-package sittingduck;
+package attackMicroTestA;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import sittingduck.fast.FastQueue;
+import bobthebuilder.fast.FastQueue;
 
 public class macroPath {
     static RobotController rc;
@@ -234,51 +234,31 @@ public class macroPath {
         }
     }
 
-    public static void spawnHeuristic(MapLocation o1, MapLocation s1, MapLocation s2, MapLocation s3) {
-        //going to o1, starting at s1
-        int d1 = (int) Math.sqrt(s1.distanceSquaredTo(o1));
-        int d2 = (int) Math.sqrt(s2.distanceSquaredTo(o1));
-        int d3 = (int) Math.sqrt(s3.distanceSquaredTo(o1));
-
-        int d12 = (int) Math.sqrt(s1.distanceSquaredTo(s2));
-        int d13 = (int) Math.sqrt(s1.distanceSquaredTo(s3));
-        int d23 = (int) Math.sqrt(s2.distanceSquaredTo(s3));
-
-        spawnScores[0] += Math.min(d12 + d2, d13 + d3) - d1;
-        spawnScores[1] += Math.min(d12 + d1, d23 + d3) - d2;
-        spawnScores[2] += Math.min(d13 + d1, d23 + d2) - d3;
-    }
-
     public static void calculateSpawnDistribution(MapLocation s1, MapLocation s2, MapLocation s3) {
         MapLocation o1, o2, o3;
         if (Comms.isSymmetry(H_SYM)) {
             o1 = getHSym(s1);
             o2 = getHSym(s2);
             o3 = getHSym(s3);
-
-            spawnHeuristic(o1, s1, s2, s3);
-            spawnHeuristic(o2, s1, s2, s3);
-            spawnHeuristic(o3, s1, s2, s3);
-
+            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
         }
         if (Comms.isSymmetry(V_SYM)) {
             o1 = getVSym(s1);
             o2 = getVSym(s2);
             o3 = getVSym(s3);
-
-            spawnHeuristic(o1, s1, s2, s3);
-            spawnHeuristic(o2, s1, s2, s3);
-            spawnHeuristic(o3, s1, s2, s3);
-
+            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
         }
         if (Comms.isSymmetry(R_SYM)) {
             o1 = getRSym(s1);
             o2 = getRSym(s2);
             o3 = getRSym(s3);
-
-            spawnHeuristic(o1, s1, s2, s3);
-            spawnHeuristic(o2, s1, s2, s3);
-            spawnHeuristic(o3, s1, s2, s3);
+            spawnScores[getClosestSpawnNumber(o1, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o2, s1, s2, s3)]++;
+            spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
         }
     }
 }

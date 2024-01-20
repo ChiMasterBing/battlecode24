@@ -1,4 +1,4 @@
-package sittingduck;
+package attackMicroTestA;
 import battlecode.common.*;
 import sittingduck.fast.FastLocSet;
 
