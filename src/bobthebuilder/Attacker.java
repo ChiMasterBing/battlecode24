@@ -1,5 +1,6 @@
 package bobthebuilder;
 import battlecode.common.*;
+import bobthebuilder.BFSController;
 import bobthebuilder.fast.FastLocSet;
 
 import java.util.Random;
@@ -24,9 +25,6 @@ public class Attacker extends Robot{
     }
 
     public void turn() throws GameActionException{
-//        if(rc.getRoundNum()>210){
-//            rc.resign();
-//        }
         premoveSetGlobals();
         checkPickupFlag();
 //        checkBuildTraps();
@@ -35,7 +33,7 @@ public class Attacker extends Robot{
         if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3) {
             tryHeal();
         }
-        tryFill();
+
         movement();
         postmoveSetGlobals();
 //        checkBuildTraps();
@@ -43,7 +41,7 @@ public class Attacker extends Robot{
         if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
-        tryFill();
+//        tryFill();
     }
     public void checkPickupFlag() throws GameActionException {
         for (Direction d:allDirections) {
@@ -123,7 +121,7 @@ public class Attacker extends Robot{
                 closestCrum = mi.distanceSquaredTo(myLoc);
             }
         }
-        if (crummy.length > 0 && roundNumber < 170) {
+        if (crummy.length > 0 && roundNumber < 250) {
             BFSController.move(rc, crum);
             return true;
         }
@@ -158,10 +156,8 @@ public class Attacker extends Robot{
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
 
-        if(currentTarget!=null) {
-            rc.setIndicatorString("moving towards curernt target");
+        if(currentTarget!=null)
             bugNav.move(currentTarget);
-        }
     }
     public void premoveSetGlobals() throws GameActionException {
         myLoc = rc.getLocation();
@@ -178,10 +174,6 @@ public class Attacker extends Robot{
         for(RobotInfo ri : friendlyRobots){
             if(ri.getHealth()<lowestHealth){
                 lowestHealth = ri.getHealth();
-                lowestHealthLoc = ri.getLocation();
-            }
-            if(ri.getBuildLevel()==6){
-                lowestHealth = -1000;
                 lowestHealthLoc = ri.getLocation();
             }
         }
@@ -263,7 +255,7 @@ public class Attacker extends Robot{
             int hp = i.getHealth();
             if (hp == 1000) continue;
             int score = (1000 - hp);
-            if(i.getBuildLevel()>3){
+            if(rc.getLevel(SkillType.BUILD)==6){
                 score+=500;
             }
             if (hp + myHeal > 750) {
@@ -295,13 +287,34 @@ public class Attacker extends Robot{
         }
         if(roundNumber>200) {
             MapLocation nxt;
-//            int threshold = Math.max(0, 7- rc.getCrumbs()/500);
-            int threshold2 = Math.max(1, 7- rc.getCrumbs()/1300);
+            int threshold = Math.max(0, 7- rc.getCrumbs()/500);
+            int threshold2 = Math.max(1, 7- rc.getCrumbs()/1000);
             for (Direction d:allDirections) {
                 nxt = myLoc.add(d);
-                if (expl<2&&rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold2) {
-                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)&&!rc.senseMapInfo(nxt).isWater()) {
-                        rc.build(TrapType.EXPLOSIVE, nxt);
+                if(nxt.x%3==1&&nxt.y%3==1) {
+                    if (enemyRobots.length >= threshold&&closeFriendlyRobots.length>3) {
+//                    if((closeFriendlyRobots.length-enemyRobots.length > 2 || rc.getCrumbs()<250)) {
+
+//                        if (friendlyRobots.length>4) {
+                        if (rc.canBuild(TrapType.STUN, nxt)) {
+                            rc.build(TrapType.STUN, nxt);
+                        }
+//                        }
+                    }
+                }else if (expl<2&&rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length >= threshold2) {
+//                    if(rc.canBuild(TrapType.EXPLOSIVE, nxt)) {
+//                        rc.build(TrapType.EXPLOSIVE, nxt);
+//                    }
+                }
+            }
+            if(myLoc.x%3==1&&myLoc.y%3==1){
+                if (enemyRobots.length >= threshold) {
+//                    if((closeFriendlyRobots.length-enemyRobots.length > 2 || rc.getCrumbs()<250)) {
+
+                    if ((friendlyRobots.length > 4 || rc.getCrumbs() < 250)) {
+                        if (rc.canBuild(TrapType.STUN, myLoc)) {
+                            rc.build(TrapType.STUN, myLoc);
+                        }
                     }
                 }
             }
@@ -396,13 +409,10 @@ public class Attacker extends Robot{
     public void tryFill() throws GameActionException {
         if (!rc.isActionReady()) return;
         if (roundNumber > 0 && enemyRobots.length == 0) {
-            MapInfo[] water = rc.senseNearbyMapInfos(2);
+            MapInfo[] water = rc.senseNearbyMapInfos(3);
             for (MapInfo w:water) {
-                MapLocation wloc = w.getMapLocation();
-//                System.out.println(wloc);
-                if ((wloc.x+wloc.y)%2==1&&w.isWater() && rc.canFill(wloc))  {
-//                    System.out.println("good"+wloc);
-                    rc.fill(wloc);
+                if (w.isWater() && rc.canFill(w.getMapLocation()))  {
+                    rc.fill(w.getMapLocation());
                     return;
                 }
             }
@@ -417,9 +427,6 @@ public class Attacker extends Robot{
 
         int mosthealth = 0;
         for(RobotInfo ri : closeFriendlyRobots){
-            if(ri.getBuildLevel()>3){
-                continue;
-            }
             mosthealth = Math.max(mosthealth, ri.getHealth());
         }
         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
@@ -444,15 +451,10 @@ public class Attacker extends Robot{
         if (weakestEnemy != null) {
             if (cooldown < 10) { //WE WANT TO ATTACK / HEAL
                 if (minEnemyDist > 4) {
-//                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
-//                        return false;
-//                    }
-//                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
-                        rc.setIndicatorString("moving twoards weakest");
-                        BFSController.move(rc, weakestEnemy);
-//                    }
-                    return true;
-
+                    if(rc.getLevel(SkillType.HEAL)>3){
+                        return false;
+                    }
+                    BFSController.move(rc, weakestEnemy); return true;
                 }else if(minEnemyDist<2&&!tooCloseToSpawn){
                     bugNav.move(opposite);
                     return true;
@@ -461,19 +463,14 @@ public class Attacker extends Robot{
             }
             else if (cooldown < 20) {
                 if (minEnemyDist > 9) {
-                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
+                    if(rc.getLevel(SkillType.HEAL)>3){
                         return false;
                     }
-                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
-                        rc.setIndicatorString("moving twoards weakest");
-                        BFSController.move(rc, weakestEnemy);
-                    }
-                    return true;
+                    BFSController.move(rc, weakestEnemy); return true;
                 }
                 if (minEnemyDist <=4&&!tooCloseToSpawn) {
                     bugNav.move(opposite);
                     return true;
-
 //                    BFSController.move(rc,opposite); return true;
                 }
             }
@@ -483,14 +480,10 @@ public class Attacker extends Robot{
                     return true;
 //                    BFSController.move(rc,opposite); return true;
                 }else{
-                    if(rc.getLevel(SkillType.HEAL)>3||enemyRobots.length+2>friendlyRobots.length){
+                    if(rc.getLevel(SkillType.HEAL)>3){
                         return false;
                     }
-                    if(rc.getRoundNum()>220||rc.getRoundNum()==201) {
-                        rc.setIndicatorString("moving twoards weakest");
-                        BFSController.move(rc, weakestEnemy);
-                    }
-                    return true;
+                    BFSController.move(rc, weakestEnemy); return true;
                 }
             }else{
                 bugNav.move(opposite);

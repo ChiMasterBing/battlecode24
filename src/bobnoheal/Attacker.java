@@ -41,7 +41,7 @@ public class Attacker extends Robot{
         if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
-        tryFill();
+//        tryFill();
     }
     public void checkPickupFlag() throws GameActionException {
         for (Direction d:allDirections) {
