@@ -12,7 +12,9 @@ public class Robot {
     // self data
     static RobotController rc;
     static int roundNumber = 0;
+
     static int moveOrder = -1;
+    static int botType;
     static int status;
     static MapLocation location;
 
@@ -29,6 +31,10 @@ public class Robot {
     
     static Team team;
     static Team enemy;
+
+    // constants
+    final static int ATTACKER = 0;
+    final static int BUILDER = 1;
 
     public Robot(RobotController r) throws GameActionException {
         rc = r;

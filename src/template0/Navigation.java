@@ -14,6 +14,7 @@ import template0.Utils.*;
 public class Navigation {
     static RobotController rc;
     static MapData mapInfo[];
+    static int symmetry;
 
     // self info
     static MapLocation targetLocation;
@@ -39,7 +40,7 @@ public class Navigation {
     public void init(RobotController r) throws GameActionException {
         rc = r;
         BugNav.init(rc);
-
+        symmetry = 0;
     }
 
 }
@@ -49,9 +50,6 @@ class MapData {
     
 }
 
-class Sector {
-
-}
 
 // unused
 class Grid2x2 {

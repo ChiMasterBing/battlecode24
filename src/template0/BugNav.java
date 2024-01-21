@@ -73,21 +73,26 @@ public class BugNav {
         // try 3 greedy moves
         if (!isBugging) {
             directionToMove = getGreedyMove();
+            if (getGreedyMove() != null && rc.canMove(directionToMove)) return directionToMove;
         }
 
         // only reaches if blocked or if bugging
-
+        startBugging(rc.getLocation().directionTo(target));
         return directionToMove;
     }
 
-    public static void startBugging() throws GameActionException {
+
+
+    public static void startBugging(MapLocation pivot) throws GameActionException {
         assert isBugging == false : "can't start bugging if u already bugging";
         isBugging = true;
+        bugNavTracker = new BugNavTracker(pivot);
     }
 
     public static void endBugging() throws GameActionException {
         assert isBugging == true : "can't stop bugging if u not bugging";
         isBugging = false;
+        bugNavTracker = null;
     }
 
     

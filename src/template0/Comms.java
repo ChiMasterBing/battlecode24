@@ -12,16 +12,18 @@ import template0.Debug.*;
 import template0.Utils.*;
 
 /* ALLOCATIONS
+bit allocations are LSB first
+
 MAIN    0
 S0      symmetry (3), flags captured (2)
 
 FLAGS   1 -> 6
-S1-3    ally flags
-S4-6    enemy flags
+S1-3    ally flags : sector location (8)
+S4-6    enemy flags : sector location (8)
 
 SQUAD   7 -> 27
 Squadron updates (move, attack, retreat, protect, build, stuck, summons, etc.)
-S5      queue usage idx, left (5), length (5)
+S5      queue usage idx : offset (5), length (5)
 S6-27   queue for updates
 
 SECTOR  28 -> 48
@@ -29,7 +31,7 @@ Sector updates (danger level, pathing blockage, etc.)
 first two bits: 00 --> flag stolen
 consider round info as recent --> will only be tens and ones digit of current rounds
 100 turns --> 5 turn buckets --> 20 --> 4 bits
-S28     queue usage idx, left (5), length (5)
+S28     queue usage idx : offset (5), length (5)
 S29-48  queue for updates
 
 INDIV   49 -> 58
@@ -44,15 +46,22 @@ UNUSED  62, 63
 */
 
 public class Comms {
-// VARIABLES
-//
+    /* --------------------------------------------------------------------------------- */
+    /* ----------------------------------- VARIABLES ----------------------------------- */
+    /* --------------------------------------------------------------------------------- */
+
     private static RobotController rc;
     
-    // constants
+    // --------- //
+    // constants //
+    // --------- //
 
     final static int MAIN_IDX = 0;
     final static int ALLY_FLAG_IDX = 1;
     final static int ENEMY_FLAG_IDX = 4;
+
+    final static int FLAG_NEUTRAL = 0;
+    final static int FLAG_TAKEN = 1;
 
     final static int SQUADRON_QUEUE_HEADER = 7;
     final static int SQUADRON_QUEUE_IDX = 8;
@@ -62,20 +71,28 @@ public class Comms {
     final static int SECTOR_QUEUE_IDX = 29;
     final static int SECTOR_QUEUE_LEN = 20;
 
+    final static int QUEUE_SQUADRON = 0;
+    final static int QUEUE_SECTOR = 1;
+
     // currently uses 10 ints to store 3 bits per, each int holds 5 bots
     final static int ALLY_STATUS_IDX = 49;
     final static int ALLY_STATUS_PERSLOT = 5;
     final static int ALLY_STATUS_BITLEN = 3;
 
-    // stored comms data
+    final static int BUILDER_IDX = 59;
+
+    // ----------------- //
+    // stored comms data //
+    // ----------------- //
 
     static int moveOrderToID[];
     static FastIntIntMap IDToMoveOrder;
 
-    static BotInfo allyBotInfo[];
+    static BotData allyBotData[];
 
-    static AllyFlagInfo allyFlagInfo[];
-    static EnemyFlagInfo enemyFlagInfo[];
+    static FlagData allyFlagData[];
+    static FlagData enemyFlagData[];
+    static int flagsCaptured;
 
     static SectorInfo sectorInfo[];
     static SquadronInfo squadronInfo[];
@@ -83,7 +100,9 @@ public class Comms {
     static FastQueue<Integer> sectorMessages;
     static FastQueue<Integer> squadronMessages;
 
-    // messaging variables
+    // ------------------- //
+    // messaging variables //
+    // ------------------- //
 
     private static FastQueue<Integer> messageQueue;
     //private static FastQueue<Integer> priorityMessageQueue;
@@ -97,8 +116,9 @@ public class Comms {
     private static int[] bufferPool;
     private static boolean[] dirtyFlags;
 
-// INIT
-//
+    /* --------------------------------------------------------------------------------- */
+    /* ------------------------------------- INIT -------------------------------------- */
+    /* --------------------------------------------------------------------------------- */
 
     public static void init(RobotController r) throws GameActionException {
         rc = r;
@@ -106,9 +126,10 @@ public class Comms {
         moveOrderToID = new int[50];
         IDToMoveOrder = new FastIntIntMap();
 
-        allyBotInfo = new BotInfo[50];
-        allyFlagInfo = new AllyFlagInfo[3];
-        enemyFlagInfo = new EnemyFlagInfo[3];
+        allyBotData = new BotData[50];
+        allyFlagData = new FlagData[3];
+        enemyFlagData = new FlagData[3];
+        flagsCaptured = 0;
     
         sectorInfo = new SectorInfo[400];
         sectorMessagesOffset = 0;
@@ -126,10 +147,14 @@ public class Comms {
         //priorityMessageQueue = new FastQueue<Integer>(64);
     }
 
-// PUBLIC METHODS
-//
+    /* --------------------------------------------------------------------------------- */
+    /* -------------------------------- PUBLIC METHODS --------------------------------- */
+    /* --------------------------------------------------------------------------------- */
 
-    // methods that should run every turn
+    // ------------------------------- //
+    // primary methods: run every turn //
+    // ------------------------------- //
+
     public static void commsStartTurn() throws GameActionException {
         initBufferPool();
 
@@ -154,8 +179,12 @@ public class Comms {
     }
 
     public static void commsEndTurn() throws GameActionException {
-        if (Robot.roundNumber > 2) writeRegularUpdate();
-
+        if (Robot.roundNumber < 2) {
+            flushBufferPool();
+            return;
+        }
+        
+        writeRegularUpdate();
         //flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
 
@@ -163,24 +192,35 @@ public class Comms {
         flushBufferPool();
     }
 
-    // action methods
+    // ----------------------------------- //
+    // action methods: write data to comms //
+    // ----------------------------------- //
+
+    public static void invalidateSymmetry(int symm) {
+        writeToBufferPool(MAIN_IDX, bufferPool[MAIN_IDX] | (1 << symm));
+    }
+
     public static void depositFlag(int flagID) {
-        
+        flagsCaptured += 1;
+        writeToBufferPool(MAIN_IDX, overwriteBits(bufferPool[MAIN_IDX], flagsCaptured, 3, 2));
     }
 
     public static void distressFlag() {
 
     }
 
-    public static void invalidateSymmetry(int symm) {
-        writeToBufferPool(MAIN_IDX, bufferPool[MAIN_IDX] | (1 << symm));
-    }
-
     public static void summonSquadron(int squadronID, int sector) {
-        
+
     }
 
-    // get data methods
+    public static void writeBuilderLocation(MapLocation m, int myMoveNumber) throws GameActionException {
+        // derive builder number from myMoveNumber
+        // setBuilderLocation(int builderNumber, MapLocation location)
+    }
+
+    // -------------------------------------- //
+    // data methods: retrieve data from comms //
+    // -------------------------------------- //
 
     public static boolean isSymmetry(int symm) {
         return !Utils.isBitOne(bufferPool[MAIN_IDX], symm);
@@ -194,11 +234,42 @@ public class Comms {
         return -1;
     }
 
-// PRIVATE METHODS
-//
+    public static MapLocation[] getBuilderLocations() {
+        MapLocation[] ret = {null, null, null};
+        int sector0 = readBits(bufferPool[BUILDER_IDX + 0], 0, 8);
+        int sector1 = readBits(bufferPool[BUILDER_IDX + 1], 0, 8);
+        int sector2 = readBits(bufferPool[BUILDER_IDX + 2], 0, 8);
+        if (sector0 != Utils.BASIC_MASKS[16]) ret[0] = Utils.sectorToLocation(sector0);
+        if (sector1 != Utils.BASIC_MASKS[16]) ret[1] = Utils.sectorToLocation(sector1);
+        if (sector2 != Utils.BASIC_MASKS[16]) ret[2] = Utils.sectorToLocation(sector2);
+        return ret;
+    }
 
-    // primary methods
-    //
+    /* --------------------------------------------------------------------------------- */
+    /* -------------------------------- PRIVATE METHODS -------------------------------- */
+    /* --------------------------------------------------------------------------------- */
+
+    // ---------------------------------------------------------------------- //
+    // primary methods: utilities for buffer, only methods that should use rc //
+    // ---------------------------------------------------------------------- //
+
+    private static int wipeBits(int message, int left, int length) {
+        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
+        int mask = ~(Utils.BASIC_MASKS[length] << left);
+        return message & mask;
+    }
+
+    private static int overwriteBits(int message, int newValue, int left, int length) {
+        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
+        assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large";
+        int sectionWiped = wipeBits(message, left, length);
+        return sectionWiped & (newValue << left);
+    }
+
+    private static int readBits(int message, int left, int length) {
+        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
+        return (message >> left) & Utils.BASIC_MASKS[length];
+    }
 
     private static void writeToBufferPool(int idx, int message) {
         bufferPool[idx] = message;
@@ -405,8 +476,9 @@ public class Comms {
             rc.writeSharedArray(63, bufferPool[63]);
     }
 
-    // write methods: write various messages to buffer
-    //
+    // ----------------------------------------------- //
+    // write methods: write various messages to buffer //
+    // ----------------------------------------------- //
 
     // for turn 1 only
     private static void writeBotID() {
@@ -473,11 +545,12 @@ public class Comms {
         // helper for readBotIDs(), writes ID data for idx
         private static void readSingleBotID(int idx) {
             int moveOrder = bufferPool[idx + 1];
-            allyBotInfo[idx].moveOrder = moveOrder;
+            allyBotData[idx].moveOrder = moveOrder;
             moveOrderToID[idx] = moveOrder;
             IDToMoveOrder.add(moveOrder, idx);
         }
 
+    // for all turns after
     private static void writeRegularUpdate() {
         // regular update contains:
 
@@ -488,24 +561,18 @@ public class Comms {
         }
 
         // queue header update
-        writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 5));
-        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 5));
+        writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 6));
+        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 6));
     }
 
     private static void writeSquadronMessageToQueue(int message) {
-        squadronMessagesSent += 1;
-        squadronMessagesLen += 1;
-
         int bufferLocation = SQUADRON_QUEUE_IDX + (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
-        messageQueue.add(message << 5 | bufferLocation);
+        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SQUADRON);
     }
 
     private static void writeSectorMessageToQueue(int message) {
-        sectorMessagesSent += 1;
-        sectorMessagesLen += 1;
-
         int bufferLocation = SECTOR_QUEUE_IDX + (sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
-        messageQueue.add(message << 5 | bufferLocation);
+        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SECTOR);
     }
 
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
@@ -513,33 +580,52 @@ public class Comms {
             if (Clock.getBytecodesLeft() < 2000) break;
 
             int encodedMessage = queue.poll();
-            int index = encodedMessage & 0b111111;
-            int message = encodedMessage >> 6;
+            int queueType = encodedMessage & Utils.BASIC_MASKS[2];
+            switch (queueType) {
+                case QUEUE_SQUADRON:
+                    squadronMessagesSent += 1;
+                    squadronMessagesLen += 1;
+                    break;
+                case QUEUE_SECTOR:
+                    sectorMessagesSent += 1;
+                    sectorMessagesLen += 1;
+                    break;
+            }
+            int index = (encodedMessage >> 2) & Utils.BASIC_MASKS[6];
+            int message = encodedMessage >> 8;
 
             writeToBufferPool(index, message);
         }
     }
     
-    // read methods: analyzes buffer ints for data
-    //
+    // ------------------------------------------- //
+    // read methods: analyzes buffer ints for data //
+    // ------------------------------------------- //
     
     private static void parseMainInfo() {
-
+        Navigation.symmetry = readSymmetry();
+        flagsCaptured = readBits(bufferPool[MAIN_IDX], 3, 2);
     }
 
+    private static void parseSingleFlag(int bufferIdx, FlagData[] dataArray, int dataIdx) {
+        dataArray[dataIdx].currentSector = readBits(bufferPool[bufferIdx], 0, 8);
+    } 
     private static void parseAllyFlags() {
-
+        parseSingleFlag(ALLY_FLAG_IDX + 0, allyFlagData, 0);
+        parseSingleFlag(ALLY_FLAG_IDX + 1, allyFlagData, 1);
+        parseSingleFlag(ALLY_FLAG_IDX + 2, allyFlagData, 2);
     }
-
     private static void parseEnemyFlags() {
-
+        parseSingleFlag(ENEMY_FLAG_IDX + 0, enemyFlagData, 0);
+        parseSingleFlag(ENEMY_FLAG_IDX + 1, enemyFlagData, 1);
+        parseSingleFlag(ENEMY_FLAG_IDX + 2, enemyFlagData, 2);
     }
 
     private static void readSectorMessages() {
-        sectorMessagesOffset = bufferPool[SECTOR_QUEUE_HEADER] & 0b11111;
+        sectorMessagesOffset = readBits(bufferPool[SECTOR_QUEUE_HEADER], 0, 6);
         sectorMessagesOffset += sectorMessagesSent;
         sectorMessagesOffset %= SECTOR_QUEUE_LEN;
-        sectorMessagesLen = (bufferPool[SECTOR_QUEUE_HEADER] >> 5) & 0b11111;
+        sectorMessagesLen = readBits(bufferPool[SECTOR_QUEUE_HEADER], 6, 6);
         sectorMessagesLen -= sectorMessagesSent;
         sectorMessagesSent = 0;
         
@@ -547,16 +633,15 @@ public class Comms {
             sectorMessages.add(bufferPool[SECTOR_QUEUE_IDX + offset % SECTOR_QUEUE_LEN]);
         }
     }
-
     private static void parseSectorMessage() {
 
     }
 
     private static void readSquadronMessages()  {
-        squadronMessagesOffset = bufferPool[SQUADRON_QUEUE_HEADER] & 0b11111;
+        squadronMessagesOffset = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 0, 6);
         squadronMessagesOffset += squadronMessagesSent;
         squadronMessagesOffset %= SQUADRON_QUEUE_LEN;
-        squadronMessagesLen = (bufferPool[SQUADRON_QUEUE_HEADER] >> 5) & 0b11111;
+        squadronMessagesLen = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 6, 6);
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;
         
@@ -564,7 +649,6 @@ public class Comms {
             squadronMessages.add(bufferPool[SQUADRON_QUEUE_IDX + offset % SQUADRON_QUEUE_LEN]);
         }
     }
-
     private static void parseSquadronMessage() {
 
     }
@@ -572,61 +656,60 @@ public class Comms {
     // may be a lot of bytecode? idk
     private static void parseAllyStatuses() {
         // 5 statuses per int, status length 3 bits
-        allyBotInfo[0].status = getAllyStatus(0);
-        allyBotInfo[1].status = getAllyStatus(1);
-        allyBotInfo[2].status = getAllyStatus(2);
-        allyBotInfo[3].status = getAllyStatus(3);
-        allyBotInfo[4].status = getAllyStatus(4);
-        allyBotInfo[5].status = getAllyStatus(5);
-        allyBotInfo[6].status = getAllyStatus(6);
-        allyBotInfo[7].status = getAllyStatus(7);
-        allyBotInfo[8].status = getAllyStatus(8);
-        allyBotInfo[9].status = getAllyStatus(9);
-        allyBotInfo[10].status = getAllyStatus(10);
-        allyBotInfo[11].status = getAllyStatus(11);
-        allyBotInfo[12].status = getAllyStatus(12);
-        allyBotInfo[13].status = getAllyStatus(13);
-        allyBotInfo[14].status = getAllyStatus(14);
-        allyBotInfo[15].status = getAllyStatus(15);
-        allyBotInfo[16].status = getAllyStatus(16);
-        allyBotInfo[17].status = getAllyStatus(17);
-        allyBotInfo[18].status = getAllyStatus(18);
-        allyBotInfo[19].status = getAllyStatus(19);
-        allyBotInfo[20].status = getAllyStatus(20);
-        allyBotInfo[21].status = getAllyStatus(21);
-        allyBotInfo[22].status = getAllyStatus(22);
-        allyBotInfo[23].status = getAllyStatus(23);
-        allyBotInfo[24].status = getAllyStatus(24);
-        allyBotInfo[25].status = getAllyStatus(25);
-        allyBotInfo[26].status = getAllyStatus(26);
-        allyBotInfo[27].status = getAllyStatus(27);
-        allyBotInfo[28].status = getAllyStatus(28);
-        allyBotInfo[29].status = getAllyStatus(29);
-        allyBotInfo[30].status = getAllyStatus(30);
-        allyBotInfo[31].status = getAllyStatus(31);
-        allyBotInfo[32].status = getAllyStatus(32);
-        allyBotInfo[33].status = getAllyStatus(33);
-        allyBotInfo[34].status = getAllyStatus(34);
-        allyBotInfo[35].status = getAllyStatus(35);
-        allyBotInfo[36].status = getAllyStatus(36);
-        allyBotInfo[37].status = getAllyStatus(37);
-        allyBotInfo[38].status = getAllyStatus(38);
-        allyBotInfo[39].status = getAllyStatus(39);
-        allyBotInfo[40].status = getAllyStatus(40);
-        allyBotInfo[41].status = getAllyStatus(41);
-        allyBotInfo[42].status = getAllyStatus(42);
-        allyBotInfo[43].status = getAllyStatus(43);
-        allyBotInfo[44].status = getAllyStatus(44);
-        allyBotInfo[45].status = getAllyStatus(45);
-        allyBotInfo[46].status = getAllyStatus(46);
-        allyBotInfo[47].status = getAllyStatus(47);
-        allyBotInfo[48].status = getAllyStatus(48);
-        allyBotInfo[49].status = getAllyStatus(49);
+        allyBotData[0].status = getAllyStatus(0);
+        allyBotData[1].status = getAllyStatus(1);
+        allyBotData[2].status = getAllyStatus(2);
+        allyBotData[3].status = getAllyStatus(3);
+        allyBotData[4].status = getAllyStatus(4);
+        allyBotData[5].status = getAllyStatus(5);
+        allyBotData[6].status = getAllyStatus(6);
+        allyBotData[7].status = getAllyStatus(7);
+        allyBotData[8].status = getAllyStatus(8);
+        allyBotData[9].status = getAllyStatus(9);
+        allyBotData[10].status = getAllyStatus(10);
+        allyBotData[11].status = getAllyStatus(11);
+        allyBotData[12].status = getAllyStatus(12);
+        allyBotData[13].status = getAllyStatus(13);
+        allyBotData[14].status = getAllyStatus(14);
+        allyBotData[15].status = getAllyStatus(15);
+        allyBotData[16].status = getAllyStatus(16);
+        allyBotData[17].status = getAllyStatus(17);
+        allyBotData[18].status = getAllyStatus(18);
+        allyBotData[19].status = getAllyStatus(19);
+        allyBotData[20].status = getAllyStatus(20);
+        allyBotData[21].status = getAllyStatus(21);
+        allyBotData[22].status = getAllyStatus(22);
+        allyBotData[23].status = getAllyStatus(23);
+        allyBotData[24].status = getAllyStatus(24);
+        allyBotData[25].status = getAllyStatus(25);
+        allyBotData[26].status = getAllyStatus(26);
+        allyBotData[27].status = getAllyStatus(27);
+        allyBotData[28].status = getAllyStatus(28);
+        allyBotData[29].status = getAllyStatus(29);
+        allyBotData[30].status = getAllyStatus(30);
+        allyBotData[31].status = getAllyStatus(31);
+        allyBotData[32].status = getAllyStatus(32);
+        allyBotData[33].status = getAllyStatus(33);
+        allyBotData[34].status = getAllyStatus(34);
+        allyBotData[35].status = getAllyStatus(35);
+        allyBotData[36].status = getAllyStatus(36);
+        allyBotData[37].status = getAllyStatus(37);
+        allyBotData[38].status = getAllyStatus(38);
+        allyBotData[39].status = getAllyStatus(39);
+        allyBotData[40].status = getAllyStatus(40);
+        allyBotData[41].status = getAllyStatus(41);
+        allyBotData[42].status = getAllyStatus(42);
+        allyBotData[43].status = getAllyStatus(43);
+        allyBotData[44].status = getAllyStatus(44);
+        allyBotData[45].status = getAllyStatus(45);
+        allyBotData[46].status = getAllyStatus(46);
+        allyBotData[47].status = getAllyStatus(47);
+        allyBotData[48].status = getAllyStatus(48);
+        allyBotData[49].status = getAllyStatus(49);
     }
-    
     // can use individually
     private static int getAllyStatus(int idx) {
-        return (bufferPool[allyIdxToStatusSlot(idx)] >> allyIdxToStatusBitShift(idx)) & Utils.BASIC_MASKS[ALLY_STATUS_BITLEN];
+        return readBits(bufferPool[allyIdxToStatusSlot(idx)], allyIdxToStatusBitShift(idx), ALLY_STATUS_BITLEN);
     }
         // helper: converts bot index (0-49) to index for buffer pool
         private static int allyIdxToStatusSlot(int idx) {
@@ -641,21 +724,31 @@ public class Comms {
         // evaluate stuff
         // resetBuilderMessage(idx);
     }
-
+    private static void setBuilderLocation(int builderNumber, MapLocation location) {
+        int message = bufferPool[BUILDER_IDX + builderNumber];
+        if (location == null) writeToBufferPool(BUILDER_IDX + builderNumber, overwriteBits(message, Utils.BASIC_MASKS[8], 0, 8));
+        else writeToBufferPool(BUILDER_IDX + builderNumber, overwriteBits(message, Utils.locationToSector(location), 0, 8));
+    }
 }
 
 
-class BotInfo {
+class BotData {
     final int NEUTRAL = 0;
     final int ATTACK = 1;
     final int DEFEND = 2;
     final int STUCK = 3;
+
+    final int SACRIFICE = 6;
+    final int DEAD = 7;
     
+    RobotInfo recentRobotInfo;
+    int robotInfoTurn;
+
     int status;
     int priority;
     int moveOrder;
 
-    public BotInfo() {
+    public BotData() {
         status = NEUTRAL;
         priority = 0;
         moveOrder = -1;
@@ -663,7 +756,7 @@ class BotInfo {
 }
 
 class SquadronInfo {
-    Sector sectorLocation;
+    int currentSector;
 
     public SquadronInfo() {
 
@@ -678,34 +771,17 @@ class SectorInfo {
     }
 }
 
-class AllyFlagInfo {
-    FlagInfo flagInfo;
+class FlagData {
+    FlagInfo recentFlagInfo;
+    int flagInfoTurn;
 
     MapLocation spawnLocation;
-    boolean stolen;
-    MapLocation currentLocation;
+    boolean taken;
+    int currentSector;
     boolean captured;
 
-    public AllyFlagInfo(MapLocation spawn) {
+    public FlagData() {
         captured = false;
-        spawnLocation = spawn;
-        stolen = true;
-    }
-}
-
-class EnemyFlagInfo {
-    FlagInfo flagInfo;
-   
-    boolean spawnKnown;
-    MapLocation spawnLocation;
-    boolean stealing;
-    MapLocation currentLocation;
-    boolean captured;
-
-
-    public EnemyFlagInfo() {
-        captured = false;
-        spawnKnown = false;
-        stealing = false;
+        taken = true;
     }
 }
