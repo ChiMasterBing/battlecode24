@@ -28,7 +28,7 @@ public class Attacker extends Robot{
     public void turn() throws GameActionException{
         premoveSetGlobals();
         checkPickupFlag();
-        checkBuildTraps();
+//        checkBuildTraps();
         updateCurrentTarget();
         prevEnemies--;
         if(enemyRobots.length>0){
@@ -36,16 +36,17 @@ public class Attacker extends Robot{
         }
         attackLogic();
         attackLogic();
-        if((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&prevEnemies<=0) {
+        if((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&enemyRobots.length==0) {
             tryHeal();
         }
 
         movement();
         postmoveSetGlobals();
-        checkBuildTraps();
+//        checkBuildTraps();
         attackLogic();
         attackLogic();
-        if(prevEnemies<=0&&(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)){
+        if(prevEnemies<=0&&enemyRobots.length==0){
+            rc.setIndicatorString("my heal levl"+rc.getExperience(SkillType.HEAL));
             tryHeal();
         }
         tryFill();
@@ -70,7 +71,7 @@ public class Attacker extends Robot{
     int[] myInfoUsed = {-1, -1, -1};
     public void callDefense() throws GameActionException {
         int score = Math.min(Math.max(friendlyRobots.length - 2 * enemyRobots.length + 8, 0), 15);
-        rc.setIndicatorString(score + " <--");
+//        rc.setIndicatorString(score + " <--");
         if (score < 8) {
             int d1 = 10000, d2 = d1, d3 = d1;
             if (Comms.myFlagExists(0))
@@ -255,6 +256,9 @@ public class Attacker extends Robot{
             explorePtr = 0;
             return;
         }
+        if(rc.getHealth()<240){
+            bugNav.move(closestSpawn);
+        }
         int ret = 0;
         for(RobotInfo i: closeFriendlyRobots){
             if(i.getLocation().distanceSquaredTo(myLoc)<2){
@@ -386,7 +390,7 @@ public class Attacker extends Robot{
 
         if(bestHeal != null && rc.canHeal(bestHeal)) {
             rc.heal(bestHeal);
-            rc.setIndicatorString("I healed " + bestHeal);
+//            rc.setIndicatorString("I healed " + bestHeal);
         }
     }
 
@@ -545,10 +549,11 @@ public class Attacker extends Robot{
     public void tryFill() throws GameActionException {
         if (!rc.isActionReady()) return;
         if (roundNumber > 0 && enemyRobots.length == 0) {
-            MapInfo[] water = rc.senseNearbyMapInfos(3);
+            MapInfo[] water = rc.senseNearbyMapInfos(2);
             for (MapInfo w:water) {
-                if (w.isWater() && rc.canFill(w.getMapLocation()))  {
-                    rc.fill(w.getMapLocation());
+                MapLocation fillLoc = w.getMapLocation();
+                if (w.isWater()&&(fillLoc.x+fillLoc.y)%2==1 && rc.canFill(fillLoc))  {
+                    rc.fill(fillLoc);
                     return;
                 }
             }
@@ -577,7 +582,7 @@ public class Attacker extends Robot{
         }
         if((rc.getHealth() < 240 || friendlyRobots.length < enemyRobots.length) && !tooCloseToSpawn){
 //            BFSController.move(rc, closestSpawn);
-            bugNav.move(closestSpawn);
+            BFSController.move(rc, opposite);
 //            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
