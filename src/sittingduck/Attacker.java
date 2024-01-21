@@ -30,7 +30,8 @@ public class Attacker extends Robot{
         checkBuildTraps();
         updateCurrentTarget();
         attackLogic();
-        if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3) {
+        attackLogic();
+        if((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&enemyRobots.length==0) {
             tryHeal();
         }
 
@@ -38,7 +39,8 @@ public class Attacker extends Robot{
         postmoveSetGlobals();
         checkBuildTraps();
         attackLogic();
-        if(enemyRobots.length==0||rc.getLevel(SkillType.HEAL)>3){
+        attackLogic();
+        if(enemyRobots.length==0&&(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)){
             tryHeal();
         }
         tryFill();
@@ -114,7 +116,7 @@ public class Attacker extends Robot{
                     myInfoUsed[2] = score;
                 }
             }
-            
+
         } else {
             if (myInfoUsed[0] == Comms.readFlagStatus(0)) {
                 Comms.writeFlagStatus(0, 8);
@@ -208,7 +210,7 @@ public class Attacker extends Robot{
             }
         }
         if (crummy.length > 0 && roundNumber < 250 && crummy.length > (friendlyRobots.length+1)) {
-            BFSController.move(rc, crum);
+//            BFSController.move(rc, crum);
             if (rc.isMovementReady()) bugNav.move(crum);
             return true;
         }
@@ -220,15 +222,15 @@ public class Attacker extends Robot{
             return true;
         }
         else if (roundNumber < 200) {
-            //minimize dam distance  
+            //minimize dam distance
             //
             MapInfo[] dams = rc.senseNearbyMapInfos(2);
             for (MapInfo m:dams) {
                 if (m.isDam() && m.getMapLocation().distanceSquaredTo(currentTarget) <= myLoc.distanceSquaredTo(currentTarget)) return true;
             }
-            
+
             if (rc.isMovementReady()) {
-                BFSController.move(rc, currentTarget);
+//                BFSController.move(rc, currentTarget);
                 bugNav.move(currentTarget);
             }
         }
@@ -247,6 +249,17 @@ public class Attacker extends Robot{
         if (attackMicro()) {
             explorePtr = 0;
             return;
+        }
+        int ret = 0;
+        for(RobotInfo i: closeFriendlyRobots){
+            if(i.getLocation().distanceSquaredTo(myLoc)<2){
+                ret++;
+                if(ret>2) {
+                    Direction oppDir = i.getLocation().directionTo(myLoc);
+                    bugNav.move(myLoc.add(oppDir).add(oppDir));
+                    return;
+                }
+            }
         }
 
         if(lowestHealthLoc!=null){
@@ -270,7 +283,7 @@ public class Attacker extends Robot{
         int lowestHealth = 1000;
         lowestHealthLoc = null;
         for(RobotInfo ri : friendlyRobots){
-            if(ri.getHealth()<lowestHealth && myLoc.distanceSquaredTo(ri.getLocation()) > 2){ //> 2 or else will bugfind interfere || 
+            if(ri.getHealth()<lowestHealth && myLoc.distanceSquaredTo(ri.getLocation()) > 2){ //> 2 or else will bugfind interfere ||
                 lowestHealth = ri.getHealth();
                 lowestHealthLoc = ri.getLocation();
             }
@@ -359,7 +372,7 @@ public class Attacker extends Robot{
             else if (hp + myHeal > 150) {
                 score += 500;
             }
-            score += (i.getHealLevel() + i.getAttackLevel()) * 10;
+            score += (i.getHealLevel() + 2*i.getAttackLevel()) * 7;
             if (score > bestScore) {
                 bestScore = score;
                 bestHeal = i.getLocation();
@@ -472,7 +485,7 @@ public class Attacker extends Robot{
     int[] exploreDX = {3, 0, -3, 0, 6, 0, -6, 0, 9, 0, -9, 0};
     int[] exploreDY = {0, 3, 0, -3, 0, 6, 0, -6, 0, 9, 0, -9};
     int explorePtr = 0;
-    public MapLocation exploreTarget(MapLocation target) throws GameActionException { 
+    public MapLocation exploreTarget(MapLocation target) throws GameActionException {
         //we've reached our target but see no flag... now what?
         if (explorePtr >= exploreDX.length) return target;
         MapLocation res = target.translate(exploreDX[explorePtr], exploreDY[explorePtr]);
@@ -501,7 +514,7 @@ public class Attacker extends Robot{
                     }
                     if (myLoc.equals(currentTarget)) {
                         currentTarget = exploreTarget(myLoc);
-                    } 
+                    }
                 }
             }
         }
@@ -523,14 +536,15 @@ public class Attacker extends Robot{
             rc.attack(attackLoc);
         }
     }
-    
+
     public void tryFill() throws GameActionException {
         if (!rc.isActionReady()) return;
         if (roundNumber > 0 && enemyRobots.length == 0) {
-            MapInfo[] water = rc.senseNearbyMapInfos(3);
+            MapInfo[] water = rc.senseNearbyMapInfos(2);
             for (MapInfo w:water) {
-                if (w.isWater() && rc.canFill(w.getMapLocation()))  {
-                    rc.fill(w.getMapLocation());
+                MapLocation fillLoc = w.getMapLocation();
+                if (w.isWater()&&(fillLoc.x+fillLoc.y)%2==1 && rc.canFill(fillLoc))  {
+                    rc.fill(fillLoc);
                     return;
                 }
             }
@@ -550,15 +564,16 @@ public class Attacker extends Robot{
         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
         MapLocation opposite = myLoc.add(oppdir).add(oppdir);
 
-//         if(rc.getHealth()<mosthealth&&!tooCloseToSpawn){
-//             BFSController.move(rc, opposite);
-// //            BFSController.move(rc, opposite);
-//             if (!rc.isMovementReady()) return true;
-//             // if (rc.isMovementReady()) return false;
-//             // else return true;
-//         }
-        if((rc.getHealth() < 240 || friendlyRobots.length < enemyRobots.length) && !tooCloseToSpawn){
+        if(cooldown>=10&&rc.getHealth()<mosthealth&&!tooCloseToSpawn){
             BFSController.move(rc, opposite);
+            //            BFSController.move(rc, opposite);
+            if (!rc.isMovementReady()) return true;
+            // if (rc.isMovementReady()) return false;
+            // else return true;
+        }
+        if((rc.getHealth() < 240 || friendlyRobots.length < enemyRobots.length) && !tooCloseToSpawn){
+//            BFSController.move(rc, closestSpawn);
+            bugNav.move(closestSpawn);
 //            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
@@ -566,8 +581,8 @@ public class Attacker extends Robot{
         }
 
         if(cooldown>=10&&deadMeat>0){
-//            bugNav.move(opposite);
-            BFSController.move(rc, opposite);
+            bugNav.move(opposite);
+//            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
             // else return true;
@@ -579,8 +594,8 @@ public class Attacker extends Robot{
                     if(rc.getLevel(SkillType.HEAL)>3){
                         return false;
                     }
-                    BFSController.move(rc, weakestEnemy); 
-                    if (rc.isMovementReady() && friendlyRobots.length - enemyRobots.length > 4) { 
+                    BFSController.move(rc, weakestEnemy);
+                    if (rc.isMovementReady() && friendlyRobots.length - enemyRobots.length > 4) {
                         bugNav.move(currentTarget);
                         return true;
                     }
@@ -588,7 +603,7 @@ public class Attacker extends Robot{
                         return true;
                     }
                 }else if(minEnemyDist<2&&!tooCloseToSpawn){
-                    bugNav.move(opposite);
+                    BFSController.move(rc, opposite);
                     return true;
 //                    BFSController.move(rc,opposite); return true;
                 }
@@ -601,14 +616,14 @@ public class Attacker extends Robot{
                     BFSController.move(rc, weakestEnemy); return true;
                 }
                 if (minEnemyDist <=4&&!tooCloseToSpawn) {
-                    bugNav.move(opposite);
+                    BFSController.move(rc, opposite);
                     return true;
 //                    BFSController.move(rc,opposite); return true;
                 }
             }
             else if(cooldown<30){
                 if (minEnemyDist < 12&&!tooCloseToSpawn) {
-                    bugNav.move(opposite);
+                    BFSController.move(rc, opposite);
                     return true;
 //                    BFSController.move(rc,opposite); return true;
                 }else{
@@ -618,7 +633,7 @@ public class Attacker extends Robot{
                     BFSController.move(rc, weakestEnemy); return true;
                 }
             }else{
-                bugNav.move(opposite);
+                BFSController.move(rc, opposite);
                 return true;
 
 //                BFSController.move(rc, opposite); return true;

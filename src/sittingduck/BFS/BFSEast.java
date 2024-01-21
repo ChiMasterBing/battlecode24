@@ -500,7 +500,6 @@ public class BFSEast {
                 movable26 = true;
             }
         }
-
         if(ret40!=10000){
             if(movable31){
                 if(wet31){
@@ -546,28 +545,28 @@ public class BFSEast {
 
             if(movable50){
                 if(wet50){
+                    if(ret50>3+ret40){
+                        d50=Direction.SOUTHEAST;
+                        ret50 = 3+ret40;
+                    }
+                }else{
                     if(ret50>2+ret40){
                         d50=Direction.SOUTHEAST;
                         ret50 = 2+ret40;
-                    }
-                }else{
-                    if(ret50>1+ret40){
-                        d50=Direction.SOUTHEAST;
-                        ret50 = 1+ret40;
                     }
                 }
             }
 
             if(movable32){
                 if(wet32){
+                    if(ret32>3+ret40){
+                        d32=Direction.NORTHEAST;
+                        ret32 = 3+ret40;
+                    }
+                }else{
                     if(ret32>2+ret40){
                         d32=Direction.NORTHEAST;
                         ret32 = 2+ret40;
-                    }
-                }else{
-                    if(ret32>1+ret40){
-                        d32=Direction.NORTHEAST;
-                        ret32 = 1+ret40;
                     }
                 }
             }
@@ -2707,6 +2706,7 @@ public class BFSEast {
             }
 
         }
+
         double initialDist = Math.sqrt(m40.distanceSquaredTo(target));
         Direction ans= Direction.CENTER;
         double cmax= 0;
