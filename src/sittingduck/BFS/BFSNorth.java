@@ -532,28 +532,28 @@ public class BFSNorth {
 
             if(movable32){
                 if(wet32){
+                    if(ret32>3+ret40){
+                        d32=Direction.NORTHEAST;
+                        ret32 = 3+ret40;
+                    }
+                }else{
                     if(ret32>2+ret40){
                         d32=Direction.NORTHEAST;
                         ret32 = 2+ret40;
-                    }
-                }else{
-                    if(ret32>1+ret40){
-                        d32=Direction.NORTHEAST;
-                        ret32 = 1+ret40;
                     }
                 }
             }
 
             if(movable30){
                 if(wet30){
+                    if(ret30>3+ret40){
+                        d30=Direction.NORTHWEST;
+                        ret30 = 3+ret40;
+                    }
+                }else{
                     if(ret30>2+ret40){
                         d30=Direction.NORTHWEST;
                         ret30 = 2+ret40;
-                    }
-                }else{
-                    if(ret30>1+ret40){
-                        d30=Direction.NORTHWEST;
-                        ret30 = 1+ret40;
                     }
                 }
             }
@@ -2707,6 +2707,7 @@ public class BFSNorth {
             }
 
         }
+
         double initialDist = Math.sqrt(m40.distanceSquaredTo(target));
         Direction ans= Direction.CENTER;
         double cmax= 0;

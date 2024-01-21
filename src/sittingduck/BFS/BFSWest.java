@@ -499,7 +499,6 @@ public class BFSWest {
                 movable27 = true;
             }
         }
-
         if(ret40!=10000){
             if(movable31){
                 if(wet31){
@@ -531,28 +530,28 @@ public class BFSWest {
 
             if(movable48){
                 if(wet48){
+                    if(ret48>3+ret40){
+                        d48=Direction.SOUTHWEST;
+                        ret48 = 3+ret40;
+                    }
+                }else{
                     if(ret48>2+ret40){
                         d48=Direction.SOUTHWEST;
                         ret48 = 2+ret40;
-                    }
-                }else{
-                    if(ret48>1+ret40){
-                        d48=Direction.SOUTHWEST;
-                        ret48 = 1+ret40;
                     }
                 }
             }
 
             if(movable30){
                 if(wet30){
+                    if(ret30>3+ret40){
+                        d30=Direction.NORTHWEST;
+                        ret30 = 3+ret40;
+                    }
+                }else{
                     if(ret30>2+ret40){
                         d30=Direction.NORTHWEST;
                         ret30 = 2+ret40;
-                    }
-                }else{
-                    if(ret30>1+ret40){
-                        d30=Direction.NORTHWEST;
-                        ret30 = 1+ret40;
                     }
                 }
             }
@@ -2706,6 +2705,7 @@ public class BFSWest {
             }
 
         }
+
         double initialDist = Math.sqrt(m40.distanceSquaredTo(target));
         Direction ans= Direction.CENTER;
         double cmax= 0;
