@@ -1,8 +1,8 @@
 package waxthebuilder;
 
 import battlecode.common.*;
-import sittingduck.fast.FastIntSet;
-import sittingduck.fast.FastLocSet;
+import waxthebuilder.fast.FastIntSet;
+import waxthebuilder.fast.FastLocSet;
 
 public class bugNav {
     static RobotController rc;
@@ -41,7 +41,7 @@ public class bugNav {
 
     static public void move(MapLocation loc) {
         initTurn();
-        Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
+//        Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
         if (!rc.isMovementReady()) return;
         target = loc;
         nav();

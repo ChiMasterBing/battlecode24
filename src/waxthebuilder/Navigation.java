@@ -2,7 +2,7 @@ package waxthebuilder;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import sittingduck.fast.FastQueue;
+import waxthebuilder.fast.FastQueue;
 
 public class Navigation {
     static RobotController rc;

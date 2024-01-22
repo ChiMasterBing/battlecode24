@@ -4,7 +4,7 @@ import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
-import sittingduck.BFS.*;
+import waxthebuilder.BFS.*;
 
 public class BFSController {
     public static void move(RobotController rc, MapLocation target) throws GameActionException {

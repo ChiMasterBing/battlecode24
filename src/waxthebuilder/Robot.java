@@ -3,7 +3,7 @@ package waxthebuilder;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import sittingduck.fast.FastLocSet;
+import waxthebuilder.fast.FastLocSet;
 
 public abstract class Robot {
     RobotController rc;
@@ -301,6 +301,6 @@ public abstract class Robot {
             }
         }
 
-        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
+//        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
     }
 }

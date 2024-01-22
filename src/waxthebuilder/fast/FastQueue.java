@@ -46,6 +46,13 @@ public class FastQueue<T> {
             return null;
         return buf[l];
     }
+    public T get(int idx){
+        if(idx<size()) {
+            return buf[idx + l];
+        }else{
+            return null;
+        }
+    }
 
     public T poll() {
         if (l == r)

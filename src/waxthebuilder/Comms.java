@@ -155,6 +155,7 @@ public class Comms {
         dirtyFlags = new boolean[64];
 
         messageQueue = new FastQueue<Integer>(64);
+        squadronMessages = new FastQueue<Integer>();
         //priorityMessageQueue = new FastQueue<Integer>(64);
     }
 
@@ -168,6 +169,7 @@ public class Comms {
 
     public static void commsStartTurn(int round) throws GameActionException {
         initBufferPool();
+        squadronMessages = new FastQueue<Integer>();
 
         roundNumber = round;
 
@@ -189,22 +191,23 @@ public class Comms {
         //     parseEnemyFlags();
         // }
         // parseAllyStatuses();
-        // if (roundNumber > 50) {
+         if (roundNumber > 150) {
         //     readSectorMessages();
-        //     readSquadronMessages();
-        // }
+             readSquadronMessages();
+         }
         // if (true /*& Robot.type = BUILDER*/) parseBuilderMessages();
     }
 
     public static void commsEndTurn() throws GameActionException {
-        if (roundNumber < 2) {
+        if (roundNumber < 4) {
             flushBufferPool();
             return;
         }
         
-        writeRegularUpdate();
         //flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
+        writeRegularUpdate();
+
 
         // sends all messages at once
         flushBufferPool();
@@ -244,12 +247,20 @@ public class Comms {
     public static void updateRobotID(int flagID, int robotID){
         for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
             if(bufferPool[i]==flagID){
-                writeToBufferPool(ROBOT_ID_HEADER+i, robotID);
+                writeToBufferPool(ROBOT_ID_HEADER+i-FLAG_ID_HEADER, robotID);
             }
         }
     }
-    public static void summonSquadron(int squadronID, int sector) {
-
+    public static void summonSquadron(MapLocation myLoc, int danger) {//danger is equal to enemy count atm. SECTOR SIZE = 2x2
+        int message = (myLoc.x/2);
+        message = (message<<5)|(myLoc.y/2);
+        message = (message<<6)|danger;
+//        if(message>65535){
+//            rc.resign();
+//        }
+//        System.out.println(myLoc);
+//        System.out.println("MESSAGE"+message);
+        writeSquadronMessageToQueue(message);
     }
 
     public static void writeBuilderLocation(MapLocation m, int myMoveNumber) throws GameActionException {
@@ -267,15 +278,15 @@ public class Comms {
 
     public static int readSymmetry() { //0 bit = symm could be valid, 1 = invalid
         if (isSymmetry(Navigation.R_SYM)) return Navigation.R_SYM;
-        if (isSymmetry(Navigation.R_SYM)) return Navigation.H_SYM;
-        if (isSymmetry(Navigation.R_SYM)) return Navigation.V_SYM;
+        if (isSymmetry(Navigation.H_SYM)) return Navigation.H_SYM;
+        if (isSymmetry(Navigation.V_SYM)) return Navigation.V_SYM;
         //this should never happen
         return -1;
     }
     public static boolean closeToFlag(int flagID, int robotID){
         for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
             if(bufferPool[i]==flagID){
-                return (bufferPool[ROBOT_ID_HEADER+i]==robotID);
+                return (bufferPool[ROBOT_ID_HEADER+i-FLAG_ID_HEADER]==robotID);
             }
         }
         return false;
@@ -283,7 +294,7 @@ public class Comms {
     public static boolean assignedToOther(int flagID, int robotID){//probably can merge this method with top one
         for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
             if(bufferPool[i]==flagID){
-                return (bufferPool[ROBOT_ID_HEADER+i]==robotID);
+                return (bufferPool[ROBOT_ID_HEADER+i-FLAG_ID_HEADER]==robotID);
             }
         }
         return false;
@@ -318,7 +329,7 @@ public class Comms {
         assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large";
         int sectionWiped = wipeBits(message, left, length);
-        return sectionWiped & (newValue << left);
+        return sectionWiped | (newValue << left);
     }
 
     private static int readBits(int message, int left, int length) {
@@ -622,17 +633,25 @@ public class Comms {
 
         // queue header update
         writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 6));
-        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 6));
+        int value = (squadronMessagesLen<<6) | (squadronMessagesOffset);
+        if(value<0){
+            System.out.println(squadronMessagesOffset);
+            System.out.println(squadronMessagesLen);
+            System.out.println(value);
+//            rc.resign();
+        }
+//        System.out.println((squadronMessagesOffset | (squadronMessagesLen << 6)));
+//        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 6));
+
+        writeToBufferPool(SQUADRON_QUEUE_HEADER, value);
     }
 
     private static void writeSquadronMessageToQueue(int message) {
-        int bufferLocation = SQUADRON_QUEUE_IDX + (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
-        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SQUADRON);
+        messageQueue.add((message << 2) | QUEUE_SQUADRON);
     }
 
     private static void writeSectorMessageToQueue(int message) {
-        int bufferLocation = SECTOR_QUEUE_IDX + (sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
-        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SECTOR);
+        messageQueue.add((message << 2) | QUEUE_SECTOR);
     }
 
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
@@ -641,23 +660,27 @@ public class Comms {
 
             int encodedMessage = queue.poll();
             int queueType = encodedMessage & Utils.BASIC_MASKS[2];
+            int index = 63;
             switch (queueType) {
                 case QUEUE_SQUADRON:
+                    if (squadronMessagesLen >= SQUADRON_QUEUE_LEN) break;
+                    index = SQUADRON_QUEUE_IDX+(squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
                     squadronMessagesSent += 1;
                     squadronMessagesLen += 1;
+                    int message = encodedMessage >> 2;
+                    writeToBufferPool(index, message);
                     break;
                 case QUEUE_SECTOR:
+                    if (sectorMessagesLen >= SECTOR_QUEUE_LEN) break;
+                    index = SECTOR_QUEUE_IDX+(sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
                     sectorMessagesSent += 1;
                     sectorMessagesLen += 1;
+                    int message2 = encodedMessage >> 2;
+                    writeToBufferPool(index, message2);
                     break;
             }
-            int index = (encodedMessage >> 2) & Utils.BASIC_MASKS[6];
-            int message = encodedMessage >> 8;
-
-            writeToBufferPool(index, message);
         }
     }
-    
     // ------------------------------------------- //
     // read methods: analyzes buffer ints for data //
     // ------------------------------------------- //
@@ -736,13 +759,20 @@ public class Comms {
     }
 
     private static void readSquadronMessages()  {
+//        System.out.println(bufferPool[SQUADRON_QUEUE_HEADER]);
         squadronMessagesOffset = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 0, 6);
         squadronMessagesOffset += squadronMessagesSent;
         squadronMessagesOffset %= SQUADRON_QUEUE_LEN;
         squadronMessagesLen = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 6, 6);
+//        assert (squadronMessagesLen>=squadronMessagesSent);
+        if(squadronMessagesSent>squadronMessagesLen) {
+            System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
+            squadronMessagesLen = squadronMessagesSent;//SUS
+//            rc.resign();
+        }
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;
-        
+
         for (int offset = squadronMessagesOffset; offset < squadronMessagesOffset + squadronMessagesLen; offset++) {
             squadronMessages.add(bufferPool[SQUADRON_QUEUE_IDX + offset % SQUADRON_QUEUE_LEN]);
         }
