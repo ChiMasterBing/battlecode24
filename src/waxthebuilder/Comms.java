@@ -1,6 +1,7 @@
 package waxthebuilder;
 
 // battlecode package
+
 import battlecode.common.*;
 
 // custom package
@@ -19,12 +20,17 @@ FLAGS   1 -> 6
 S1-3    ally flags : sector location (8)
 S4-6    enemy flags : sector location (8)
 
-SQUAD   7 -> 27
+FLAG PASSING 7-12:
+7-9     Robot ID
+10-12   Flag ID
+
+SQUAD   13 -> 30
 Squadron updates (move, attack, retreat, protect, build, stuck, summons, etc.)
 S5      queue usage idx : offset (5), length (5)
 S6-27   queue for updates
 
-SECTOR  28 -> 48
+
+SECTOR  31 -> 48
 Sector updates (danger level, pathing blockage, etc.)
 first two bits: 00 --> flag stolen
 consider round info as recent --> will only be tens and ones digit of current rounds
@@ -60,14 +66,18 @@ public class Comms {
 
     final static int FLAG_NEUTRAL = 0;
     final static int FLAG_TAKEN = 1;
+    final static int FLAG_ID_HEADER = 7;
+    final static int NUM_FLAGS = 3;
+    final static int ROBOT_ID_HEADER = 10;
 
-    final static int SQUADRON_QUEUE_HEADER = 7;
-    final static int SQUADRON_QUEUE_IDX = 8;
-    final static int SQUADRON_QUEUE_LEN = 20;
 
-    final static int SECTOR_QUEUE_HEADER = 28;
-    final static int SECTOR_QUEUE_IDX = 29;
-    final static int SECTOR_QUEUE_LEN = 20;
+    final static int SQUADRON_QUEUE_HEADER = 13;
+    final static int SQUADRON_QUEUE_IDX = 14;
+    final static int SQUADRON_QUEUE_LEN = 17;
+
+    final static int SECTOR_QUEUE_HEADER = 31;
+    final static int SECTOR_QUEUE_IDX = 32;
+    final static int SECTOR_QUEUE_LEN = 17;
 
     final static int QUEUE_SQUADRON = 0;
     final static int QUEUE_SECTOR = 1;
@@ -131,7 +141,7 @@ public class Comms {
         allyFlagData = new FlagData[3];
         enemyFlagData = new FlagData[3];
         flagsCaptured = 0;
-    
+
         sectorInfo = new SectorInfo[400];
         sectorMessagesOffset = 0;
         sectorMessagesLen = 0;
@@ -166,6 +176,9 @@ public class Comms {
             return;
         } else if (roundNumber == 2) {
             readBotIDs();
+            return;
+        }else if(roundNumber==3){
+            wipeBotID();
             return;
         }
 
@@ -218,7 +231,23 @@ public class Comms {
     public static void distressFlag() {
 
     }
-
+    public static void updateFlagID(int flagID){
+        for(int i= FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
+            if(bufferPool[i]==0){
+                writeToBufferPool(i, flagID);
+                return;
+            }else if(bufferPool[i]==flagID){
+                return;
+            }
+        }
+    }
+    public static void updateRobotID(int flagID, int robotID){
+        for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
+            if(bufferPool[i]==flagID){
+                writeToBufferPool(ROBOT_ID_HEADER+i, robotID);
+            }
+        }
+    }
     public static void summonSquadron(int squadronID, int sector) {
 
     }
@@ -242,6 +271,22 @@ public class Comms {
         if (isSymmetry(Navigation.R_SYM)) return Navigation.V_SYM;
         //this should never happen
         return -1;
+    }
+    public static boolean closeToFlag(int flagID, int robotID){
+        for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
+            if(bufferPool[i]==flagID){
+                return (bufferPool[ROBOT_ID_HEADER+i]==robotID);
+            }
+        }
+        return false;
+    }
+    public static boolean assignedToOther(int flagID, int robotID){//probably can merge this method with top one
+        for(int i = FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
+            if(bufferPool[i]==flagID){
+                return (bufferPool[ROBOT_ID_HEADER+i]==robotID);
+            }
+        }
+        return false;
     }
 
     public static MapLocation[] getBuilderLocations() {
@@ -494,8 +539,11 @@ public class Comms {
         assert roundNumber == 1 : "Attempted to write bot ID to array when not turn 1.";
         
         myMoveOrder = bufferPool[0];
-        writeToBufferPool(0, myMoveOrder + 1);
+        writeToBufferPool(MAIN_IDX, myMoveOrder + 1);
         writeToBufferPool(myMoveOrder + 1, rc.getID());
+        if(myMoveOrder==49){
+            writeToBufferPool(MAIN_IDX, 0);
+        }
     }
     // for turn 2 only
     private static void readBotIDs() {
@@ -559,7 +607,9 @@ public class Comms {
             moveOrderToID[idx] = botID;
             IDToMoveOrder.add(botID, idx);
         }
-
+    private static void wipeBotID(){
+        writeToBufferPool(myMoveOrder+1, 0);
+    }
     // for all turns after
     private static void writeRegularUpdate() {
         // regular update contains:
@@ -667,6 +717,7 @@ public class Comms {
         parseSingleFlag(ENEMY_FLAG_IDX + 1, enemyFlagData, 1);
         parseSingleFlag(ENEMY_FLAG_IDX + 2, enemyFlagData, 2);
     }
+
 
     private static void readSectorMessages() {
         sectorMessagesOffset = readBits(bufferPool[SECTOR_QUEUE_HEADER], 0, 6);
