@@ -1,4 +1,4 @@
-package waxthebuilder;
+package waxoldbuilder;
 import java.util.Arrays;
 
 import battlecode.common.*;
@@ -16,7 +16,8 @@ public class Navigation {
     public static final int R_SYM = 2;
     static final int NO_WATER_ROUND = 0; 
     static final int SYMM_BYTECODE = 5000; // do not run this if < 5000 bc
-    
+
+    static boolean[] symmetries = {true, true, true};
     static int[] spawnScores = {0, 0, 0};
     private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); 
 
