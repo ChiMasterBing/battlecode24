@@ -6,7 +6,7 @@ public strictfp class RobotPlayer {
     static int turnCount = 0;
     static final Random rng = new Random(6147);
 
-    public static void run(RobotController rc) throws GameActionException {
+    public static void run(RobotController rc) throws Exception {
         Robot robot = null; //= new Attacker(rc); //~6000 bytecode
         int currentMoveNumber = rc.readSharedArray(0);
         if (currentMoveNumber == 2 || currentMoveNumber == 12 || currentMoveNumber == 22) {

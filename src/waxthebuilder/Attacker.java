@@ -39,7 +39,7 @@ public class Attacker extends Robot{
         }
         attackLogic();
         attackLogic();
-        if((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&numberOfEnemies==0) {
+        if(rc.getHealth()<=450||(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&numberOfEnemies==0) {
             tryHeal();
         }
 
@@ -50,7 +50,7 @@ public class Attacker extends Robot{
         checkBuildTraps();
         attackLogic();
         attackLogic();
-        if(closestEnemy == null || myLoc.distanceSquaredTo(closestEnemy) > 9){
+        if(closestEnemy == null || myLoc.distanceSquaredTo(closestEnemy) > 9||rc.getHealth()<=450){
 //            rc.setIndicatorString("my heal levl"+rc.getExperience(SkillType.HEAL));
             tryHeal();
         }
@@ -562,8 +562,8 @@ public class Attacker extends Robot{
 
         if(roundNumber>200) {
             MapLocation nxt;
-            int threshold = Math.max(3, 10 - prevTurnCrumbs/1000);
-            int threshold2 = Math.max(2, 5 - rc.getCrumbs()/1000);
+            int threshold = Math.max(2, 5 - rc.getCrumbs()/1000);
+            int threshold2 = Math.max(2, 5-rc.getCrumbs()/1000);
 
             // if (rc.senseMapInfo(myLoc).getTeamTerritory() != rc.getTeam()) {
 
@@ -592,7 +592,10 @@ public class Attacker extends Robot{
                     }
                 }
 
-                int t1 = threshold, t2 = threshold2;
+                int t2 = threshold2;
+                if(rc.senseMapInfo(myLoc).getTeamTerritory()!=rc.getTeam()){
+                    t2= threshold;
+                }
                 int num = rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length;
                 if(num>=t2){
                     MapInfo[] mp = rc.senseNearbyMapInfos(nxt, 4);
@@ -782,10 +785,40 @@ public class Attacker extends Robot{
             }
         }
     }
+    public void chickenBehavior() throws GameActionException{
+        int bestdirVal = -100000000;
+        Direction bestDirection = Direction.CENTER;
+        for(Direction d: allDirections){
+            if(rc.canMove(d)){
+                MapLocation nxt = myLoc.add(d);
+                int enemies = 0;
+                for(RobotInfo ri: enemyRobots){
+                    if(ri.getLocation().distanceSquaredTo(nxt)<11){//or 12
+                        enemies++;
+                    }
+                }
+                int curDirVal = closeFriendlyRobots.length-1000*enemies;
+                if(closeEnemyRobots.length>0){
+                    curDirVal+=100;
+                }
+                if(bestdirVal<curDirVal) {
+                    bestdirVal = curDirVal;
+                    bestDirection = d;
+                }
+            }
+        }
+        rc.setIndicatorString("chicken");
+        if(rc.canMove(bestDirection)){
+            rc.move(bestDirection);
+        }
+    }
     public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
         if (numberOfEnemies == 0) return false;
-
+        if(rc.getHealth()<=450){
+            chickenBehavior();
+            return true;
+        }
         int cooldown = rc.getActionCooldownTurns();
 
         int mosthealth = 0;
@@ -801,6 +834,10 @@ public class Attacker extends Robot{
             if (!rc.isMovementReady()) return true;
             // if (rc.isMovementReady()) return false;
             // else return true;
+        }
+        if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
+            weakestEnemy = myLoc;
+            if(!rc.isMovementReady()) return true;
         }
 
         //GENERAL RETREAT LOGIC

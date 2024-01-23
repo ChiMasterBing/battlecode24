@@ -75,7 +75,7 @@ public class Navigation {
     static MapLocation getVSym(MapLocation loc){ return new MapLocation (loc.x, HEIGHT - loc.y - 1); }
     static MapLocation getRSym(MapLocation loc){ return new MapLocation (WIDTH - loc.x - 1, HEIGHT - loc.y - 1); }
     
-    public static void updateSymm() throws GameActionException {
+    public static void updateSymm() throws Exception {
         boolean isHSYM = Comms.isSymmetry(H_SYM);
         boolean isVSYM = Comms.isSymmetry(V_SYM);
         boolean isRSYM = Comms.isSymmetry(R_SYM);
@@ -198,7 +198,7 @@ public class Navigation {
         else return 2;
     }
 
-    public static void eliminateSpawnSymmetries(MapLocation s1, MapLocation s2, MapLocation s3) throws GameActionException {
+    public static void eliminateSpawnSymmetries(MapLocation s1, MapLocation s2, MapLocation s3) throws Exception {
         MapLocation o1, o2, o3;
         //H_SYM
         o1 = getHSym(s1);

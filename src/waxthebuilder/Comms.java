@@ -437,8 +437,10 @@ public class Comms {
             rc.writeSharedArray(11, bufferPool[11]);
         if (dirtyFlags[12])
             rc.writeSharedArray(12, bufferPool[12]);
-        if (dirtyFlags[13])
+        if (dirtyFlags[13]) {
+//            System.out.println(bufferPool[13]);
             rc.writeSharedArray(13, bufferPool[13]);
+        }
         if (dirtyFlags[14])
             rc.writeSharedArray(14, bufferPool[14]);
         if (dirtyFlags[15])
@@ -634,12 +636,12 @@ public class Comms {
         // queue header update
         writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 6));
         int value = (squadronMessagesLen<<6) | (squadronMessagesOffset);
-        if(value<0){
-            System.out.println(squadronMessagesOffset);
-            System.out.println(squadronMessagesLen);
-            System.out.println(value);
+//        if(value<0){
+//            System.out.println(squadronMessagesOffset);
+//            System.out.println(squadronMessagesLen);
+//            System.out.println(value);
 //            rc.resign();
-        }
+//        }
 //        System.out.println((squadronMessagesOffset | (squadronMessagesLen << 6)));
 //        writeToBufferPool(SQUADRON_QUEUE_HEADER, squadronMessagesOffset | (squadronMessagesLen << 6));
 
@@ -758,7 +760,7 @@ public class Comms {
 
     }
 
-    private static void readSquadronMessages()  {
+    public static void readSquadronMessages()  {
 //        System.out.println(bufferPool[SQUADRON_QUEUE_HEADER]);
         squadronMessagesOffset = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 0, 6);
         squadronMessagesOffset += squadronMessagesSent;
@@ -768,7 +770,7 @@ public class Comms {
         if(squadronMessagesSent>squadronMessagesLen) {
             System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
             squadronMessagesLen = squadronMessagesSent;//SUS
-//            rc.resign();
+            rc.resign();
         }
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;

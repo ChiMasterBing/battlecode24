@@ -25,7 +25,7 @@ public class Attacker extends Robot {
         }
     }
 
-    public void turn() throws GameActionException{
+    public void turn() throws Exception {
         premoveSetGlobals();
         updateCurrentTarget();
         checkPickupFlag();
@@ -51,7 +51,7 @@ public class Attacker extends Robot {
     }
 
     int[] myInfoUsed = {-1, -1, -1};
-    public void deadFunctions() throws GameActionException { //this runs if bot is dead
+    public void deadFunctions() throws Exception { //this runs if bot is dead
         if (myInfoUsed[0] == Comms.readFlagStatus(0)) {
             Comms.writeFlagStatus(0, 8);
             myInfoUsed[0] = -1;
@@ -66,7 +66,7 @@ public class Attacker extends Robot {
         }
     }
 
-    public void callDefense() throws GameActionException {
+    public void callDefense() throws Exception {
         int score = Math.min(Math.max(numberOfFriendlies - 2 * numberOfEnemies + 8, 0), 15);
         if (score < 8) {
             int d1 = 10000, d2 = d1, d3 = d1;
@@ -127,7 +127,7 @@ public class Attacker extends Robot {
         }
     }
 
-    public boolean flagMovementLogic() throws GameActionException {
+    public boolean flagMovementLogic() throws Exception {
         if (rc.hasFlag()){
             for (Direction d:allDirections) {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
@@ -282,7 +282,7 @@ public class Attacker extends Robot {
         }
         return false;
     }
-    public void movement() throws GameActionException {
+    public void movement() throws Exception {
         //if (roundNumber == 1000) rc.resign();
         if(roundNumber>200){
             if(flagMovementLogic()) {

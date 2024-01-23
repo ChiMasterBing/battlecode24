@@ -32,7 +32,7 @@ public abstract class Robot {
         updateSymmetryComputations();
     }
     
-    public void senseGlobals() throws GameActionException {
+    public void senseGlobals() throws Exception {
         flags = rc.senseNearbyFlags(-1); 
         if (roundNumber > 10) { //If we are in range of a spawn zone, check if our flag is still there.
             boolean[] tmp = {false, false, false};
@@ -94,7 +94,7 @@ public abstract class Robot {
         }
     }
 
-    private void commFlagID() throws GameActionException {
+    private void commFlagID() throws Exception {
         for (FlagInfo f:flags) {
             MapLocation floc = f.getLocation();
             if (floc.equals(myFlags[0])) {
@@ -136,10 +136,10 @@ public abstract class Robot {
         }
     }
 
-    public abstract void turn() throws GameActionException;
-    public abstract void deadFunctions() throws GameActionException;
+    public abstract void turn() throws Exception;
+    public abstract void deadFunctions() throws Exception;
 
-    public void spawnedTurn() throws GameActionException {
+    public void spawnedTurn() throws Exception {
         senseGlobals();
         if (roundNumber == 3) {
             commFlagID();
@@ -171,7 +171,7 @@ public abstract class Robot {
         else if (roundNumber == 1800 && rc.canBuyGlobal(GlobalUpgrade.CAPTURING)) rc.buyGlobal(GlobalUpgrade.CAPTURING);
     }
 
-    private void doPreRoundTasks() throws GameActionException {
+    private void doPreRoundTasks() throws Exception {
         switch (roundNumber) {
             case 1:
                 myMoveNumber = Comms.myMoveOrder;
@@ -269,7 +269,7 @@ public abstract class Robot {
         return false;
     }
 
-    public void play() throws GameActionException {
+    public void play() throws Exception {
         roundNumber = rc.getRoundNum();
 
         if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
