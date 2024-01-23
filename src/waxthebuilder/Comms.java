@@ -86,6 +86,7 @@ public class Comms {
     static int moveOrderToID[];
     static FastIntIntMap IDToMoveOrder;
 
+    static int allyStatus[];
     static BotData allyBotData[];
 
     static FlagData allyFlagData[];
@@ -127,6 +128,7 @@ public class Comms {
         moveOrderToID = new int[50];
         IDToMoveOrder = new FastIntIntMap();
 
+        allyStatus = new int[50];
         allyBotData = new BotData[50];
         allyFlagData = new FlagData[3];
         enemyFlagData = new FlagData[3];
@@ -163,10 +165,15 @@ public class Comms {
 
         if (roundNumber == 1) {
             writeBotID();
+            writeFlagID();
             return;
         } else if (roundNumber == 2) {
             readBotIDs();
+            readFlagIDs();
             return;
+        } else if (roundNumber == 3) {
+            wipeBotID();
+            wipeFlagID();
         }
 
         // read in all pertinent messages to data
@@ -272,8 +279,9 @@ public class Comms {
     private static int overwriteBits(int message, int newValue, int left, int length) {
         assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large";
+
         int sectionWiped = wipeBits(message, left, length);
-        return sectionWiped & (newValue << left);
+        return sectionWiped | (newValue << left);
     }
 
     private static int readBits(int message, int left, int length) {
@@ -494,7 +502,7 @@ public class Comms {
         assert roundNumber == 1 : "Attempted to write bot ID to array when not turn 1.";
         
         myMoveOrder = bufferPool[0];
-        writeToBufferPool(0, myMoveOrder + 1);
+        writeToBufferPool(0, myMoveOrder < 49 ? myMoveOrder + 1 : 0);
         writeToBufferPool(myMoveOrder + 1, rc.getID());
     }
     // for turn 2 only
@@ -559,6 +567,10 @@ public class Comms {
             moveOrderToID[idx] = botID;
             IDToMoveOrder.add(botID, idx);
         }
+    
+        private static void wipeBotID() {
+            writeToBufferPool(myMoveOrder + 1, 0);
+        }
 
     // for all turns after
     private static void writeRegularUpdate() {
@@ -576,13 +588,11 @@ public class Comms {
     }
 
     private static void writeSquadronMessageToQueue(int message) {
-        int bufferLocation = SQUADRON_QUEUE_IDX + (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
-        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SQUADRON);
+        messageQueue.add((message << 2) | QUEUE_SQUADRON);
     }
 
     private static void writeSectorMessageToQueue(int message) {
-        int bufferLocation = SECTOR_QUEUE_IDX + (sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
-        messageQueue.add((message << 8) | (bufferLocation << 2) | QUEUE_SECTOR);
+        messageQueue.add((message << 2) | QUEUE_SECTOR);
     }
 
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
@@ -591,19 +601,22 @@ public class Comms {
 
             int encodedMessage = queue.poll();
             int queueType = encodedMessage & Utils.BASIC_MASKS[2];
+            int index = 63;
             switch (queueType) {
                 case QUEUE_SQUADRON:
+                    if (squadronMessagesLen == SQUADRON_QUEUE_LEN) continue;
+                    index = (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
                     squadronMessagesSent += 1;
                     squadronMessagesLen += 1;
                     break;
                 case QUEUE_SECTOR:
+                    if (sectorMessagesLen == SECTOR_QUEUE_LEN) continue;
+                    index = (sectorMessagesOffset + sectorMessagesLen) % SECTOR_QUEUE_LEN;
                     sectorMessagesSent += 1;
                     sectorMessagesLen += 1;
                     break;
             }
-            int index = (encodedMessage >> 2) & Utils.BASIC_MASKS[6];
-            int message = encodedMessage >> 8;
-
+            int message = encodedMessage >> 2;
             writeToBufferPool(index, message);
         }
     }
@@ -785,6 +798,7 @@ class BotData {
     final int DEFEND = 2;
     final int STUCK = 3;
 
+    final int NEED_HEAL = 5;
     final int SACRIFICE = 6;
     final int DEAD = 7;
     

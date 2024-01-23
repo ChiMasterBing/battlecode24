@@ -82,6 +82,13 @@ public class Utils {
         (1 << 16) - 1
     };
 
+    final static int[][] locationDeltaToBucket = {
+        {},
+        {},
+        {},
+        {}
+    };
+
     // init
 
     static void init(RobotController r) {

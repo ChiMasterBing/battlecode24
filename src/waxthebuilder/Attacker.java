@@ -27,30 +27,58 @@ public class Attacker extends Robot{
 
     public void turn() throws GameActionException{
         premoveSetGlobals();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("premoveSetGlobals " + Integer.toString(Clock.getBytecodeNum()));
         checkPickupFlag();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("checkPickupFlag " + Integer.toString(Clock.getBytecodeNum()));
         checkBuildTraps();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("checkBuildTraps " + Integer.toString(Clock.getBytecodeNum()));
         updateCurrentTarget();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("updateCurrentTarget " + Integer.toString(Clock.getBytecodeNum()));
+        
         prevEnemies--;
         if(enemyRobots.length>0){
             prevEnemies = 1;
         }
         attackLogic();
         attackLogic();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("attackLogic " + Integer.toString(Clock.getBytecodeNum()));
+        
         if((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&prevEnemies<=0) {
             tryHeal();
         }
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("tryheal " + Integer.toString(Clock.getBytecodeNum()));
 
         movement();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("movement " + Integer.toString(Clock.getBytecodeNum()));
         postmoveSetGlobals();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("postmoveSetGlobals " + Integer.toString(Clock.getBytecodeNum()));
         checkBuildTraps();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("checkBuildTraps 2 " + Integer.toString(Clock.getBytecodeNum()));
         attackLogic();
         attackLogic();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("attackLogic 2 " + Integer.toString(Clock.getBytecodeNum()));
         if(prevEnemies<=0){
             rc.setIndicatorString("my heal levl"+rc.getExperience(SkillType.HEAL));
             tryHeal();
         }
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("tryHeal 2 " + Integer.toString(Clock.getBytecodeNum()));
         tryFill();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("tryFill " + Integer.toString(Clock.getBytecodeNum()));
         callDefense();
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("callDefense " + Integer.toString(Clock.getBytecodeNum()));
     }
 
     public void deadFunctions() throws GameActionException {

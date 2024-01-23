@@ -147,6 +147,9 @@ public abstract class Robot {
 
         turn();
 
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("Robot turn " + Integer.toString(Clock.getBytecodeNum()));
+
         if (roundNumber < 200) {
             if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
                 Navigation.scout();
@@ -159,6 +162,9 @@ public abstract class Robot {
                 Navigation.updateSymm();
             }
         }
+
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("Robot navigation " + Integer.toString(Clock.getBytecodeNum()));
     }
 
     // todo for me:
@@ -278,10 +284,19 @@ public abstract class Robot {
         }
 
         buyUpgrades();
+        
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0)) System.out.println("setup " + Integer.toString(Clock.getBytecodeNum()));
 
         Comms.commsStartTurn(roundNumber);
 
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("comm start " + Integer.toString(Clock.getBytecodeNum()));
+
         doPreRoundTasks();
+
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("preround tasks " + Integer.toString(Clock.getBytecodeNum()));
 
         if (!rc.isSpawned()){
             mySpawn = -1;
@@ -291,7 +306,13 @@ public abstract class Robot {
             spawnedTurn();
         }
 
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("main turn " + Integer.toString(Clock.getBytecodeNum()));
+
         Comms.commsEndTurn(); 
+
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("comm end " + Integer.toString(Clock.getBytecodeNum()));
 
         if (Clock.getBytecodesLeft() > 1500) {
             int symm = Comms.readSymmetry();
@@ -302,5 +323,8 @@ public abstract class Robot {
         }
 
         rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
+    
+        //! bytecode
+        if (myMoveNumber == 25 & ((roundNumber % 100) == 0))  System.out.println("round end " + Integer.toString(Clock.getBytecodeNum()));
     }
 }
