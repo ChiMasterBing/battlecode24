@@ -4,7 +4,7 @@ import waxingmoon.fast.FastLocSet;
 
 import java.util.Random;
 
-public class Attacker extends Robot {
+public class Healer extends Robot {
     MapLocation closestSpawn, myLoc = null, currentTarget = null;
     MapLocation[] broadcastLocations = {};
     RobotInfo[] enemyRobots, friendlyRobots, closeFriendlyRobots, closeEnemyRobots;
@@ -25,7 +25,7 @@ public class Attacker extends Robot {
 
     MapLocation centerOfExploration = null;
 
-    public Attacker(RobotController rc) throws GameActionException {
+    public Healer(RobotController rc) throws GameActionException {
         super(rc);
         for(MapLocation spawn : spawnLocs){
             spawnSet.add(spawn);
@@ -35,8 +35,11 @@ public class Attacker extends Robot {
 
     public void turn() throws GameActionException{
         premoveSetGlobals();
-        callFriends();
+        callFriends();//maybe try calling solely healers/attacers in teh future
         checkPickupFlag();
+        if(rc.getHealth()<=450||(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&numberOfEnemies==0) {
+            tryHeal();
+        }
 
         checkBuildTraps();
 
@@ -45,18 +48,14 @@ public class Attacker extends Robot {
         if(numberOfEnemies>0){
             prevEnemies = 1;
         }
+
         attackLogic();
-        attackLogic();
-        if(rc.getHealth()<=450||(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&numberOfEnemies==0) {
-            tryHeal();
-        }
 
         movement();
         postmoveSetGlobals();
         callFriends();
 
         checkBuildTraps();
-        attackLogic();
         attackLogic();
         if(closestEnemy == null || myLoc.distanceSquaredTo(closestEnemy) > 9||rc.getHealth()<=450){
             tryHeal();
@@ -395,7 +394,7 @@ public class Attacker extends Robot {
         }
 
         if(crumbMovementLogic()) return;
-        
+
         if (attackMicro()) {
             rc.setIndicatorString("atack microing");
             explorePtr = 0;

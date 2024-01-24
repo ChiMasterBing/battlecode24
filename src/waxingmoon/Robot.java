@@ -3,7 +3,7 @@ package waxingmoon;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import waxthebuilder.fast.FastLocSet;
+import waxingmoon.fast.*;
 
 public abstract class Robot {
     RobotController rc;

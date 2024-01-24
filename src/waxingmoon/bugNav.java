@@ -1,8 +1,7 @@
 package waxingmoon;
 
 import battlecode.common.*;
-import waxthebuilder.fast.FastIntSet;
-import waxthebuilder.fast.FastLocSet;
+import waxingmoon.fast.*;
 
 public class bugNav {
     static RobotController rc;

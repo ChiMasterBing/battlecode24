@@ -5,10 +5,7 @@ package waxingmoon;
 import battlecode.common.*;
 
 // custom package
-import waxthebuilder.fast.*;
-import waxthebuilder.Comms.*;
-import waxthebuilder.Debug.*;
-import waxthebuilder.Utils.*;
+import waxingmoon.fast.*;
 
 /* ALLOCATIONS
 bit allocations are LSB first
@@ -770,7 +767,7 @@ public class Comms {
         if(squadronMessagesSent>squadronMessagesLen) {
             System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
             squadronMessagesLen = squadronMessagesSent;//SUS
-            rc.resign();
+//            rc.resign();
         }
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;

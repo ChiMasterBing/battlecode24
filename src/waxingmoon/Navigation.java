@@ -2,7 +2,7 @@ package waxingmoon;
 import java.util.Arrays;
 
 import battlecode.common.*;
-import waxthebuilder.fast.FastQueue;
+import waxingmoon.fast.*;
 
 public class Navigation {
     static RobotController rc;

@@ -7,8 +7,7 @@ import java.util.Random;
 import battlecode.common.*;
 
 // custom package
-import waxthebuilder.fast.*;
-import waxthebuilder.Debug.*;
+import waxingmoon.fast.*;
 
 public class Utils {
     private static RobotController rc;
