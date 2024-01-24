@@ -3,12 +3,9 @@ package waxingmoon;
 //--waxing moon
 import battlecode.common.*;
 //XSquare style micro
-
 //weight squares to move in, one for each direction
 //keep track of bombs
-
 //stun has radius of adjacent. keeps track of where might PROC stuns, not where stuns are.
-
 //compute likelihood for stuns ONLY on adjacent tiles I can next walk to. 
 
 public class AttackerMicro {
@@ -20,6 +17,11 @@ public class AttackerMicro {
     static int[] aroundMeX = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] aroundMeY = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int nullX, nullY;
+
+    static int[] attackerDamages = {150, 158, 161, 165, 195, 203, 240};
+    static int[] attackerCooldowns = {20, 19, 19, 18, 16, 13, 8};
+    static int[] attackerDPS = {75, 83, 85, 92, 122, 156, 300};
+    static int[] uAttackerDPS = {113, 124, 127, 138, 183, 234, 450};
 
     public static void init(RobotController r) {
         rc = r;
@@ -67,16 +69,26 @@ public class AttackerMicro {
         //     }
         // }
 
+        for (RobotInfo r:friendlyRobots) {
+
+        }
+
         for (RobotInfo r:enemyRobots) {
-            microInfo[0].updateEnemy(r);
-            microInfo[1].updateEnemy(r);
-            microInfo[2].updateEnemy(r);
-            microInfo[3].updateEnemy(r);
-            microInfo[4].updateEnemy(r);
-            microInfo[5].updateEnemy(r);
-            microInfo[6].updateEnemy(r);
-            microInfo[7].updateEnemy(r);
-            microInfo[8].updateEnemy(r);
+            int dps;
+            if (roundNumber >= 600) {
+                dps = uAttackerDPS[r.getAttackLevel()];
+            } else {
+                dps = attackerDPS[r.getAttackLevel()];
+            }
+            microInfo[0].updateEnemy(r, dps);
+            microInfo[1].updateEnemy(r, dps);
+            microInfo[2].updateEnemy(r, dps);
+            microInfo[3].updateEnemy(r, dps);
+            microInfo[4].updateEnemy(r, dps);
+            microInfo[5].updateEnemy(r, dps);
+            microInfo[6].updateEnemy(r, dps);
+            microInfo[7].updateEnemy(r, dps);
+            microInfo[8].updateEnemy(r, dps);
         }
 
         MicroInfo bestMicro = microInfo[8];
@@ -99,30 +111,39 @@ public class AttackerMicro {
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
         boolean canMove = true;
+        int stunLikely = 0;
+        boolean enemyTerritory;
 
-        public MicroInfo(Direction dir){
+        public MicroInfo(Direction dir) throws GameActionException {
             this.dir = dir;
             this.location = rc.getLocation().add(dir);
             if (dir != Direction.CENTER && !rc.canMove(dir)) canMove = false;
             else{
-
+                if (rc.senseMapInfo(location).getTeamTerritory() == rc.getTeam()) {
+                    enemyTerritory = false;
+                } else {
+                    enemyTerritory = true;
+                }
             }
         }
 
-        void updateEnemy(RobotInfo unit){
+        void updateEnemy(RobotInfo unit, int dps){
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
-            if (dist <= 4) DPSreceived += 150; //MAKE THIS MORE PRECISE
-            if (dist <= 20) enemiesTargeting += 150;
+            if (dist <= 4) DPSreceived += dps; //MAKE THIS MORE PRECISE
+            if (dist <= 20) enemiesTargeting += dps;
+            if (dist <= 4) stunLikely++;
         }
 
         void updateAlly(RobotInfo unit){
             if (!canMove) return;
-            // alliesTargeting += currentDPS;
+            int dist = unit.getLocation().distanceSquaredTo(location);
+            if (dist <= 2)
+                stunLikely--;
         }
 
-        int safe(){
+        int safe(){ 
             if (!canMove) return -1;
             if (DPSreceived > 0) return 0;
             if (enemiesTargeting > alliesTargeting) return 1;
@@ -138,6 +159,7 @@ public class AttackerMicro {
         boolean isBetter(MicroInfo M, int cooldown){
             if (!canMove) return false;
             if (!M.canMove) return true;
+            if (rc.getHealth() < DPSreceived) return false;
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
                 if (inRange() && !M.inRange()) return true;
                 if (!inRange() && M.inRange()) return false;
@@ -145,6 +167,13 @@ public class AttackerMicro {
                 if (inRange()) { //both squares are in range
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
+
+                    if (enemiesTargeting < M.enemiesTargeting) return true;
+                    else if (enemiesTargeting > M.enemiesTargeting) return false;
+
+                    if (stunLikely < M.stunLikely) return true;
+                    if (stunLikely > M.stunLikely) return false;
+
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
                 else return minDistanceToEnemy <= M.minDistanceToEnemy;
@@ -155,9 +184,18 @@ public class AttackerMicro {
                 if (inRange()) { //both squares are in range
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
+                    
+                    if (enemiesTargeting < M.enemiesTargeting) return true;
+                    else if (enemiesTargeting > M.enemiesTargeting) return false;
+                    
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
-                else return minDistanceToEnemy <= M.minDistanceToEnemy;
+                else {
+                    if (enemiesTargeting < M.enemiesTargeting) return true;
+                    else if (enemiesTargeting > M.enemiesTargeting) return false;
+
+                    return minDistanceToEnemy <= M.minDistanceToEnemy;
+                }
             }
         }
     }

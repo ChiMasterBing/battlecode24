@@ -397,7 +397,6 @@ public class Attacker extends Robot {
         if(crumbMovementLogic()) return;
         
         if (attackMicro()) {
-            rc.setIndicatorString("atack microing");
             explorePtr = 0;
             centerOfExploration = null;
             return;
@@ -591,11 +590,11 @@ public class Attacker extends Robot {
 
             for (Direction d:allDirections) {
                 nxt = myLoc.add(d);
-                if (nxt.equals(myLoc) && nxt.equals(mirrorFlags[0]) || nxt.equals(mirrorFlags[1]) || nxt.equals(mirrorFlags[2])) {
-                    if (rc.canBuild(TrapType.WATER, nxt) && rc.senseNearbyFlags(-1, rc.getTeam().opponent()).length == 0) {
-                        rc.build(TrapType.WATER, nxt);
-                    }
-                }
+                // if (nxt.equals(myLoc) && nxt.equals(mirrorFlags[0]) || nxt.equals(mirrorFlags[1]) || nxt.equals(mirrorFlags[2])) {
+                //     if (rc.canBuild(TrapType.WATER, nxt) && rc.senseNearbyFlags(-1, rc.getTeam().opponent()).length == 0) {
+                //         rc.build(TrapType.WATER, nxt);
+                //     }
+                // }
 
                 int t2 = threshold2;
                 if(rc.senseMapInfo(myLoc).getTeamTerritory()!=rc.getTeam()){
@@ -829,36 +828,32 @@ public class Attacker extends Robot {
             chickenBehavior();
             return true;
         }
-        int cooldown = rc.getActionCooldownTurns();
 
-        int mosthealth = 0;
-        for(RobotInfo ri : closeFriendlyRobots){
-            mosthealth = Math.max(mosthealth, ri.getHealth());
-        }
-        Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
-        MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
+        // int cooldown = rc.getActionCooldownTurns();
 
-        if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
-            BFSController.move(rc, opposite);
-            //            BFSController.move(rc, opposite);
-            if (!rc.isMovementReady()) return true;
-            // if (rc.isMovementReady()) return false;
-            // else return true;
-        }
-        if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
-            weakestEnemy = myLoc;
-            if(!rc.isMovementReady()) return true;
-        }
+        // int mosthealth = 0;
+        // for(RobotInfo ri : closeFriendlyRobots){
+        //     mosthealth = Math.max(mosthealth, ri.getHealth());
+        // }
+        // Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
+        // MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
 
-        int oneShot = 150 + roundNumber / 20;
-        if (roundNumber >= 600) oneShot += 80;
-        if((rc.getHealth() < oneShot || numberOfFriendlies < numberOfEnemies) && !tooCloseToSpawn){
-            BFSController.move(rc, closestSpawn);
-            if (!rc.isMovementReady()) return true;
-        }
-        if(cooldown>=10&&enemyRobots.length>friendlyRobots.length&&rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()){
-            bugNav.move(closestSpawn);
-        }
+        // if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
+        //     BFSController.move(rc, opposite);
+        //     //            BFSController.move(rc, opposite);
+        //     if (!rc.isMovementReady()) return true;
+        //     // if (rc.isMovementReady()) return false;
+        //     // else return true;
+        // }
+
+        // if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
+        //     weakestEnemy = myLoc;
+        //     if(!rc.isMovementReady()) return true;
+        // }
+
+        // if(cooldown>=10&&enemyRobots.length>friendlyRobots.length&&rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()){
+        //     bugNav.move(closestSpawn);
+        // }
 
         return AttackerMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
     }
