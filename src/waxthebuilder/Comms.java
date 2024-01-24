@@ -770,7 +770,7 @@ public class Comms {
         if(squadronMessagesSent>squadronMessagesLen) {
             System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
             squadronMessagesLen = squadronMessagesSent;//SUS
-            rc.resign();
+//            rc.resign();
         }
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;

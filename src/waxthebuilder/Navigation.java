@@ -32,9 +32,13 @@ public class Navigation {
     }
 
     public static void scout() { //Scouts surrounding squares and updates symmetry
-        MapInfo[] tiles = rc.senseNearbyMapInfos();
-        for (MapInfo tile:tiles) {
-            updateTile(tile);
+        try {
+            MapInfo[] tiles = rc.senseNearbyMapInfos();
+            for (MapInfo tile : tiles) {
+                updateTile(tile);
+            }
+        }catch (Exception e){
+
         }
     }
     

@@ -20,11 +20,12 @@ public class Attacker extends Robot{
     MapLocation lastCombatLoc = null;
     int prevEnemies = 0;
     int numberOfEnemies, numberOfFriendlies, numberOfCloseEnemies, numberOfCloseFriends;
+    boolean isSwiper = false; //SWIPER NO SWIPING
+    MapLocation centerOfExploration = null;
     MapLocation lastEnemyLocation; //I was going to do something with this but forgot
     public Attacker(RobotController rc) throws GameActionException {
         super(rc);
     }
-
     public void turn() throws GameActionException{
         premoveSetGlobals();
         callFriends();
@@ -212,7 +213,7 @@ public class Attacker extends Robot{
             }
 
             MapLocation tempObstacle = bugNav.lastObstacleFound;
-            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (tempObstacle != null && rc.senseRobotAtLocation(tempObstacle) != null))) {
+            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (tempObstacle != null &&rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null))) {
                 int dist = myLoc.distanceSquaredTo(closestSpawn);
                 int bestHealth = rc.getHealth();
                 RobotInfo best = null;
@@ -381,6 +382,7 @@ public class Attacker extends Robot{
         if(roundNumber>200){
             if(flagMovementLogic()) {
                 explorePtr = 0;
+                centerOfExploration = null;
                 return;
             }
         }
@@ -391,6 +393,7 @@ public class Attacker extends Robot{
 
         if (attackMicro()) {
             explorePtr = 0;
+            centerOfExploration = null;
             return;
         }
 //        if(rc.getHealth()<240&&closeFriendlyRobots.length==0){
@@ -411,7 +414,7 @@ public class Attacker extends Robot{
         if(lowestHealthLoc!=null){
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
-        if(enemyRobots.length==0) {
+        if(enemyRobots.length==0&&!isSwiper) {
             MapLocation combatLoc = findCombatLocation();
             if (combatLoc != null) {
                 lastCombatLoc = combatLoc;
@@ -523,7 +526,6 @@ public class Attacker extends Robot{
         numberOfFriendlies = friendlyRobots.length;
         numberOfCloseEnemies = closeEnemyRobots.length;
         numberOfCloseFriends = closeFriendlyRobots.length;
-
 
     }
 
@@ -691,13 +693,21 @@ public class Attacker extends Robot{
     int[] exploreDX = {3, 0, -3, 0, 6, 0, -6, 0, 9, 0, -9, 0};
     int[] exploreDY = {0, 3, 0, -3, 0, 6, 0, -6, 0, 9, 0, -9};
     int explorePtr = 0;
-    public MapLocation exploreTarget(MapLocation target) throws GameActionException {
+    public MapLocation exploreTarget() throws GameActionException {
         //we've reached our target but see no flag... now what?
-        if (explorePtr >= exploreDX.length) return target;
-        MapLocation res = target.translate(exploreDX[explorePtr], exploreDY[explorePtr]);
+        if (explorePtr >= exploreDX.length) return centerOfExploration;
+        MapLocation newTarget = centerOfExploration.translate(exploreDX[explorePtr], exploreDY[explorePtr]);
+        if (myLoc.equals(newTarget)) {
+            explorePtr++;
+            return exploreTarget();
+        }
+
+        rc.setIndicatorString("exploring " + centerOfExploration + " " + newTarget);
+        rc.setIndicatorLine(myLoc, newTarget, 0, 0, 255);
+        MapLocation res = newTarget;
         if (!rc.onTheMap(res)) {
             explorePtr++;
-            return exploreTarget(target);
+            return exploreTarget();
         }
         return res;
     }
@@ -711,15 +721,21 @@ public class Attacker extends Robot{
                 if (myMoveNumber >= 3) {
                     currentTarget = broadcastLocations[0];
                 } else { //try to snipe some flags :>
+                    isSwiper = true;
                     if (broadcastLocations.length == 3) {
                         currentTarget = broadcastLocations[myMoveNumber%2 + 1];
                     } else if (broadcastLocations.length == 2) {
                         currentTarget = broadcastLocations[1];
                     } else if (broadcastLocations.length == 1) {
                         currentTarget = broadcastLocations[0];
+                    } else {
+                        isSwiper = false;
                     }
-                    if (myLoc.equals(currentTarget)) {
-                        currentTarget = exploreTarget(myLoc);
+                    if (myLoc.equals(currentTarget) || explorePtr != 0) {
+                        if (centerOfExploration == null) {
+                            centerOfExploration = currentTarget;
+                        }
+                        currentTarget = exploreTarget();
                     }
                 }
             }
@@ -730,7 +746,6 @@ public class Attacker extends Robot{
             broadcastLocations = arr;
         }
     }
-
     public void attackLogic() throws GameActionException {
         if (!rc.isActionReady()) return;
         MapLocation attackLoc = findBestAttackLocation();
@@ -827,8 +842,7 @@ public class Attacker extends Robot{
         }
         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
         MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
-
-        if(cooldown>=10&&rc.getHealth()<mosthealth&&!tooCloseToSpawn){
+        if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
             BFSController.move(rc, opposite);
             //            BFSController.move(rc, opposite);
             if (!rc.isMovementReady()) return true;
@@ -853,12 +867,9 @@ public class Attacker extends Robot{
 
         int oneShot = 150 + roundNumber / 20;
         if (roundNumber >= 600) oneShot += 80;
-        if((rc.getHealth() < oneShot || numberOfFriendlies < numberOfEnemies) && !tooCloseToSpawn){
+        if ((rc.getHealth() < oneShot || numberOfFriendlies < numberOfEnemies) && !tooCloseToSpawn) {
             BFSController.move(rc, closestSpawn);
             if (!rc.isMovementReady()) return true;
-        }
-        if(cooldown>=10&&enemyRobots.length>friendlyRobots.length&&rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()){
-            bugNav.move(closestSpawn);
         }
 
         // if(cooldown>=10&&deadMeat>0){
@@ -914,7 +925,7 @@ public class Attacker extends Robot{
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
 
