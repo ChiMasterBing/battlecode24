@@ -1,6 +1,6 @@
-package waxingmoon;
+package waningmoon;
 import battlecode.common.*;
-import waxingmoon.fast.FastLocSet;
+import waningmoon.fast.FastLocSet;
 
 import java.util.Random;
 
@@ -22,7 +22,6 @@ public class Attacker extends Robot {
     int numberOfEnemies, numberOfFriendlies, numberOfCloseEnemies, numberOfCloseFriends;
     MapLocation lastEnemyLocation; //I was going to do something with this but forgot
     boolean isSwiper = false; //SWIPER NO SWIPING
-    int chickenLevel = 450;
 
     MapLocation centerOfExploration = null;
 
@@ -46,12 +45,9 @@ public class Attacker extends Robot {
         if(numberOfEnemies>0){
             prevEnemies = 1;
         }
-        if(rc.getLevel(SkillType.HEAL)>3){
-            tryHeal();
-        }
         attackLogic();
         attackLogic();
-        if(rc.getHealth()<=chickenLevel||((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3||myMoveNumber%3<2)&&numberOfEnemies==0)) {
+        if(rc.getHealth()<=450||(rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3)&&numberOfEnemies==0) {
             tryHeal();
         }
 
@@ -60,22 +56,10 @@ public class Attacker extends Robot {
         callFriends();
 
         checkBuildTraps();
-        if(rc.getLevel(SkillType.HEAL)>3){
+        attackLogic();
+        attackLogic();
+        if(closestEnemy == null || myLoc.distanceSquaredTo(closestEnemy) > 9||rc.getHealth()<=450){
             tryHeal();
-        }
-        attackLogic();
-        attackLogic();
-        if(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))>3){
-            chickenLevel = 450+150*(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))-3);
-        }
-        if(rc.getLevel(SkillType.ATTACK)>3||(rc.getLevel(SkillType.HEAL)<=3&&rc.getID()%3==0)) {
-            if (rc.getHealth()<=chickenLevel||closestEnemy == null || enemyRobots.length==0) {
-                tryHeal();
-            }
-        }else{
-            if (closestEnemy == null || myLoc.distanceSquaredTo(closestEnemy) > 12 || rc.getHealth() <= chickenLevel) {
-                tryHeal();
-            }
         }
         tryFill();
         callDefense();
@@ -114,7 +98,7 @@ public class Attacker extends Robot {
                 }
                 Integer message = Comms.squadronMessages.get(i);
 
-                int cury = (message>>6)&Utils.BASIC_MASKS[5];
+                int cury = (message>>6)& Utils.BASIC_MASKS[5];
                 int curx = (message>>11)&Utils.BASIC_MASKS[5];
                 if(curx==myLoc.x/2&&cury==myLoc.y/2){
                     alreadyExists = true;
@@ -417,6 +401,7 @@ public class Attacker extends Robot {
             centerOfExploration = null;
             return;
         }
+
         int ret = 0;
         for(RobotInfo i: closeFriendlyRobots){
             if(i.getLocation().distanceSquaredTo(myLoc)<2){
@@ -429,7 +414,7 @@ public class Attacker extends Robot {
             }
         }
 
-        if(lowestHealthLoc!=null&&(rc.getLevel(SkillType.HEAL)>3||rc.getID()%3<2)){
+        if(lowestHealthLoc!=null){
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
         if(enemyRobots.length==0 && !isSwiper) {
@@ -560,10 +545,7 @@ public class Attacker extends Robot {
             if (hp + myHeal > 150) {
                 score += 100;
             }
-            score+=100*Math.max(i.getHealLevel(), Math.max(2*i.getAttackLevel(), i.getBuildLevel()));
-            if(rc.getID()%3==2){
-                score+=100;
-            }
+            score+=100*Math.max(i.getHealLevel(), Math.max(i.getAttackLevel(), i.getBuildLevel()));
             if (score > bestScore) {
                 bestScore = score;
                 bestHeal = i.getLocation();
@@ -854,27 +836,27 @@ public class Attacker extends Robot {
     public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
         if (numberOfEnemies == 0) return false;
-        if(rc.getHealth()<=chickenLevel){
+        if(rc.getHealth()<=450){
             chickenBehavior();
             return true;
         }
 
-         int cooldown = rc.getActionCooldownTurns();
+        // int cooldown = rc.getActionCooldownTurns();
 
-         int mosthealth = 0;
-         for(RobotInfo ri : closeFriendlyRobots){
-             mosthealth = Math.max(mosthealth, ri.getHealth());
-         }
-         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
-         MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
+        // int mosthealth = 0;
+        // for(RobotInfo ri : closeFriendlyRobots){
+        //     mosthealth = Math.max(mosthealth, ri.getHealth());
+        // }
+        // Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
+        // MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
 
-         if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
-             BFSController.move(rc, opposite);
-             //            BFSController.move(rc, opposite);
-             if (!rc.isMovementReady()) return true;
-             // if (rc.isMovementReady()) return false;
-             // else return true;
-         }
+        // if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
+        //     BFSController.move(rc, opposite);
+        //     //            BFSController.move(rc, opposite);
+        //     if (!rc.isMovementReady()) return true;
+        //     // if (rc.isMovementReady()) return false;
+        //     // else return true;
+        // }
 
         // if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
         //     weakestEnemy = myLoc;
