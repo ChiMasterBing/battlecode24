@@ -49,8 +49,10 @@ public class Attacker extends Robot {
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
-        attackLogic();
-        attackLogic();
+        if(rc.getLevel(SkillType.HEAL)<=3){
+            attackLogic();
+            attackLogic();
+        }
         if(rc.getHealth()<=chickenLevel||((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3||myMoveNumber%3<2)&&numberOfEnemies==0)) {
             tryHeal();
         }
@@ -317,7 +319,9 @@ public class Attacker extends Robot {
                         }
                     }
                 }else{ //if we picked up their flag
-                    if (friendlyRobots.length >= 10) return false;
+                    if(Comms.countFlagsCaptured()!=2) {
+                        if (friendlyRobots.length >= 10) return false;
+                    }
                     if (Comms.closeToFlag(i.getID(), rc.getID())) {
                         targ = i.getLocation();
                         break;
@@ -374,7 +378,7 @@ public class Attacker extends Robot {
                 closestCrum = mi.distanceSquaredTo(myLoc);
             }
         }
-        if (crummy.length > 0 && roundNumber < 250 && crummy.length > (numberOfFriendlies+1)) {
+        if (crummy.length > 0 && roundNumber < 250 && (crummy.length > (numberOfFriendlies+1) || roundNumber > 200)) {
 //            BFSController.move(rc, crum);
             if (rc.isMovementReady()) bugNav.move(crum);
             return true;
