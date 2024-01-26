@@ -1,4 +1,4 @@
-package waxingmoon;
+package waningmoon;
 //sometimes, full moons turn bad dreams into horrible nightmares.
 //--waxing moon
 import battlecode.common.*;
@@ -132,12 +132,12 @@ public class AttackerMicro {
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
-            if (dist <= 12){
+            if (dist <= 4){
                 DPSreceived += dps; //MAKE THIS MORE PRECISE
-                lowestHealth = Math.min(lowestHealth, Math.max(unit.getHealth(), uAttackerDPS[rc.getLevel(SkillType.ATTACK)]));
+                lowestHealth = -20*dist+Math.max(unit.getHealth(), 150)-20*Math.max(unit.getHealLevel(), Math.max(2*unit.getAttackLevel(), unit.getBuildLevel()));
             }
             if (dist <= 20) enemiesTargeting += dps;
-//            if (dist <= 2) stunLikely++;
+            if (dist <= 4) stunLikely++;
         }
 
         void updateAlly(RobotInfo unit){
@@ -178,7 +178,7 @@ public class AttackerMicro {
                     if (stunLikely < M.stunLikely) return true;
                     if (stunLikely > M.stunLikely) return false;
 
-                    return minDistanceToEnemy >= M.minDistanceToEnemy;
+                    return lowestHealth <= M.lowestHealth;
                 }
                 else return minDistanceToEnemy <= M.minDistanceToEnemy;
             } else { //dont wanna proc anything rn
@@ -191,8 +191,8 @@ public class AttackerMicro {
                     
                     if (enemiesTargeting < M.enemiesTargeting) return true;
                     else if (enemiesTargeting > M.enemiesTargeting) return false;
-                    return lowestHealth <= M.lowestHealth;
-//                    return minDistanceToEnemy >= M.minDistanceToEnemy;
+                    
+                    return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
                 else {
                     if (enemiesTargeting < M.enemiesTargeting) return true;
