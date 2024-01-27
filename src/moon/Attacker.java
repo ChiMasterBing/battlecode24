@@ -1,8 +1,7 @@
-package waxingmoon;
+package moon;
 import battlecode.common.*;
-import waxingmoon.fast.FastLocSet;
+import moon.fast.FastLocSet;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Attacker extends Robot {
@@ -36,14 +35,11 @@ public class Attacker extends Robot {
     }
 
     public void turn() throws GameActionException{
-        if(rc.getRoundNum()==10){
-            HealerMicro.init(rc);
-        }
         premoveSetGlobals();
         callFriends();
         checkPickupFlag();
 
-        checkBuildTraps();
+//        checkBuildTraps();
 
         updateCurrentTarget();
         prevEnemies--;
@@ -65,7 +61,7 @@ public class Attacker extends Robot {
         postmoveSetGlobals();
         callFriends();
 
-        checkBuildTraps();
+//        checkBuildTraps();
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
@@ -113,14 +109,14 @@ public class Attacker extends Robot {
             }
 
             boolean alreadyExists = false;
-            for(int i = 0; i<Comms.squadronMessages.size(); i++) {
+            for(int i = 0; i< Comms.squadronMessages.size(); i++) {
                 if(Comms.squadronMessages==null){
                     System.out.println("comms squadron messages null??");
 //                    rc.resign();;
                 }
                 Integer message = Comms.squadronMessages.get(i);
 
-                int cury = (message>>6)&Utils.BASIC_MASKS[5];
+                int cury = (message>>6)& Utils.BASIC_MASKS[5];
                 int curx = (message>>11)&Utils.BASIC_MASKS[5];
                 if(curx==myLoc.x/2&&cury==myLoc.y/2){
                     alreadyExists = true;
@@ -140,7 +136,7 @@ public class Attacker extends Robot {
             if(Comms.squadronMessages.size()>100){
                 System.out.println(Comms.squadronMessages.size());
             }
-            for(int i = 0; i<Comms.squadronMessages.size(); i++){
+            for(int i = 0; i< Comms.squadronMessages.size(); i++){
                 Integer message = Comms.squadronMessages.get(i);
                 int cury = 2*((message>>6)&Utils.BASIC_MASKS[5]);
                 int curx = 2*((message>>11)&Utils.BASIC_MASKS[5]);
@@ -977,8 +973,8 @@ public class Attacker extends Robot {
         // if(cooldown>=10&&enemyRobots.length>friendlyRobots.length&&rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()){
         //     bugNav.move(closestSpawn);
         // }
-        if(rc.getLevel(SkillType.HEAL)>3&&rc.getHealth()<1000){
-            return HealerMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
+        if(rc.getLevel(SkillType.HEAL)>3){
+            return AttackerMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
         }else {
             return AttackerMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
         }

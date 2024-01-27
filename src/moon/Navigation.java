@@ -1,8 +1,7 @@
-package waxingmoon;
-import java.util.Arrays;
+package moon;
 
 import battlecode.common.*;
-import waxingmoon.fast.*;
+import moon.fast.FastQueue;
 
 public class Navigation {
     static RobotController rc;
@@ -18,7 +17,7 @@ public class Navigation {
     static final int SYMM_BYTECODE = 5000; // do not run this if < 5000 bc
     
     static int[] spawnScores = {0, 0, 0};
-    private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500); 
+    private static FastQueue<MapLocation> symmQueue = new FastQueue<MapLocation>(500);
 
     static int WIDTH, HEIGHT;
     static int[][] map;

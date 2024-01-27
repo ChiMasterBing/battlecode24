@@ -1,9 +1,9 @@
-package waxingmoon;
-
-import java.util.Arrays;
+package moon;
 
 import battlecode.common.*;
-import waxingmoon.fast.*;
+import moon.fast.FastLocSet;
+
+import java.util.Arrays;
 
 public abstract class Robot {
     RobotController rc;
@@ -319,7 +319,7 @@ public abstract class Robot {
             spawnedTurn();
         }
 
-        Comms.commsEndTurn(); 
+        Comms.commsEndTurn();
 
         if (Clock.getBytecodesLeft() > 1500) {
             int symm = Comms.readSymmetry();

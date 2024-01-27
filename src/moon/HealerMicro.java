@@ -1,4 +1,4 @@
-package waningmoon;
+package moon;
 
 //sometimes, full moons turn bad dreams into horrible nightmares.
 //--waxing moon
@@ -9,7 +9,7 @@ import battlecode.common.*;
 //stun has radius of adjacent. keeps track of where might PROC stuns, not where stuns are.
 //compute likelihood for stuns ONLY on adjacent tiles I can next walk to.
 
-public class AttackerMicro {
+public class HealerMicro {
     static int[][] stunTracker; // 0 --> probably no bomb, 1 IDK, 2 perhaps bomb
     static RobotController rc;
     static RobotInfo[] enemyRobots, friendlyRobots, closeFriendlyRobots, closeEnemyRobots;
@@ -189,8 +189,7 @@ public class AttackerMicro {
             if (rc.getHealth() < DPSreceived) return false;
 
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
-                if (inRange() && !M.inRange()) return true;
-                if (!inRange() && M.inRange()) return false;
+                if (!inRange() && M.inRange()) return true;
 
                 if (inRange()) { //both squares are in range
                     if (DPSreceived < M.DPSreceived) return true;
@@ -205,7 +204,7 @@ public class AttackerMicro {
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
                 else {
-                    return minDistanceToEnemy <= M.minDistanceToEnemy;
+                    return heals>=M.heals;
                 }
             } else { //mess with CanBeHit?
                 if (!canBeHit() && M.canBeHit()) return true;
@@ -223,7 +222,7 @@ public class AttackerMicro {
                     if (enemiesTargeting - heals < M.enemiesTargeting - M.heals) return true;
                     else if (enemiesTargeting - heals > M.enemiesTargeting - M.heals) return false;
 
-                    return minDistanceToEnemy <= M.minDistanceToEnemy;
+                    return heals >= M.heals;
                 }
             }
         }

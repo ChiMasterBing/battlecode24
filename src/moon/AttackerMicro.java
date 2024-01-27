@@ -1,4 +1,4 @@
-package waningmoon;
+package moon;
 
 //sometimes, full moons turn bad dreams into horrible nightmares.
 //--waxing moon
@@ -208,9 +208,9 @@ public class AttackerMicro {
                     return minDistanceToEnemy <= M.minDistanceToEnemy;
                 }
             } else { //mess with CanBeHit?
-                if (!canBeHit() && M.canBeHit()) return true;
-                if (canBeHit() && !M.canBeHit()) return false;
-                if (canBeHit()) {
+                 if (!canBeHit() && M.canBeHit()) return true;
+                 if (canBeHit() && !M.canBeHit()) return false;
+                 if (canBeHit()) {
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
 

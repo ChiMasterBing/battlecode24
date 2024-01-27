@@ -39,7 +39,7 @@ public class Attacker extends Robot {
         callFriends();
         checkPickupFlag();
 
-//        checkBuildTraps();
+        checkBuildTraps();
 
         updateCurrentTarget();
         prevEnemies--;
@@ -61,7 +61,7 @@ public class Attacker extends Robot {
         postmoveSetGlobals();
         callFriends();
 
-//        checkBuildTraps();
+        checkBuildTraps();
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
@@ -238,11 +238,11 @@ public class Attacker extends Robot {
             }
 
             MapLocation tempObstacle = bugNav.lastObstacleFound;
-            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (tempObstacle != null &&rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null))) {
+            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (rc.getHealth()<=chickenLevel||rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null&&rc.senseRobotAtLocation(tempObstacle).getTeam()==rc.getTeam()))) {
                 int dist = myLoc.distanceSquaredTo(closestSpawn);
                 int bestHealth = rc.getHealth();
                 RobotInfo best = null;
-                RobotInfo[] superCloseFriendlyRobots = closeFriendlyRobots;
+                RobotInfo[] superCloseFriendlyRobots = rc.senseNearbyRobots(8);
                 int flagValue = rc.senseNearbyFlags(0)[0].getID();
                 Comms.updateFlagID(flagValue);
                 //int adjDist = -1;
@@ -319,7 +319,9 @@ public class Attacker extends Robot {
                         }
                     }
                 }else{ //if we picked up their flag
-                    if (friendlyRobots.length >= 10) return false;
+                    if(Comms.countFlagsCaptured()!=2) {
+                        if (friendlyRobots.length >= 10) return false;
+                    }
                     if (Comms.closeToFlag(i.getID(), rc.getID())) {
                         targ = i.getLocation();
                         break;
@@ -376,7 +378,7 @@ public class Attacker extends Robot {
                 closestCrum = mi.distanceSquaredTo(myLoc);
             }
         }
-        if (crummy.length > 0 && roundNumber < 250 && crummy.length > (numberOfFriendlies+1)) {
+        if (crummy.length > 0 && roundNumber < 250 && (crummy.length > (numberOfFriendlies+1) || roundNumber > 200)) {
 //            BFSController.move(rc, crum);
             if (rc.isMovementReady()) bugNav.move(crum);
             return true;
