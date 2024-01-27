@@ -2,6 +2,7 @@ package waxingmoon;
 import battlecode.common.*;
 import waxingmoon.fast.FastLocSet;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Attacker extends Robot {
@@ -347,6 +348,13 @@ public class Attacker extends Robot {
     }
     public void checkPickupFlag() throws GameActionException {
         if(rc.getRoundNum()<200){
+            if (myMoveNumber < 3 && roundNumber < 20) {
+                for (FlagInfo f:flags) {
+                    if (rc.canPickupFlag(f.getLocation()) && (f.getLocation().equals(myFlags[0]) || f.getLocation().equals(myFlags[1]) || f.getLocation().equals(myFlags[2]))) {
+                        rc.pickupFlag(f.getLocation());
+                    }
+                }
+            }
             return;
         }
         for (Direction d:allDirections) {
@@ -405,12 +413,91 @@ public class Attacker extends Robot {
         }
         return false;
     }
+
+    boolean seenTarget = false;
+    public void hideFlag() throws GameActionException {
+        MapLocation targ = Navigation.getFurthestSpawnFromEnemy(myFlags[0], myFlags[1], myFlags[2]);
+        MapLocation closest = Navigation.getTripleMinLocation(targ, mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
+        Direction push = closest.directionTo(targ);
+        targ = targ.add(push).add(push).add(push);
+
+        if (roundNumber > 130 && !seenTarget) {
+            //couldnt find a good location
+            targ = myFlags[mySpawn];
+        }
+        
+        if (myLoc.distanceSquaredTo(targ) <= 25 && roundNumber < 130) {
+            seenTarget = true; 
+            Comms.commSeenFlagTarget(mySpawn);
+        }
+
+        if (roundNumber > 75) {
+            MapLocation[] curs = Comms.getHiddenFlagLocations();
+            //To do: deal with isolated spawns
+            //check if current config is valid
+            boolean allSeenTarget = Comms.hasSeenTarget(0) && Comms.hasSeenTarget(1) && Comms.hasSeenTarget(2);
+            if (allSeenTarget && curs[0].distanceSquaredTo(curs[1]) >= 36 && curs[0].distanceSquaredTo(curs[2]) >= 36 && curs[2].distanceSquaredTo(curs[1]) >= 36) {
+                //We gucci
+                rc.setIndicatorDot(curs[0], 255, 0, 0);
+                rc.setIndicatorDot(curs[1], 255, 0, 0);
+                rc.setIndicatorDot(curs[2], 255, 0, 0);
+                if (mySpawn == 0) {
+                    if (rc.canDropFlag(curs[0]))
+                        rc.dropFlag(curs[0]);
+                } else if (mySpawn == 1) {
+                    if (rc.canDropFlag(curs[1]))
+                        rc.dropFlag(curs[1]);
+                } else if (mySpawn == 2) {
+                    if (rc.canDropFlag(curs[2]))
+                        rc.dropFlag(curs[2]);
+                }
+            } else if (allSeenTarget) {
+                MapLocation m1, m2;
+                if (mySpawn == 0) {
+                    m1 = curs[1]; m2 = curs[2];
+                } else if (mySpawn == 1) {
+                    m1 = curs[0]; m2 = curs[2];
+                } else {
+                    m1 = curs[0]; m2 = curs[1];
+                }
+                Direction bestDirection = null;
+                int bestScore = 1000000;
+                for (Direction d:allDirections) {
+                    if (rc.canMove(d)) {
+                        MapLocation nxt = myLoc.add(d);
+                        int score = Math.abs(36 - nxt.distanceSquaredTo(m1)) + Math.abs(36 - nxt.distanceSquaredTo(m2));
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestDirection = d;
+                        }
+                    }
+                }
+                if (bestDirection != null) {
+                    rc.move(bestDirection);
+                }
+                Comms.dropFlagAtNewLocation(myLoc, mySpawn);
+            } else {
+                bugNav.move(targ);
+            }     
+        } else {
+            bugNav.move(targ);
+            Comms.dropFlagAtNewLocation(myLoc, mySpawn);
+            rc.setIndicatorLine(myLoc, targ, 255, 0, 0);
+        }
+        rc.setIndicatorString(mySpawn + " ");
+    }
+
     public void movement() throws GameActionException {
         if(roundNumber>200){
+            rc.resign();
             if(flagMovementLogic()) {
                 explorePtr = 0;
                 centerOfExploration = null;
                 return;
+            }
+        } else {
+            if (rc.hasFlag()) {
+                hideFlag();
             }
         }
 

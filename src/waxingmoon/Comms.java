@@ -86,6 +86,7 @@ public class Comms {
 
     final static int BUILDER_IDX = 59;
 
+
     // ----------------- //
     // stored comms data //
     // ----------------- //
@@ -689,17 +690,50 @@ public class Comms {
         flagsCaptured = readBits(bufferPool[MAIN_IDX], 3, 2);
     }
 
+    public static void commSeenFlagTarget(int flagnum) {
+        writeToBufferPool(0, bufferPool[0] | (1 << (flagnum + 10)));
+    }
+
+    public static boolean hasSeenTarget(int flagnum) {
+        return Utils.isBitOne(bufferPool[0], flagnum + 10);
+    }
+
+    public static void dropFlagAtNewLocation(MapLocation m, int flagnum) {
+        //12 bits conveying EXACT location
+        int mask = (m.x << 6) | m.y;
+        writeToBufferPool(flagnum + 1, mask);
+    }
+
+    public static MapLocation[] getHiddenFlagLocations() {
+        //this should only run once around round 175
+        MapLocation m1 = new MapLocation((bufferPool[1] >> 6) & 0x3f, bufferPool[1] & 0x3f);
+        MapLocation m2 = new MapLocation((bufferPool[2] >> 6) & 0x3f, bufferPool[2] & 0x3f);
+        MapLocation m3 = new MapLocation((bufferPool[3] >> 6) & 0x3f, bufferPool[3] & 0x3f);
+        MapLocation[] res = {m1, m2, m3};
+        return res;
+    }
+
+    public static void startFlagMainPhase() throws GameActionException {
+        //This indicates that all flags have been hidden --> entering main phase
+        writeToBufferPool(1, (1 << 5));
+        writeToBufferPool(2, (1 << 5));
+        writeToBufferPool(3, (1 << 5));
+    }
+
     public static boolean myFlagExists(int flagnum) {
+        //This should only be run in main phase.
         return Utils.isBitOne(bufferPool[flagnum], 5);
     }
 
     public static void writeMyFlag(int flagnum, int exists) throws GameActionException {
         //writes 1 in the first bit if the flag currently is safe, 0 otherwise
+        //This should only be run in main phase.
         int mask = (bufferPool[flagnum] & 0xffdf) | (exists << 5);
         writeToBufferPool(flagnum, mask);
     }
 
     public static void writeFlagStatus(int flagnum, int counts) throws GameActionException { 
+        //This should only be run in main phase.
         //bits: 4 bits each
         int basemask = 0xf; //<< (4 * flagnum);
         int mask = (bufferPool[1 + flagnum] & (0xffff ^ basemask)) | (counts); //<< (4 * flagnum)
@@ -707,17 +741,20 @@ public class Comms {
     }
 
     public static int readFlagStatus(int flagnum) { //returns true if theres more enemy ducks at flag then friendly ducks AND that flag still exists
+        //This should only be run in main phase.
         int basemask = 0xf; // << (4 * flagnum);
         int mask = (bufferPool[1 + flagnum] & basemask);
         return mask;
     }
 
     public static void init_WriteAllyFlags(int bufferIdx, FlagInfo f) {
+        //This should be run WAY before main phase.
         //This will happen in the first few turns to get the flagIDs on all robots
         writeToBufferPool(bufferIdx, f.getID());
     }
 
     public static void init_ReadAllyFlags() {
+        //This should be run WAY before main phase.
         allyFlagData[0] = new FlagData(); 
         allyFlagData[0].flagID = bufferPool[1];
         allyFlagData[1] = new FlagData(); 
