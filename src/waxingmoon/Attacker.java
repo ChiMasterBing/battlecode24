@@ -373,7 +373,6 @@ public class Attacker extends Robot {
                     }
                 }
             }
-
         }
     }
     public Boolean crumbMovementLogic() throws GameActionException {
