@@ -36,7 +36,7 @@ public abstract class Robot {
     
     public void senseGlobals() throws GameActionException {
         flags = rc.senseNearbyFlags(-1); 
-        if (roundNumber > 181) { //If we are in range of a spawn zone, check if our flag is still there.
+        if (roundNumber > 190) { //If we are in range of a spawn zone, check if our flag is still there.
             boolean[] tmp = {false, false, false};
             for (FlagInfo f:flags) {
                 if (f.getTeam() == rc.getTeam()) {
@@ -201,7 +201,7 @@ public abstract class Robot {
                 //     Comms.dropFlagAtNewLocation(f.getLocation(), myFlagNum);
                 // }
                 break;
-            case 180:
+            case 190:
                 hideLocations = Comms.getHiddenFlagLocations();
                 for(int i = 0; i<3; i++){
                     int curDist = 1000000000;
@@ -214,9 +214,12 @@ public abstract class Robot {
                     }
                 }
                 Navigation.calculateDefenderSpawn(myFlags[0], myFlags[1], myFlags[2]);
-                Debug.println(Arrays.toString(hideLocations));
+                // Debug.println(Arrays.toString(hideLocations));
 //                rc.resign();
                 break;
+            // case 210:
+            //     rc.resign();
+            //     break;
         }
     }
 

@@ -166,15 +166,16 @@ public class Attacker extends Robot {
         if (score < 8) {
             int d1 = 10000, d2 = d1, d3 = d1;
             if (Comms.myFlagExists(0))
-                d1 = myLoc.distanceSquaredTo(myFlags[0]);
+                d1 = myLoc.distanceSquaredTo(hideLocations[0]);
             if (Comms.myFlagExists(1))
-                d2 = myLoc.distanceSquaredTo(myFlags[1]);
+                d2 = myLoc.distanceSquaredTo(hideLocations[1]);
             if (Comms.myFlagExists(2))
-                d3 = myLoc.distanceSquaredTo(myFlags[2]);
+                d3 = myLoc.distanceSquaredTo(hideLocations[2]);
             int d4 = Math.min(d1, Math.min(d2, d3));
 
             if (d4 == 10000) {
-                Debug.println("Whoops, seems like the sitting duck has died?");
+                
+                //Debug.println("Whoops, seems like the sitting duck has died?");
                 return;
             }
 
@@ -417,77 +418,124 @@ public class Attacker extends Robot {
     }
 
     boolean seenTarget = false;
+    MapLocation previousTarget = null;
+    MapLocation bestSoFar = null;
+    int bestFlagDist = 100000;
     public void hideFlag() throws GameActionException {
+        if (roundNumber == 188) {
+            if (rc.canDropFlag(bestSoFar)) {
+                rc.dropFlag(bestSoFar); 
+                Comms.dropFlagAtNewLocation(bestSoFar, mySpawn);
+                return;
+                //check if we've been reset
+            }
+        } else if (roundNumber == 189) {
+            if (rc.canBuild(TrapType.WATER, bestSoFar)) {
+                rc.build(TrapType.WATER, bestSoFar);
+            }
+        }
+
         MapLocation targ = Navigation.getFurthestSpawnFromEnemy(myFlags[0], myFlags[1], myFlags[2]);
         MapLocation closest = Navigation.getTripleMinLocation(targ, mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
         Direction push = closest.directionTo(targ);
         targ = targ.add(push).add(push).add(push);
 
+        if (previousTarget != null && !targ.equals(previousTarget)) { //if symmetry changes
+            seenTarget = false;
+            Comms.commSeenFlagTarget(mySpawn, 0);
+        }
+        previousTarget = targ;
+
         if (roundNumber > 130 && !seenTarget) {
             //couldnt find a good location
             targ = myFlags[mySpawn];
-        }
-        
-        if (myLoc.distanceSquaredTo(targ) <= 25 && roundNumber < 130) {
+            bestSoFar = myFlags[mySpawn];
             seenTarget = true;
-            Comms.commSeenFlagTarget(mySpawn);
+            Comms.commSeenFlagTarget(mySpawn, 1);
+        } else if (roundNumber > 130 && seenTarget && rc.hasFlag()) {
+            targ = bestSoFar;
+        } 
+        
+        if (roundNumber < 130 && myLoc.distanceSquaredTo(targ) <= 25) {
+            seenTarget = true;
+            Comms.commSeenFlagTarget(mySpawn, 1);
         }
 
-        if (roundNumber > 75) {
-            MapLocation[] curs = Comms.getHiddenFlagLocations();
-            //To do: deal with isolated spawns
-            //check if current config is valid
-            boolean allSeenTarget = Comms.hasSeenTarget(0) && Comms.hasSeenTarget(1) && Comms.hasSeenTarget(2);
-            rc.setIndicatorString(String.valueOf(allSeenTarget));
-            if (allSeenTarget && curs[0].distanceSquaredTo(curs[1]) >= 36 && curs[0].distanceSquaredTo(curs[2]) >= 36 && curs[2].distanceSquaredTo(curs[1]) >= 36) {
+        if (bestSoFar != null) {
+            rc.setIndicatorLine(myLoc, bestSoFar, 0, 255, 0);
+        }
+
+
+        MapLocation[] curs = Comms.getHiddenFlagLocations();
+        boolean allSeenTarget = Comms.hasSeenTarget(0) && Comms.hasSeenTarget(1) && Comms.hasSeenTarget(2);
+        rc.setIndicatorString(String.valueOf(allSeenTarget));
+        if (roundNumber <= 130 && allSeenTarget && curs[0].distanceSquaredTo(curs[1]) >= 36 && curs[0].distanceSquaredTo(curs[2]) >= 36 && curs[2].distanceSquaredTo(curs[1]) >= 36) {
+            MapLocation loc = null;
+            if (mySpawn == 0) {
+                loc = curs[0];
+            } else if (mySpawn == 1) {
+                loc = curs[1];
+            } else if (mySpawn == 2) {
+                loc = curs[2];
+            }
+            if (loc.distanceSquaredTo(targ) <= 64 && roundNumber > 130) {
                 //We gucci
                 rc.setIndicatorDot(curs[0], 255, 0, 0);
                 rc.setIndicatorDot(curs[1], 255, 0, 0);
                 rc.setIndicatorDot(curs[2], 255, 0, 0);
-                if (mySpawn == 0) {
-                    if (rc.canDropFlag(curs[0]))
-                        rc.dropFlag(curs[0]);
-                } else if (mySpawn == 1) {
-                    if (rc.canDropFlag(curs[1]))
-                        rc.dropFlag(curs[1]);
-                } else if (mySpawn == 2) {
-                    if (rc.canDropFlag(curs[2]))
-                        rc.dropFlag(curs[2]);
+                if (rc.canDropFlag(loc)) {
+                    rc.dropFlag(loc);
                 }
-            } else if (allSeenTarget) {
-                MapLocation m1, m2;
-                if (mySpawn == 0) {
-                    m1 = curs[1]; m2 = curs[2];
-                } else if (mySpawn == 1) {
-                    m1 = curs[0]; m2 = curs[2];
-                } else {
-                    m1 = curs[0]; m2 = curs[1];
+            } else {
+                int dist = loc.distanceSquaredTo(targ);
+                if (dist < bestFlagDist) {
+                    bestFlagDist = dist;
+                    bestSoFar = loc;
                 }
-                Direction bestDirection = null;
-                int bestScore = 1000000;
-                for (Direction d:allDirections) {
-                    if (rc.canMove(d)) {
-                        MapLocation nxt = myLoc.add(d);
-                        int score = 36 - Math.min(nxt.distanceSquaredTo(m1), 36) + 36-Math.min(nxt.distanceSquaredTo(m2), 36);
-                        if (score < bestScore) {
-                            bestScore = score;
-                            bestDirection = d;
-                        }
+            }
+        } else if (roundNumber <= 130 && allSeenTarget) {
+            MapLocation m1, m2;
+            if (mySpawn == 0) {
+                m1 = curs[1]; m2 = curs[2];
+            } else if (mySpawn == 1) {
+                m1 = curs[0]; m2 = curs[2];
+            } else {
+                m1 = curs[0]; m2 = curs[1];
+            }
+
+
+            Direction bestDirection = null;
+            int bestScore = 1000000;
+            for (Direction d:allDirections) {
+                if (rc.canMove(d)) {
+                    MapLocation nxt = myLoc.add(d);
+                    int score = 36 - Math.min(nxt.distanceSquaredTo(m1), 36) + 36-Math.min(nxt.distanceSquaredTo(m2), 36);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestDirection = d;
                     }
                 }
-                if (bestDirection != null) {
-                    rc.move(bestDirection);
-                }
-                Comms.dropFlagAtNewLocation(myLoc, mySpawn);
-            } else {
-                bugNav.move(targ);
-            }     
-        } else {
-            bugNav.move(targ);
+            }
+
+            if (myLoc.distanceSquaredTo(m1) + myLoc.distanceSquaredTo(m2) < 3) {
+                bestDirection = allDirections[random.nextInt(8)];
+            }
+
+            if (bestDirection != null && rc.canMove(bestDirection)) {
+                rc.move(bestDirection);
+            }
             Comms.dropFlagAtNewLocation(myLoc, mySpawn);
-            rc.setIndicatorLine(myLoc, targ, 255, 0, 0);
-        }
-    }
+        } else {
+            if (targ == null) {
+                targ = myFlags[mySpawn];
+                bestSoFar = targ;
+            }
+            bugNav.move(targ);
+            rc.setIndicatorLine(myLoc, targ, 0, 0, 0);
+            Comms.dropFlagAtNewLocation(myLoc, mySpawn);
+        }     
+    } 
+    
 
     public void movement() throws GameActionException {
         if(roundNumber>200){
@@ -498,7 +546,7 @@ public class Attacker extends Robot {
                 return;
             }
         } else {
-            if (rc.hasFlag()) {
+            if (rc.hasFlag() || (myMoveNumber < 3 && roundNumber == 189)) {
                 hideFlag();
             }
         }

@@ -690,8 +690,9 @@ public class Comms {
         flagsCaptured = readBits(bufferPool[MAIN_IDX], 3, 2);
     }
 
-    public static void commSeenFlagTarget(int flagnum) {
-        writeToBufferPool(0, bufferPool[0] | (1 << (flagnum + 10)));
+    public static void commSeenFlagTarget(int flagnum, int bit) {
+        int val = overwriteBits(bufferPool[0], bit, flagnum + 10, 1);
+        writeToBufferPool(0, val);
     }
 
     public static boolean hasSeenTarget(int flagnum) {
