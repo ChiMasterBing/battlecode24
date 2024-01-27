@@ -239,11 +239,11 @@ public class Attacker extends Robot {
             }
 
             MapLocation tempObstacle = bugNav.lastObstacleFound;
-            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (tempObstacle != null &&rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null))) {
+            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (rc.getHealth()<=chickenLevel||rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null&&rc.senseRobotAtLocation(tempObstacle).getTeam()==rc.getTeam()))) {
                 int dist = myLoc.distanceSquaredTo(closestSpawn);
                 int bestHealth = rc.getHealth();
                 RobotInfo best = null;
-                RobotInfo[] superCloseFriendlyRobots = closeFriendlyRobots;
+                RobotInfo[] superCloseFriendlyRobots = rc.senseNearbyRobots(8);
                 int flagValue = rc.senseNearbyFlags(0)[0].getID();
                 Comms.updateFlagID(flagValue);
                 //int adjDist = -1;
