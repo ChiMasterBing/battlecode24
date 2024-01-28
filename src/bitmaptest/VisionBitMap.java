@@ -4,10 +4,14 @@ package bitmaptest;
 import battlecode.common.*;
 
 //* BYTECODE COSTS
+
+//* instantiate max. tiles: 1930
 //* instantiate overhead: 135
 //* per tile sensed: 26.1
+
 //* bfs overhead: 270
 //* bfs iteration: 260
+
 //* floodfill overhead: 270
 //* floodfill iteration: 205
 
@@ -21,7 +25,6 @@ public class VisionBitMap {
 
     public VisionBitMap(MapLocation myLoc, MapInfo[] mapInfos) {
         // ~1460 bytecode
-        System.out.println(Clock.getBytecodeNum());
 
         center = myLoc;
         int[] tempMask = new int[] {0x1ff, 0x1ff, 0x1ff, 0x1ff, 0x1ff, 0x1ff, 0x1ff, 0x1ff, 0x1ff};
@@ -29,8 +32,6 @@ public class VisionBitMap {
         int x = 4 + myLoc.x;
         int y = 4 + myLoc.y;
         int i = mapInfos.length;
-        System.out.println(i);
-        System.out.println(Clock.getBytecodeNum());
 
         while (i-- > 0) {
             MapInfo m = mapInfos[i];
@@ -38,8 +39,6 @@ public class VisionBitMap {
                 tempMask[y - m.getMapLocation().y] ^= 1 << (x - m.getMapLocation().x);
             }
         }
-        System.out.println(Clock.getBytecodeNum());
-
 
         tempMask[0] ^= 0x1ff;
         tempMask[1] ^= 0x1ff;
