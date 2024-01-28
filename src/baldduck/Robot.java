@@ -1,9 +1,7 @@
-package waxingmoon;
-
-import java.util.Arrays;
+package baldduck;
 
 import battlecode.common.*;
-import waxingmoon.fast.*;
+import baldduck.fast.FastLocSet;
 
 public abstract class Robot {
     RobotController rc;
@@ -12,10 +10,8 @@ public abstract class Robot {
     int MYTYPE, myFlagNum;
     MapLocation[] spawnLocs;
     MapLocation[] myFlags = {null, null, null};
-    MapLocation[] hideLocations = {null, null, null};
     MapLocation[] mirrorFlags = {null, null, null};
     MapLocation[] stolenFlags = {null, null, null};
-    MapLocation[] closestSpawnToFlag = {null, null, null};
     FlagInfo[] flags = null;
     int[] stolenFlagRounds = {0, 0, 0};
     int[] flagIDs = {0, 0, 0};
@@ -36,7 +32,7 @@ public abstract class Robot {
     
     public void senseGlobals() throws GameActionException {
         flags = rc.senseNearbyFlags(-1); 
-        if (roundNumber > 190) { //If we are in range of a spawn zone, check if our flag is still there.
+        if (roundNumber > 10) { //If we are in range of a spawn zone, check if our flag is still there.
             boolean[] tmp = {false, false, false};
             for (FlagInfo f:flags) {
                 if (f.getTeam() == rc.getTeam()) {
@@ -45,7 +41,7 @@ public abstract class Robot {
                     else if (f.getID() == flagIDs[2]) tmp[2] = true;
                 }
             }
-            if (rc.canSenseLocation(hideLocations[0])) {
+            if (rc.canSenseLocation(myFlags[0])) {
                 if (tmp[0]) {
                     Comms.writeMyFlag(0, 1);
                 }
@@ -54,7 +50,7 @@ public abstract class Robot {
                     Comms.writeFlagStatus(0, 15);
                 }
             }
-            if (rc.canSenseLocation(hideLocations[1])) {
+            if (rc.canSenseLocation(myFlags[1])) {
                 if (tmp[1]) {
                     Comms.writeMyFlag(1, 1);
                 }
@@ -63,7 +59,7 @@ public abstract class Robot {
                     Comms.writeFlagStatus(1, 15);
                 }
             }
-            if (rc.canSenseLocation(hideLocations[2])) {
+            if (rc.canSenseLocation(myFlags[2])) {
                 if (tmp[2]) {
                     Comms.writeMyFlag(2, 1);
                 }
@@ -191,31 +187,6 @@ public abstract class Robot {
                 break;
             case 5:
                 Comms.writeFlagStatus(myMoveNumber%3, 8);
-                break;
-            case 176:
-                // for (FlagInfo f:flags) {
-                //     int flagnum = 999999999; 
-                //     if (f.getID() == flagIDs[0]) flagnum = 0;
-                //     else if (f.getID() == flagIDs[1]) flagnum = 1;
-                //     else if (f.getID() == flagIDs[2]) flagnum = 2;
-                //     Comms.dropFlagAtNewLocation(f.getLocation(), myFlagNum);
-                // }
-                break;
-            case 188:
-                hideLocations = Comms.getHiddenFlagLocations();
-                for(int i = 0; i<3; i++){
-                    int curDist = 1000000000;
-                    for(int j = 0; j<3; j++) {
-                        int dist = hideLocations[i].distanceSquaredTo(myFlags[j]);
-                        if (curDist>dist){
-                            curDist = dist;
-                            closestSpawnToFlag[i] = myFlags[j];
-                        }
-                    }
-                }
-                Navigation.calculateDefenderSpawn(myFlags[0], myFlags[1], myFlags[2]);
-                Debug.println(Arrays.toString(hideLocations));
-//                rc.resign();
                 break;
         }
     }

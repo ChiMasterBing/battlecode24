@@ -1,11 +1,11 @@
-package waxingmoon;
+package baldduck;
 
 // battlecode package
 
 import battlecode.common.*;
 
 // custom package
-import waxingmoon.fast.*;
+import baldduck.fast.*;
 
 /* ALLOCATIONS
 bit allocations are LSB first
@@ -52,7 +52,7 @@ public class Comms {
     /* --------------------------------------------------------------------------------- */
 
     private static RobotController rc;
-
+    
     // --------- //
     // constants //
     // --------- //
@@ -121,7 +121,7 @@ public class Comms {
     static int roundNumber;
     static int myMoveOrder;
     static int myStatus;
-
+    
     private static int[] bufferPool;
     private static boolean[] dirtyFlags;
 
@@ -131,7 +131,7 @@ public class Comms {
 
     public static void init(RobotController r) throws GameActionException {
         rc = r;
-
+        
         moveOrderToID = new int[50];
         IDToMoveOrder = new FastIntIntMap();
 
@@ -189,10 +189,10 @@ public class Comms {
         //     parseEnemyFlags();
         // }
         // parseAllyStatuses();
-        if (roundNumber > 150) {
-            //     readSectorMessages();
-            readSquadronMessages();
-        }
+         if (roundNumber > 150) {
+        //     readSectorMessages();
+             readSquadronMessages();
+         }
         // if (true /*& Robot.type = BUILDER*/) parseBuilderMessages();
     }
 
@@ -201,7 +201,7 @@ public class Comms {
             flushBufferPool();
             return;
         }
-
+        
         //flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
         writeRegularUpdate();
@@ -548,7 +548,7 @@ public class Comms {
     // for turn 1 only
     private static void writeBotID() {
         assert roundNumber == 1 : "Attempted to write bot ID to array when not turn 1.";
-
+        
         myMoveOrder = bufferPool[0];
         writeToBufferPool(MAIN_IDX, myMoveOrder + 1);
         writeToBufferPool(myMoveOrder + 1, rc.getID());
@@ -610,14 +610,14 @@ public class Comms {
         readSingleBotID(48);
         readSingleBotID(49);
     }
-    // helper for readBotIDs(), writes ID data for idx
-    private static void readSingleBotID(int idx) {
-        int botID = bufferPool[idx + 1];
-        allyBotData[idx] = new BotData();
-        allyBotData[idx].moveOrder = botID;
-        moveOrderToID[idx] = botID;
-        IDToMoveOrder.add(botID, idx);
-    }
+        // helper for readBotIDs(), writes ID data for idx
+        private static void readSingleBotID(int idx) { 
+            int botID = bufferPool[idx + 1];
+            allyBotData[idx] = new BotData();
+            allyBotData[idx].moveOrder = botID;
+            moveOrderToID[idx] = botID;
+            IDToMoveOrder.add(botID, idx);
+        }
     private static void wipeBotID(){
         writeToBufferPool(myMoveOrder+1, 0);
     }
@@ -684,7 +684,7 @@ public class Comms {
     // ------------------------------------------- //
     // read methods: analyzes buffer ints for data //
     // ------------------------------------------- //
-
+    
     private static void parseMainInfo() {
         // Navigation.symmetry = readSymmetry(); we're just going to use Comms.readSymmetry to get the symmetry
         flagsCaptured = readBits(bufferPool[MAIN_IDX], 3, 2);
@@ -733,7 +733,7 @@ public class Comms {
         writeToBufferPool(flagnum, mask);
     }
 
-    public static void writeFlagStatus(int flagnum, int counts) throws GameActionException {
+    public static void writeFlagStatus(int flagnum, int counts) throws GameActionException { 
         //This should only be run in main phase.
         //bits: 4 bits each
         int basemask = 0xf; //<< (4 * flagnum);
@@ -756,17 +756,17 @@ public class Comms {
 
     public static void init_ReadAllyFlags() {
         //This should be run WAY before main phase.
-        allyFlagData[0] = new FlagData();
+        allyFlagData[0] = new FlagData(); 
         allyFlagData[0].flagID = bufferPool[1];
-        allyFlagData[1] = new FlagData();
+        allyFlagData[1] = new FlagData(); 
         allyFlagData[1].flagID = bufferPool[2];
-        allyFlagData[2] = new FlagData();
+        allyFlagData[2] = new FlagData(); 
         allyFlagData[2].flagID = bufferPool[3];
     }
 
     private static void parseSingleFlag(int bufferIdx, FlagData[] dataArray, int dataIdx) {
         dataArray[dataIdx].currentSector = readBits(bufferPool[bufferIdx], 0, 8);
-    }
+    } 
     private static void parseAllyFlags() {
         parseSingleFlag(ALLY_FLAG_IDX + 0, allyFlagData, 0);
         parseSingleFlag(ALLY_FLAG_IDX + 1, allyFlagData, 1);
@@ -786,7 +786,7 @@ public class Comms {
         sectorMessagesLen = readBits(bufferPool[SECTOR_QUEUE_HEADER], 6, 6);
         sectorMessagesLen -= sectorMessagesSent;
         sectorMessagesSent = 0;
-
+        
         for (int offset = sectorMessagesOffset; offset < sectorMessagesOffset + sectorMessagesLen; offset++) {
             sectorMessages.add(bufferPool[SECTOR_QUEUE_IDX + offset % SECTOR_QUEUE_LEN]);
         }
@@ -876,14 +876,14 @@ public class Comms {
     private static int getAllyStatus(int idx) {
         return readBits(bufferPool[allyIdxToStatusSlot(idx)], allyIdxToStatusBitShift(idx), ALLY_STATUS_BITLEN);
     }
-    // helper: converts bot index (0-49) to index for buffer pool
-    private static int allyIdxToStatusSlot(int idx) {
-        return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
-    }
-    // helper: converts bot index to shift used
-    private static int allyIdxToStatusBitShift(int idx) {
-        return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
-    }
+        // helper: converts bot index (0-49) to index for buffer pool
+        private static int allyIdxToStatusSlot(int idx) {
+            return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
+        }
+        // helper: converts bot index to shift used
+        private static int allyIdxToStatusBitShift(int idx) {
+            return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
+        }
 
     private static void parseBuilderMessages() {
         // evaluate stuff
@@ -905,7 +905,7 @@ class BotData {
 
     final int SACRIFICE = 6;
     final int DEAD = 7;
-
+    
     RobotInfo recentRobotInfo;
     int robotInfoTurn;
 

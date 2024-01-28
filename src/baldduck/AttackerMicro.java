@@ -1,4 +1,4 @@
-package waxingmoon;
+package baldduck;
 
 //sometimes, full moons turn bad dreams into horrible nightmares.
 //--waxing moon
@@ -29,7 +29,7 @@ public class AttackerMicro {
     static int[] uhealerHPS = {43, 46, 51, 55, 56, 59, 72};
     public static void init(RobotController r) {
         rc = r;
-//        stunTracker = new int[rc.getMapWidth() + 1][rc.getMapHeight() + 1];
+        stunTracker = new int[rc.getMapWidth() + 1][rc.getMapHeight() + 1];
         nullX = rc.getMapHeight();
         nullY = rc.getMapWidth();
     }
@@ -186,8 +186,7 @@ public class AttackerMicro {
             if (!canMove) return false;
             if (!M.canMove) return true;
 
-            if (rc.getHealth() < DPSreceived&&rc.getHealth()>M.DPSreceived) return false;
-            if (rc.getHealth() > DPSreceived&&rc.getHealth()<M.DPSreceived) return true;
+            if (rc.getHealth() < DPSreceived) return false;
 
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
                 if (inRange() && !M.inRange()) return true;
