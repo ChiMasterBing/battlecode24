@@ -64,7 +64,6 @@ public class AttackerMicro {
         }
 
         for (RobotInfo r:enemyRobots) {
-            if (Clock.getBytecodesLeft() < 3000) break;
             int dps;
             if (roundNumber >= 600) {
                 dps = uAttackerDPS[r.getAttackLevel()];
@@ -83,7 +82,6 @@ public class AttackerMicro {
         }
 
         for (RobotInfo r:friendlyRobots) {
-            if (Clock.getBytecodesLeft() < 3000) break;
             int hps;
             if (roundNumber >= 1200) {
                 hps = uhealerHPS[r.getHealLevel()];
@@ -127,6 +125,7 @@ public class AttackerMicro {
         int heals = 0;
         int stunScrew = 0; //how many allies am i screwing if I move here and stun goes off
         int lowestHealth = 1000000;
+        int alliesNearby = 0;
 
         public MicroInfo(Direction dir) throws GameActionException {
             this.dir = dir;
@@ -143,7 +142,6 @@ public class AttackerMicro {
 
         void updateEnemy(RobotInfo unit, int dps){
             if (!canMove) return;
-            if (unit.hasFlag) return; //poses no threat in terms of dmg
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
 
@@ -168,6 +166,8 @@ public class AttackerMicro {
                 stunLikely--;
             if(dist<=4)
                 heals+=hps;
+            if(dist<=4)
+                alliesNearby++;
         }
         int safe(){
             if (!canMove) return -1;
@@ -189,8 +189,12 @@ public class AttackerMicro {
             if (!canMove) return false;
             if (!M.canMove) return true;
 
-            if (rc.getHealth() < DPSreceived&&rc.getHealth()>M.DPSreceived) return false;
-            if (rc.getHealth() > DPSreceived&&rc.getHealth()<M.DPSreceived) return true;
+            if (rc.getHealth() < DPSreceived-heals&&rc.getHealth()>M.DPSreceived-M.heals) return false;
+            if (rc.getHealth() > DPSreceived-heals&&rc.getHealth()<M.DPSreceived-M.heals) return true;
+
+
+//            if (rc.getHealth() < DPSreceived&&rc.getHealth()>M.DPSreceived) return false;
+//            if (rc.getHealth() > DPSreceived&&rc.getHealth()<M.DPSreceived) return true;
 
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
                 if (inRange() && !M.inRange()) return true;
@@ -211,10 +215,35 @@ public class AttackerMicro {
                 else {
                     return minDistanceToEnemy <= M.minDistanceToEnemy;
                 }
-            } else { //mess with CanBeHit?
-                 if (!canBeHit() && M.canBeHit()) return true;
-                 if (canBeHit() && !M.canBeHit()) return false;
-                 if (canBeHit()) {
+            }else if(cooldown<20){
+                if (!inRange() && M.inRange()) return true;
+                if (inRange() && !M.inRange()) return false;
+
+                if (!canBeHit() && M.canBeHit()&&rc.getHealth()==1000) return false;
+                if (canBeHit() && !M.canBeHit()&&rc.getHealth()==1000) return true;
+
+                if (DPSreceived < M.DPSreceived) return true;
+                if (M.DPSreceived < DPSreceived) return false;
+
+                if(inRange()){
+//                    if(alliesNearby>=M.alliesNearby){
+//                        return true;
+//                    }else{
+//                        return false;
+//                    }
+
+                    return minDistanceToEnemy >= M.minDistanceToEnemy;
+                }else{
+                    if(alliesNearby>=M.alliesNearby){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            }else { //mess with CanBeHit?
+                if (!canBeHit() && M.canBeHit()) return true;
+                if (canBeHit() && !M.canBeHit()) return false;
+                if (canBeHit()) {
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
 

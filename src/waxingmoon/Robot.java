@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Random;
 
 import battlecode.common.*;
-import bobnobuilder.fast.FastLocIntMap;
 import waxingmoon.fast.*;
 
 public abstract class Robot {
@@ -33,6 +32,7 @@ public abstract class Robot {
         Navigation.init(rc);
         Debug.init(rc);
         Comms.init(rc);
+        Utils.init(rc);
         spawnLocs = rc.getAllySpawnLocations();
         initFlagStatus(); //~4000 bytecode
         updateSymmetryComputations();
@@ -40,13 +40,34 @@ public abstract class Robot {
     
     public void senseGlobals() throws GameActionException {
         flags = rc.senseNearbyFlags(-1); 
+
+        // if (roundNumber > 500) rc.resign();
+
         if (roundNumber > 190) { //If we are in range of a spawn zone, check if our flag is still there.
             boolean[] tmp = {false, false, false};
+
             for (FlagInfo f:flags) {
                 if (f.getTeam() == rc.getTeam()) {
                     if (f.getID() == flagIDs[0]) tmp[0] = true;
                     else if (f.getID() == flagIDs[1]) tmp[1] = true;
                     else if (f.getID() == flagIDs[2]) tmp[2] = true;
+                } else {
+                    int f1 = Comms.getEnemyFlagID(0);
+                    int f2 = Comms.getEnemyFlagID(1);
+                    int f3 = Comms.getEnemyFlagID(2);
+                    
+                    if (f.getID() % 61 == f1 || f.getID() % 61 == f2 || f.getID() % 61 == f3) {
+                        continue;
+                    }
+                    System.out.println(f1 + " " + f2 + " " + f3 + " " + f.getID() + " " + (f.getID() % 61));
+
+                    if (Comms.getEnemyFlagStatus(0) == 0) {
+                        Comms.writeEnemyFlagLocation(0, f);
+                    } else if (Comms.getEnemyFlagStatus(1) == 0) {
+                        Comms.writeEnemyFlagLocation(1, f);
+                    } else if (Comms.getEnemyFlagStatus(2) == 0) {
+                        Comms.writeEnemyFlagLocation(2, f);
+                    }
                 }
             }
             if (rc.canSenseLocation(myFlags[0])) {
@@ -167,6 +188,37 @@ public abstract class Robot {
             commFlagID();
         }
 
+        MapLocation m1 = Comms.getEnemyFlagLocation(0);
+        MapLocation m2 = Comms.getEnemyFlagLocation(1);
+        MapLocation m3 = Comms.getEnemyFlagLocation(2);
+        int s1 = Comms.getEnemyFlagStatus(0);
+        int s2 = Comms.getEnemyFlagStatus(1);
+        int s3 = Comms.getEnemyFlagStatus(2);
+
+        if (s1 == 1) {
+            rc.setIndicatorDot(m1, 255, 0, 0);
+        } else if (s1 == 3) {
+            rc.setIndicatorDot(m1, 0, 0, 255);
+        } else if (s1 == 2) {
+            rc.setIndicatorDot(m1, 0, 255, 0);
+        }
+        if (s2 == 1) {
+            rc.setIndicatorDot(m2, 255, 0, 0);
+        } else if (s2 == 3) {
+            rc.setIndicatorDot(m2, 0, 0, 255);
+        } else if (s2 == 2) {
+            rc.setIndicatorDot(m2, 0, 255, 0);
+        }
+        if (s3 == 1) {
+            rc.setIndicatorDot(m3, 255, 0, 0);
+        } else if (s3 == 3) {
+            rc.setIndicatorDot(m3, 0, 0, 255);
+        } else if (s3 == 2) {
+            rc.setIndicatorDot(m3, 0, 255, 0);
+        }
+        
+        rc.setIndicatorString(m1 + " " + m2 + " " + m3);
+
         lastLocation = rc.getLocation();
 
         turn();
@@ -179,8 +231,6 @@ public abstract class Robot {
             Comms.writeOccupy(spawnLocToIndex.getVal(rc.getLocation()), 1);
         }
         lastLocation = rc.getLocation();
-        
-
 
         if (roundNumber < 200) {
             if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
@@ -369,7 +419,10 @@ public abstract class Robot {
                 }
             }
 
-            if (center == null) center = myFlags[myMoveNumber % 3];
+            if (center == null) {
+                mySpawn = myMoveNumber % 3;
+                center = myFlags[myMoveNumber % 3];
+            }
 
             for (Direction d:allDirections) {
                 if (rc.canSpawn(center.add(d))) {
@@ -386,6 +439,7 @@ public abstract class Robot {
     }
 
     boolean aliveLastTurn = false;
+    FlagInfo heldFlagLastTurn = null;
 
     public void play() throws GameActionException {
         roundNumber = rc.getRoundNum();
@@ -406,6 +460,11 @@ public abstract class Robot {
                 if (spawnLocToIndex.contains(lastLocation)) {
                     Comms.writeOccupy(spawnLocToIndex.getVal(lastLocation), 0);
                     lastLocation = new MapLocation(80, 80);
+                }
+
+                if (heldFlagLastTurn != null) {
+                    Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
+                    heldFlagLastTurn = null;
                 }
 
                 if (isSwiper) {
@@ -436,6 +495,6 @@ public abstract class Robot {
             }
         }
 
-        rc.setIndicatorString(Comms.getAlive() + " ");
+        //rc.setIndicatorString(Comms.getAlive() + " ");
     }
 }

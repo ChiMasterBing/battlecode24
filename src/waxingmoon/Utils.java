@@ -102,12 +102,20 @@ public class Utils {
 
     // navigation
 
-    public static int locationToSector (MapLocation location) {
-        return ((location.x >> 2) << 4) | (location.y >> 2);
+    // public static int locationToSector (MapLocation location) {
+    //     return ((location.x >> 2) << 4) | (location.y >> 2);
+    // }
+
+    // public static MapLocation sectorToLocation (int sector) {
+    //     return new MapLocation((sector >> 4) << 2 + 1, (sector & 0x7) << 2 + 1);
+    // }
+
+    public static int locationToSector (MapLocation loc) {
+        return (loc.x / 4) | ((loc.y/4) << 4);
     }
 
     public static MapLocation sectorToLocation (int sector) {
-        return new MapLocation((sector >> 4) << 2 + 1, (sector & 0x7) << 2 + 1);
+        return new MapLocation(4 * (sector & 15), 4 * ((sector >> 4) & 15));
     }
  
     public static int locationToInt(MapLocation location) {

@@ -116,6 +116,7 @@ public class ChickenMicro {
         Direction dir;
         MapLocation location;
         int minDistanceToEnemy = 1000000;
+        int getMinDistanceToAlly = 100000;
         double DPSreceived = 0;
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
@@ -168,6 +169,7 @@ public class ChickenMicro {
                 heals+=hps;
             if(dist<=4)
                 allysNear+=uAttackerDPS[unit.attackLevel];
+            getMinDistanceToAlly = Math.min(getMinDistanceToAlly, dist);
         }
         int safe(){
             if (!canMove) return -1;
@@ -188,34 +190,21 @@ public class ChickenMicro {
         boolean isBetter(MicroInfo M, int cooldown){
             if (!canMove) return false;
             if (!M.canMove) return true;
-            if(DPSreceived-heals>rc.getHealth()&&M.DPSreceived-heals>rc.getHealth()){//ur gonna die anwyays, so kill ursself
-                if (allysNear > M.allysNear) {
-                    return true;
-                }
-                if (M.allysNear > allysNear) {
-                    return false;
-                }
-                if (DPSreceived < M.DPSreceived) return false;//jhopefully u charge in and set off some stuns
-                if (M.DPSreceived < DPSreceived) return true;
-                return minDistanceToEnemy <= M.minDistanceToEnemy;
-
-            }else {
-                if (DPSreceived -heals< M.DPSreceived-heals) return true;
-                if (M.DPSreceived-heals < DPSreceived-heals) return false;
-                if (heals > M.heals) {
-                    return true;
-                }
-                if (M.heals > heals) {
-                    return false;
-                }
-                if (allysNear > M.allysNear) {
-                    return true;
-                }
-                if (M.allysNear > allysNear) {
-                    return false;
-                }
-                return minDistanceToEnemy >= M.minDistanceToEnemy;
-            }
+            if (DPSreceived< M.DPSreceived) return true;
+            if (M.DPSreceived< DPSreceived) return false;
+//            if (heals > M.heals) {
+//                return true;
+//            }
+//            if (M.heals > heals) {
+//                return false;
+//            }
+//            if (allysNear > M.allysNear) {
+//                return true;
+//            }
+//            if (M.allysNear > allysNear) {
+//                return false;
+//            }
+            return getMinDistanceToAlly <= M.getMinDistanceToAlly;
         }
     }
 }

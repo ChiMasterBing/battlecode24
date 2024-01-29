@@ -269,9 +269,54 @@ public class Comms {
         writeToBufferPool(MAIN_IDX, bufferPool[MAIN_IDX] | (1 << symm));
     }
 
+    public static void writeEnemyFlagLocation(int flagnum, FlagInfo f) {
+        MapLocation m = f.getLocation();
+        // 8 bits location, 6 bits ID, 2 bits status
+        writeToBufferPool(flagnum + 4, (Utils.locationToSector(m)) | ((f.getID() % 61) << 8) | (1 << 14));
+    }
+
+    public static MapLocation getEnemyFlagLocation(int flagnum) {
+        if (bufferPool[4 + flagnum] != 0) {
+            return Utils.sectorToLocation((bufferPool[4+flagnum] & 255));
+        } 
+        return new MapLocation(80, 80);
+    }
+
+    public static int getEnemyFlagID(int flagnum) {
+        if (bufferPool[4 + flagnum] != 0) {
+            return (bufferPool[4+flagnum] >> 8) & 63;
+        } 
+        return -1;
+    }
+
+    public static int getEnemyFlagStatus(int flagnum) {
+        return bufferPool[4 + flagnum] >> 14;
+    }
+
+    public static void writeEnemyFlagStatus(FlagInfo f, int status) {
+        if (f.getID() % 61 == getEnemyFlagID(0)) {
+            writeToBufferPool(4, overwriteBits(bufferPool[4], status, 14, 2));
+        } else if (f.getID() % 61 == getEnemyFlagID(1)) {
+            writeToBufferPool(5, overwriteBits(bufferPool[5], status, 14, 2));
+        } else if (f.getID() % 61 == getEnemyFlagID(2)) {
+            writeToBufferPool(6, overwriteBits(bufferPool[6], status, 14, 2));
+        }
+    }
+
     public static void depositFlag(int flagID) {
         flagsCaptured = countFlagsCaptured() + 1;
         writeToBufferPool(MAIN_IDX, overwriteBits(bufferPool[MAIN_IDX], flagsCaptured, 3, 2));
+        if (getEnemyFlagID(0) == flagID % 61) {
+            System.out.println(getEnemyFlagStatus(0));
+            writeToBufferPool(4, overwriteBits(bufferPool[4], 3, 14, 2));
+            System.out.println(getEnemyFlagStatus(0));
+        } else if (getEnemyFlagID(1) == flagID % 61) {
+            System.out.println(getEnemyFlagStatus(1));
+            writeToBufferPool(5, overwriteBits(bufferPool[5], 3, 14, 2));
+            System.out.println(getEnemyFlagStatus(1));
+        } else {    
+            writeToBufferPool(6, overwriteBits(bufferPool[6], 3, 14, 2));
+        }
     }
 
     public static int countFlagsCaptured() {

@@ -260,20 +260,25 @@ public class Attacker extends Robot {
     }
 
     public Boolean flagMovementLogic() throws GameActionException {
+        heldFlagLastTurn = null;
         if (rc.hasFlag()){
-            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100) {
-                rc.dropFlag(myLoc);
-                // rc.resign();
-                //lets not troll and at least do some damage
+            for (FlagInfo f:flags) {
+                if (f.getLocation().equals(myLoc) && f.isPickedUp()) {
+                    heldFlagLastTurn = f; break;
+                }
             }
 
+            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100) {
+                rc.dropFlag(myLoc);
+                Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
+            }
 
             for (Direction d:Direction.allDirections()) {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
                     rc.move(d);
                     if (spawnSet.contains(rc.getLocation())) {
                         Debug.println("I DEPOSITED FLAG WOO!");
-                        Comms.depositFlag(0);
+                        Comms.depositFlag(heldFlagLastTurn.getID());
                     }
                     return true;
                 }
@@ -305,6 +310,7 @@ public class Attacker extends Robot {
                     MapLocation temp = myLoc.add(myLoc.directionTo(best.getLocation()));
                     if(rc.canDropFlag(temp)) {
                         rc.dropFlag(temp);
+                        Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
                     }
                 }
             }
@@ -315,14 +321,12 @@ public class Attacker extends Robot {
                 bugNav.move(myFlags[mySpawn]); //we want to stay at edge of map too
             }
             
-
             if (spawnSet.contains(rc.getLocation())) {
                 Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag(0);
             }
             return true;
         }
-
         else {
             FlagInfo[] closeFlags = rc.senseNearbyFlags(8);
             if(closeFlags.length > 0) {
@@ -366,7 +370,7 @@ public class Attacker extends Robot {
                     }
                 }else{ //if we picked up their flag
                     if(Comms.countFlagsCaptured()!=2) {
-                        return false;
+                        if (friendlyRobots.length >= 12) return false;
                     }
                     if (Comms.closeToFlag(i.getID(), rc.getID())) {
                         targ = i.getLocation();
@@ -393,14 +397,7 @@ public class Attacker extends Robot {
     }
     public void checkPickupFlag() throws GameActionException {
         if(rc.getRoundNum()<200){
-            // if (myMoveNumber < 3 && roundNumber < 20) {
-            //     for (FlagInfo f:flags) {
-            //         if (rc.canPickupFlag(f.getLocation()) && (f.getLocation().equals(myFlags[0]) || f.getLocation().equals(myFlags[1]) || f.getLocation().equals(myFlags[2]))) {
-            //             rc.pickupFlag(f.getLocation());
-            //         }
-            //     }
-            // }
-            // return;
+            return;
         }
         for (Direction d:allDirections) {
             MapLocation nxt = myLoc.add(d);
@@ -415,6 +412,7 @@ public class Attacker extends Robot {
                 if (Comms.assignedToOther(i.getID(), rc.getID())||isDead) {
                     if ((friendlyRobots.length + 1) - enemyRobots.length > 0 && rc.getRoundNum() > 200) {
                         rc.pickupFlag(nxt);
+                        Comms.writeEnemyFlagStatus(i, 2);
                     }
                 }
             }
@@ -455,207 +453,6 @@ public class Attacker extends Robot {
         }
         return false;
     }
-
-    boolean seenTarget = false;
-    boolean returnToSpawn = true;
-    MapLocation previousTarget = null;
-    MapLocation bestSoFar = null;
-    MapLocation targ = null;
-    int bestFlagDist = 100000;
-    boolean prevTurnWasGood = false;
-    public void hideFlag() throws GameActionException {
-        if(!rc.hasFlag()) {
-            return;
-        }
-        if (roundNumber > 170 && roundNumber < 189) {
-            if (bestSoFar != null) {
-                if (rc.canDropFlag(bestSoFar)) { //todo: check if we've been reset
-                    rc.dropFlag(bestSoFar);
-                    Comms.dropFlagAtNewLocation(bestSoFar, mySpawn);
-                    return;
-                }
-            }
-            if (rc.hasFlag() && roundNumber == 188) {
-                rc.dropFlag(myLoc);
-            }
-        }
-        // else if (roundNumber == 189) {
-        //     if (rc.canBuild(TrapType.STUN, bestSoFar)) rc.build(TrapType.STUN, bestSoFar);
-        //     return;
-        // }
-
-        if (bestSoFar != null) {
-            rc.setIndicatorLine(myLoc, bestSoFar, 0, 255, 0);
-        }
-
-        //CHANGE THE TARGET
-        if (roundNumber < 50) {
-            targ = Navigation.getFurthestSpawnFromEnemy(myFlags[0], myFlags[1], myFlags[2]);
-            MapLocation closest = Navigation.getTripleMinLocation(targ, mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
-            Direction push = closest.directionTo(targ);
-            if (rc.onTheMap(targ.add(push))) targ = targ.add(push);
-            if (rc.onTheMap(targ.add(push))) targ = targ.add(push);
-            if (rc.onTheMap(targ.add(push))) targ = targ.add(push);
-
-            if (previousTarget != null && !targ.equals(previousTarget)) { //if symmetry changes
-                seenTarget = false;
-                returnToSpawn = true;
-                Comms.commSeenFlagTarget(mySpawn, 0);
-            }
-            previousTarget = targ;
-            rc.setIndicatorLine(myLoc, targ, 0, 0, 255);
-        } else if (roundNumber < 150) {
-            int dist = (int) Math.sqrt(myLoc.distanceSquaredTo(targ));
-            if (roundNumber + dist * 2 > 150 && !seenTarget) { //couldnt find a good location
-                bestSoFar = myFlags[mySpawn];
-                bugNav.move(bestSoFar);
-            }
-            rc.setIndicatorLine(myLoc, targ, 0, 0, 255);
-        } else if (roundNumber < 188) {
-            if (returnToSpawn) {
-                bestSoFar = myFlags[mySpawn]; //this should only happen if this duck STARTS at the best spawn to go to
-            }
-            if (bestSoFar != null) {
-                if (myLoc.equals(bestSoFar)) {
-                    int walls = 0;
-                    for (Direction d:allDirections) {
-                        MapLocation nxt = myLoc.add(d);
-                        if (!rc.onTheMap(nxt) || rc.senseMapInfo(nxt).isWall()) {
-                            walls++;
-                        }
-                    }
-                    if (walls >= 3 && rc.canDropFlag(bestSoFar) || returnToSpawn) {
-                        rc.dropFlag(bestSoFar);
-                        Comms.dropFlagAtNewLocation(bestSoFar, mySpawn);
-                        return;
-                    }
-                    //do final fine adjustments
-                    MapLocation[] curs = Comms.getHiddenFlagLocations();
-                    MapLocation m1, m2;
-                    if (mySpawn == 0) {
-                        m1 = curs[1]; m2 = curs[2];
-                    } else if (mySpawn == 1) {
-                        m1 = curs[0]; m2 = curs[2];
-                    } else {
-                        m1 = curs[0]; m2 = curs[1];
-                    }
-                    Direction bestDirection = null;
-                    int bestScore = rc.getLocation().distanceSquaredTo(targ);
-                    for (Direction d:allDirections) {
-                        MapLocation nxt = myLoc.add(d);
-                        boolean isValid = (nxt.distanceSquaredTo(m1) >= 36) && (nxt.distanceSquaredTo(m2) >= 36);
-                        if (isValid && rc.canMove(d)) {
-                            int score = nxt.distanceSquaredTo(targ);
-                            if (score < bestScore) {
-                                bestScore = score;
-                                bestDirection = d;
-                            }
-                        }
-                    }
-                    if (bestDirection != null && rc.canMove(bestDirection)) {
-                        rc.move(bestDirection);
-                        bestSoFar = rc.getLocation();
-                    }
-                    Comms.dropFlagAtNewLocation(bestSoFar, mySpawn);
-                    return;
-                } else {
-                    if (roundNumber % 2 == 1)
-                        bugNav.move(bestSoFar);
-                    Comms.dropFlagAtNewLocation(bestSoFar, mySpawn);
-                }
-                return;
-            }
-        }
-
-        if (myLoc.distanceSquaredTo(targ) <= 16) {
-            seenTarget = true;
-            Comms.commSeenFlagTarget(mySpawn, 1);
-        }
-
-        boolean allSeenTarget = Comms.hasSeenTarget(0) && Comms.hasSeenTarget(1) && Comms.hasSeenTarget(2);
-        returnToSpawn = returnToSpawn && !allSeenTarget;
-        boolean shouldIMove = true;
-        if (allSeenTarget) { //this means all of 3 made it to the location
-            MapLocation[] curs = Comms.getHiddenFlagLocations();
-            rc.setIndicatorString(String.valueOf(allSeenTarget));
-            //System.out.println("trying " + " " + curs[0] + " " + curs[1] + " " + curs[2]);
-            if (curs[0].distanceSquaredTo(curs[1]) >= 36 && curs[0].distanceSquaredTo(curs[2]) >= 36 && curs[2].distanceSquaredTo(curs[1]) >= 36) {
-                MapLocation loc = null; //if this works, say this is a valid config
-                if (mySpawn == 0) {
-                    loc = curs[0];
-                } else if (mySpawn == 1) {
-                    loc = curs[1];
-                } else if (mySpawn == 2) {
-                    loc = curs[2];
-                }
-
-                if (roundNumber % 2 == 0) {
-                    int d1 = curs[0].distanceSquaredTo(targ), d2 = curs[1].distanceSquaredTo(targ), d3 = curs[2].distanceSquaredTo(targ);
-                    int score = Math.max(d1, Math.max(d2, d3)) * 2 + d1 + d2 + d3;
-                    d1 = Navigation.getTripleMinDist(curs[0], mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
-                    d2 = Navigation.getTripleMinDist(curs[1], mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
-                    d3 = Navigation.getTripleMinDist(curs[2], mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
-                    score -= 2 * (d1 + d2 + d3); //Math.min(d1, Math.min(d2, d3));
-
-                    if (score < bestFlagDist) {
-                        bestFlagDist = score;
-                        bestSoFar = loc;
-                        System.out.println("best config " + bestFlagDist + " " + curs[0] + " " + curs[1] + " " + curs[2]);
-                    }
-                } else if (roundNumber % 2 == 1) {
-                    //now lets try rotating to get a better config //TO DO
-                    BFSController.move(rc, targ);
-                }
-
-                shouldIMove = false;
-            } else {
-                MapLocation m1, m2;
-                if (mySpawn == 0) {
-                    m1 = curs[1]; m2 = curs[2];
-                } else if (mySpawn == 1) {
-                    m1 = curs[0]; m2 = curs[2];
-                } else {
-                    m1 = curs[0]; m2 = curs[1];
-                }
-                Direction bestDirection = null;
-                int bestScore = 1000000;
-                for (Direction d:allDirections) {
-                    if (rc.canMove(d)) {
-                        MapLocation nxt = myLoc.add(d);
-                        // int score = 36 - Math.min(nxt.distanceSquaredTo(m1), 36) + 36 - Math.min(nxt.distanceSquaredTo(m2), 36);
-                        // int score = 0;
-                        int d1 = nxt.distanceSquaredTo(m1), d2 = nxt.distanceSquaredTo(m2);
-                        // if (d1 < 36) score += (36-d1) * 5;
-                        // else score += (d1-36);
-                        // if (d2 < 36) score += (36-d2) * 5;
-                        // else score += (d2-36);
-                        int score = Math.abs(36 - d1) + Math.abs(36 - d2);
-                        score *= 100;
-                        score += nxt.distanceSquaredTo(targ);
-                        if (score < bestScore) {
-                            bestScore = score;
-                            bestDirection = d;
-                        }
-                    }
-                }
-                if (myLoc.distanceSquaredTo(m1) + myLoc.distanceSquaredTo(m2) < 3) {
-                    bestDirection = allDirections[random.nextInt(8)];
-                }
-                if (bestDirection != null && rc.canMove(bestDirection) && roundNumber % 2 == 1) {
-                    rc.move(bestDirection);
-                    shouldIMove = false;
-                }
-            }
-        }
-        if (seenTarget && !allSeenTarget) {
-            shouldIMove = false;
-        }
-        if (shouldIMove && rc.isMovementReady() && roundNumber % 2 == 1)
-            bugNav.move(targ);
-        rc.setIndicatorDot(myLoc, 255, 0, 255);
-        Comms.dropFlagAtNewLocation(rc.getLocation(), mySpawn);
-    }
-
 
     public void movement() throws GameActionException {
         if(roundNumber>200){
@@ -998,7 +795,17 @@ public class Attacker extends Robot {
         } else {
             if (broadcastLocations.length>0 && broadcastLocations[0] != null) {
                 if (myMoveNumber >= 3) {
-                    currentTarget = broadcastLocations[0];
+                    if (Comms.getEnemyFlagLocation(0).x < 70 && Comms.getEnemyFlagStatus(0) == 1) {
+                        currentTarget = Comms.getEnemyFlagLocation(0);
+                    }
+                    else if (Comms.getEnemyFlagLocation(1).x < 70 && Comms.getEnemyFlagStatus(1) == 1) {
+                        currentTarget = Comms.getEnemyFlagLocation(1);
+                    }
+                    else if (Comms.getEnemyFlagLocation(2).x < 70 && Comms.getEnemyFlagStatus(2) == 1) {
+                        currentTarget = Comms.getEnemyFlagLocation(2);
+                    } else {
+                        currentTarget = broadcastLocations[0];
+                    }
                 } else { //try to snipe some flags :>
                     isSwiper = true;
                     if (broadcastLocations.length == 3) {
@@ -1017,7 +824,10 @@ public class Attacker extends Robot {
                         currentTarget = exploreTarget();
                     }
                 }
-            }
+            } 
+            // if (Comms.countFlagsCaptured() == 2 && broadcastLocations.length == 0) {
+            //     currentTarget = mirrorFlags[myMoveNumber % 3];
+            // }
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
@@ -1080,54 +890,13 @@ public class Attacker extends Robot {
             }
         }
     }
-    public void chickenBehavior() throws GameActionException{
-        int bestdirVal = -100000000;
-        Direction bestDirection = Direction.CENTER;
-        for(Direction d: allDirections){
-            if(rc.canMove(d)){
-                MapLocation nxt = myLoc.add(d);
-                int enemies = 0;
-                int numcloseenemies = 0;
-                for(RobotInfo ri: enemyRobots){
-                    if(ri.getLocation().distanceSquaredTo(nxt)<=4) {
-                        numcloseenemies++;
-                    }else if(ri.getLocation().distanceSquaredTo(nxt)<11){//or 12
-                        enemies++;
-                    }
-                }
-                int friendlies = 0;
-                for(RobotInfo ri: friendlyRobots){
-                    if(ri.getLocation().distanceSquaredTo(nxt)<=4){
-                        friendlies+=8;
-                    }else if(ri.getLocation().distanceSquaredTo(nxt)<12){
-                        friendlies+=6;
-                    }else{
-//                        friendlies+=4;
-                    }
-                }
-
-                int curDirVal = friendlies-20*enemies-numcloseenemies*32;
-                if(numcloseenemies==0){
-                    curDirVal+=50;
-                }
-
-                if(bestdirVal<curDirVal) {
-                    bestdirVal = curDirVal;
-                    bestDirection = d;
-                }
-            }
-        }
-        if(rc.canMove(bestDirection)){
-            rc.move(bestDirection);
-        }
-    }
+    
     public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
         if (numberOfEnemies == 0) return false;
         
         if(rc.getHealth()<=chickenLevel){
             ChickenMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
-//            chickenBehavior();
             return true;
         }
 
