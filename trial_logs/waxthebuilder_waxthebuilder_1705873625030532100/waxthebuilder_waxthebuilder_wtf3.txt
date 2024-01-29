@@ -1,0 +1,900 @@
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test UP-TO-DATE
+> Task :check UP-TO-DATE
+> Task :unpackClient UP-TO-DATE
+> Task :checkNewVersion
+> Task :build UP-TO-DATE
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] waxthebuilder vs. waxthebuilder on wtf3
+[A: #11887@100] -1 <-- Symm
+[A: #11887@100] 0<-- flags captured
+[B: #11558@100] 2 <-- Symm
+[B: #11558@100] 0<-- flags captured
+[A: #12706@100] setup 42
+[A: #12706@100] comm start 590
+[A: #12706@100] preround tasks 617
+[A: #12706@100] premoveSetGlobals 2530
+[A: #12706@100] checkPickupFlag 2826
+[A: #12706@100] checkBuildTraps 2854
+[A: #12706@100] updateCurrentTarget 3046
+[A: #12706@100] attackLogic 3156
+[A: #12706@100] tryheal 3226
+[A: #12706@100] movement 3894
+[A: #12706@100] postmoveSetGlobals 4412
+[A: #12706@100] checkBuildTraps 2 4440
+[A: #12706@100] attackLogic 2 4540
+[A: #12706@100] tryHeal 2 4612
+[A: #12706@100] tryFill 4905
+[A: #12706@100] callDefense 5002
+[A: #12706@100] Robot turn 5025
+[A: #12706@100] Robot navigation 8627
+[A: #12706@100] main turn 8650
+[A: #12706@100] comm end 9185
+[A: #12706@100] round end 9351
+[B: #11700@100] setup 42
+[B: #11700@100] comm start 590
+[B: #11700@100] preround tasks 617
+[B: #11700@100] premoveSetGlobals 2653
+[B: #11700@100] checkPickupFlag 2963
+[B: #11700@100] checkBuildTraps 2991
+[B: #11700@100] updateCurrentTarget 3180
+[B: #11700@100] attackLogic 3290
+[B: #11700@100] tryheal 3377
+[B: #11700@100] movement 3769
+[B: #11700@100] postmoveSetGlobals 4287
+[B: #11700@100] checkBuildTraps 2 4315
+[B: #11700@100] attackLogic 2 4415
+[B: #11700@100] tryHeal 2 4521
+[B: #11700@100] tryFill 4814
+[B: #11700@100] callDefense 4911
+[B: #11700@100] Robot turn 4934
+[B: #11700@100] Robot navigation 8567
+[B: #11700@100] main turn 8590
+[B: #11700@100] comm end 9205
+[B: #11700@100] round end 9333
+[A: #11887@200] -1 <-- Symm
+[A: #11887@200] 0<-- flags captured
+[B: #11558@200] -1 <-- Symm
+[B: #11558@200] 0<-- flags captured
+[A: #12706@200] setup 42
+[A: #12706@200] comm start 590
+[A: #12706@200] preround tasks 617
+[A: #12706@200] premoveSetGlobals 2545
+[A: #12706@200] checkPickupFlag 2841
+[A: #12706@200] checkBuildTraps 2869
+[A: #12706@200] updateCurrentTarget 3030
+[A: #12706@200] attackLogic 3140
+[A: #12706@200] tryheal 3210
+[A: #12706@200] movement 3839
+[A: #12706@200] postmoveSetGlobals 4357
+[A: #12706@200] checkBuildTraps 2 4385
+[A: #12706@200] attackLogic 2 4485
+[A: #12706@200] tryHeal 2 4557
+[A: #12706@200] tryFill 4850
+[A: #12706@200] callDefense 4947
+[A: #12706@200] Robot turn 4970
+[A: #12706@200] Robot navigation 9012
+[A: #12706@200] main turn 9035
+[A: #12706@200] comm end 9570
+[A: #12706@200] round end 9736
+[B: #11700@200] setup 42
+[B: #11700@200] comm start 590
+[B: #11700@200] preround tasks 617
+[B: #11700@200] premoveSetGlobals 2576
+[B: #11700@200] checkPickupFlag 2872
+[B: #11700@200] checkBuildTraps 2900
+[B: #11700@200] updateCurrentTarget 3061
+[B: #11700@200] attackLogic 3171
+[B: #11700@200] tryheal 3258
+[B: #11700@200] movement 4084
+[B: #11700@200] postmoveSetGlobals 4602
+[B: #11700@200] checkBuildTraps 2 4630
+[B: #11700@200] attackLogic 2 4730
+[B: #11700@200] tryHeal 2 4819
+[B: #11700@200] tryFill 5112
+[B: #11700@200] callDefense 5209
+[B: #11700@200] Robot turn 5232
+[B: #11700@200] Robot navigation 8266
+[B: #11700@200] main turn 8289
+[B: #11700@200] comm end 8824
+[B: #11700@200] round end 8990
+[A: #11887@300] -1 <-- Symm
+[A: #11887@300] 0<-- flags captured
+[B: #11558@300] -1 <-- Symm
+[B: #11558@300] 0<-- flags captured
+[A: #12706@300] setup 42
+[A: #12706@300] comm start 590
+[A: #12706@300] preround tasks 617
+[A: #12706@300] premoveSetGlobals 2595
+[A: #12706@300] checkPickupFlag 2891
+[A: #12706@300] checkBuildTraps 5487
+[A: #12706@300] updateCurrentTarget 5648
+[A: #12706@300] attackLogic 5758
+[A: #12706@300] tryheal 5862
+[A: #12706@300] movement 6867
+[A: #12706@300] postmoveSetGlobals 7385
+[A: #12706@300] checkBuildTraps 2 9981
+[A: #12706@300] attackLogic 2 10081
+[A: #12706@300] tryHeal 2 10187
+[A: #12706@300] tryFill 10480
+[A: #12706@300] callDefense 10577
+[A: #12706@300] Robot turn 10600
+[A: #12706@300] Robot navigation 13640
+[A: #12706@300] main turn 13663
+[A: #12706@300] comm end 14198
+[A: #12706@300] round end 14364
+[B: #11700@300] setup 42
+[B: #11700@300] comm start 590
+[B: #11700@300] preround tasks 617
+[B: #11700@300] premoveSetGlobals 2550
+[B: #11700@300] checkPickupFlag 2846
+[B: #11700@300] checkBuildTraps 5442
+[B: #11700@300] updateCurrentTarget 5603
+[B: #11700@300] attackLogic 5713
+[B: #11700@300] tryheal 5783
+[B: #11700@300] movement 6458
+[B: #11700@300] postmoveSetGlobals 6976
+[B: #11700@300] checkBuildTraps 2 9572
+[B: #11700@300] attackLogic 2 9672
+[B: #11700@300] tryHeal 2 9744
+[B: #11700@300] tryFill 10037
+[B: #11700@300] callDefense 10134
+[B: #11700@300] Robot turn 10157
+[B: #11700@300] Robot navigation 13185
+[B: #11700@300] main turn 13208
+[B: #11700@300] comm end 13743
+[B: #11700@300] round end 13909
+[A: #11887@400] -1 <-- Symm
+[A: #11887@400] 0<-- flags captured
+[B: #11558@400] -1 <-- Symm
+[B: #11558@400] 0<-- flags captured
+[A: #12706@400] setup 42
+[A: #12706@400] comm start 590
+[A: #12706@400] preround tasks 617
+[A: #12706@400] premoveSetGlobals 2679
+[A: #12706@400] checkPickupFlag 2975
+[A: #12706@400] checkBuildTraps 5571
+[A: #12706@400] updateCurrentTarget 5732
+[A: #12706@400] attackLogic 5842
+[A: #12706@400] tryheal 5929
+[A: #12706@400] movement 6489
+[A: #12706@400] postmoveSetGlobals 7007
+[A: #12706@400] checkBuildTraps 2 9603
+[A: #12706@400] attackLogic 2 9703
+[A: #12706@400] tryHeal 2 9792
+[A: #12706@400] tryFill 10085
+[A: #12706@400] callDefense 10182
+[A: #12706@400] Robot turn 10205
+[A: #12706@400] Robot navigation 13245
+[A: #12706@400] main turn 13268
+[A: #12706@400] comm end 13883
+[A: #12706@400] round end 14049
+[B: #11700@400] setup 42
+[B: #11700@400] comm start 590
+[B: #11700@400] preround tasks 617
+[B: #11700@400] premoveSetGlobals 2563
+[B: #11700@400] checkPickupFlag 2859
+[B: #11700@400] checkBuildTraps 5455
+[B: #11700@400] updateCurrentTarget 5616
+[B: #11700@400] attackLogic 5726
+[B: #11700@400] tryheal 5796
+[B: #11700@400] movement 6236
+[B: #11700@400] postmoveSetGlobals 6754
+[B: #11700@400] checkBuildTraps 2 9350
+[B: #11700@400] attackLogic 2 9450
+[B: #11700@400] tryHeal 2 9539
+[B: #11700@400] tryFill 9832
+[B: #11700@400] callDefense 9929
+[B: #11700@400] Robot turn 9952
+[B: #11700@400] Robot navigation 13745
+[B: #11700@400] main turn 13768
+[B: #11700@400] comm end 14303
+[B: #11700@400] round end 14469
+[A: #11887@500] -1 <-- Symm
+[A: #11887@500] 0<-- flags captured
+[B: #11558@500] -1 <-- Symm
+[B: #11558@500] 0<-- flags captured
+[A: #12706@500] setup 42
+[A: #12706@500] comm start 590
+[A: #12706@500] preround tasks 617
+[A: #12706@500] premoveSetGlobals 2531
+[A: #12706@500] checkPickupFlag 2827
+[A: #12706@500] checkBuildTraps 5423
+[A: #12706@500] updateCurrentTarget 5584
+[A: #12706@500] attackLogic 5694
+[A: #12706@500] tryheal 5764
+[A: #12706@500] movement 6444
+[A: #12706@500] postmoveSetGlobals 6962
+[A: #12706@500] checkBuildTraps 2 9558
+[A: #12706@500] attackLogic 2 9658
+[A: #12706@500] tryHeal 2 9730
+[A: #12706@500] tryFill 10023
+[A: #12706@500] callDefense 10120
+[A: #12706@500] Robot turn 10143
+[A: #12706@500] Robot navigation 13168
+[A: #12706@500] main turn 13191
+[A: #12706@500] comm end 13726
+[A: #12706@500] round end 13892
+[B: #11700@500] setup 42
+[B: #11700@500] comm start 590
+[B: #11700@500] preround tasks 617
+[B: #11700@500] premoveSetGlobals 2727
+[B: #11700@500] checkPickupFlag 3023
+[B: #11700@500] checkBuildTraps 5619
+[B: #11700@500] updateCurrentTarget 5780
+[B: #11700@500] attackLogic 5893
+[B: #11700@500] tryheal 5928
+[B: #11700@500] movement 9356
+[B: #11700@500] postmoveSetGlobals 9874
+[B: #11700@500] checkBuildTraps 2 12470
+[B: #11700@500] attackLogic 2 12570
+[B: #11700@500] tryHeal 2 12595
+[B: #11700@500] tryFill 12888
+[B: #11700@500] callDefense 12985
+[B: #11700@500] Robot turn 13008
+[B: #11700@500] Robot navigation 13036
+[B: #11700@500] main turn 13059
+[B: #11700@500] comm end 13594
+[B: #11700@500] round end 13760
+[A: #11887@600] -1 <-- Symm
+[A: #11887@600] 0<-- flags captured
+[B: #11558@600] -1 <-- Symm
+[B: #11558@600] 0<-- flags captured
+[A: #12706@600] setup 56
+[A: #12706@600] comm start 604
+[A: #12706@600] preround tasks 631
+[A: #12706@600] premoveSetGlobals 3408
+[A: #12706@600] checkPickupFlag 3704
+[A: #12706@600] checkBuildTraps 7252
+[A: #12706@600] updateCurrentTarget 7413
+[A: #12706@600] attackLogic 7460
+[A: #12706@600] tryheal 7495
+[A: #12706@600] movement 10138
+[A: #12706@600] postmoveSetGlobals 10656
+[A: #12706@600] checkBuildTraps 2 13640
+[A: #12706@600] attackLogic 2 13674
+[A: #12706@600] tryHeal 2 13699
+[A: #12706@600] tryFill 13727
+[A: #12706@600] callDefense 13893
+[A: #12706@600] Robot turn 13916
+[A: #12706@600] Robot navigation 13944
+[A: #12706@600] main turn 13967
+[A: #12706@600] comm end 14502
+[A: #12706@600] round end 14668
+[B: #11700@600] setup 56
+[B: #11700@600] comm start 604
+[B: #11700@600] preround tasks 631
+[B: #11700@600] premoveSetGlobals 2566
+[B: #11700@600] checkPickupFlag 2862
+[B: #11700@600] checkBuildTraps 5458
+[B: #11700@600] updateCurrentTarget 5619
+[B: #11700@600] attackLogic 5729
+[B: #11700@600] tryheal 5816
+[B: #11700@600] movement 6276
+[B: #11700@600] postmoveSetGlobals 6794
+[B: #11700@600] checkBuildTraps 2 9390
+[B: #11700@600] attackLogic 2 9490
+[B: #11700@600] tryHeal 2 9562
+[B: #11700@600] tryFill 9855
+[B: #11700@600] callDefense 9952
+[B: #11700@600] Robot turn 9975
+[B: #11700@600] Robot navigation 12991
+[B: #11700@600] main turn 13014
+[B: #11700@600] comm end 13549
+[B: #11700@600] round end 13715
+[A: #11887@700] -1 <-- Symm
+[A: #11887@700] 0<-- flags captured
+[B: #11558@700] -1 <-- Symm
+[B: #11558@700] 0<-- flags captured
+[A: #12706@700] setup 42
+[A: #12706@700] comm start 590
+[A: #12706@700] preround tasks 617
+[A: #12706@700] main turn 1036
+[A: #12706@700] comm end 1571
+[A: #12706@700] round end 1737
+[B: #11700@700] setup 42
+[B: #11700@700] comm start 590
+[B: #11700@700] preround tasks 617
+[B: #11700@700] premoveSetGlobals 2572
+[B: #11700@700] checkPickupFlag 2868
+[B: #11700@700] checkBuildTraps 5464
+[B: #11700@700] updateCurrentTarget 5625
+[B: #11700@700] attackLogic 5735
+[B: #11700@700] tryheal 5805
+[B: #11700@700] movement 6344
+[B: #11700@700] postmoveSetGlobals 6862
+[B: #11700@700] checkBuildTraps 2 9458
+[B: #11700@700] attackLogic 2 9558
+[B: #11700@700] tryHeal 2 9630
+[B: #11700@700] tryFill 9923
+[B: #11700@700] callDefense 10020
+[B: #11700@700] Robot turn 10043
+[B: #11700@700] Robot navigation 13083
+[B: #11700@700] main turn 13106
+[B: #11700@700] comm end 13721
+[B: #11700@700] round end 13887
+[A: #11887@800] -1 <-- Symm
+[A: #11887@800] 0<-- flags captured
+[B: #11558@800] -1 <-- Symm
+[B: #11558@800] 0<-- flags captured
+[A: #12706@800] setup 42
+[A: #12706@800] comm start 590
+[A: #12706@800] preround tasks 617
+[A: #12706@800] premoveSetGlobals 2595
+[A: #12706@800] checkPickupFlag 2891
+[A: #12706@800] checkBuildTraps 5487
+[A: #12706@800] updateCurrentTarget 5648
+[A: #12706@800] attackLogic 5758
+[A: #12706@800] tryheal 5845
+[A: #12706@800] movement 6305
+[A: #12706@800] postmoveSetGlobals 6823
+[A: #12706@800] checkBuildTraps 2 9419
+[A: #12706@800] attackLogic 2 9519
+[A: #12706@800] tryHeal 2 9591
+[A: #12706@800] tryFill 9884
+[A: #12706@800] callDefense 9981
+[A: #12706@800] Robot turn 10004
+[A: #12706@800] Robot navigation 13032
+[A: #12706@800] main turn 13055
+[A: #12706@800] comm end 13590
+[A: #12706@800] round end 13756
+[B: #11700@800] setup 42
+[B: #11700@800] comm start 590
+[B: #11700@800] preround tasks 617
+[B: #11700@800] premoveSetGlobals 2671
+[B: #11700@800] checkPickupFlag 2967
+[B: #11700@800] checkBuildTraps 5563
+[B: #11700@800] updateCurrentTarget 5724
+[B: #11700@800] attackLogic 5834
+[B: #11700@800] tryheal 5921
+[B: #11700@800] movement 6403
+[B: #11700@800] postmoveSetGlobals 6921
+[B: #11700@800] checkBuildTraps 2 9517
+[B: #11700@800] attackLogic 2 9617
+[B: #11700@800] tryHeal 2 9723
+[B: #11700@800] tryFill 10016
+[B: #11700@800] callDefense 10113
+[B: #11700@800] Robot turn 10136
+[B: #11700@800] Robot navigation 13194
+[B: #11700@800] main turn 13217
+[B: #11700@800] comm end 13832
+[B: #11700@800] round end 13998
+[A: #11887@900] -1 <-- Symm
+[A: #11887@900] 0<-- flags captured
+[B: #11558@900] -1 <-- Symm
+[B: #11558@900] 0<-- flags captured
+[A: #12706@900] setup 42
+[A: #12706@900] comm start 590
+[A: #12706@900] preround tasks 617
+[A: #12706@900] premoveSetGlobals 2854
+[A: #12706@900] checkPickupFlag 3150
+[A: #12706@900] checkBuildTraps 5413
+[A: #12706@900] updateCurrentTarget 5574
+[A: #12706@900] attackLogic 5621
+[A: #12706@900] tryheal 5656
+[A: #12706@900] movement 11857
+[A: #12706@900] postmoveSetGlobals 12375
+[A: #12706@900] checkBuildTraps 2 14638
+[A: #12706@900] attackLogic 2 14672
+[A: #12706@900] tryHeal 2 14697
+[A: #12706@900] tryFill 14725
+[A: #12706@900] callDefense 14891
+[A: #12706@900] Robot turn 14914
+[A: #12706@900] Robot navigation 14942
+[A: #12706@900] main turn 14965
+[A: #12706@900] comm end 15500
+[A: #12706@900] round end 15666
+[B: #11700@900] setup 42
+[B: #11700@900] comm start 590
+[B: #11700@900] preround tasks 617
+[B: #11700@900] premoveSetGlobals 2525
+[B: #11700@900] checkPickupFlag 2821
+[B: #11700@900] checkBuildTraps 5417
+[B: #11700@900] updateCurrentTarget 5578
+[B: #11700@900] attackLogic 5688
+[B: #11700@900] tryheal 5775
+[B: #11700@900] movement 6179
+[B: #11700@900] postmoveSetGlobals 6697
+[B: #11700@900] checkBuildTraps 2 9293
+[B: #11700@900] attackLogic 2 9393
+[B: #11700@900] tryHeal 2 9465
+[B: #11700@900] tryFill 9758
+[B: #11700@900] callDefense 9855
+[B: #11700@900] Robot turn 9878
+[B: #11700@900] Robot navigation 12906
+[B: #11700@900] main turn 12929
+[B: #11700@900] comm end 13464
+[B: #11700@900] round end 13630
+[A: #11887@1000] -1 <-- Symm
+[A: #11887@1000] 0<-- flags captured
+[B: #11558@1000] -1 <-- Symm
+[B: #11558@1000] 0<-- flags captured
+[A: #12706@1000] setup 42
+[A: #12706@1000] comm start 590
+[A: #12706@1000] preround tasks 617
+[A: #12706@1000] premoveSetGlobals 2713
+[A: #12706@1000] checkPickupFlag 3009
+[A: #12706@1000] checkBuildTraps 5605
+[A: #12706@1000] updateCurrentTarget 5766
+[A: #12706@1000] attackLogic 5810
+[A: #12706@1000] tryheal 5851
+[A: #12706@1000] movement 6385
+[A: #12706@1000] postmoveSetGlobals 6903
+[A: #12706@1000] checkBuildTraps 2 9499
+[A: #12706@1000] attackLogic 2 9533
+[A: #12706@1000] tryHeal 2 9576
+[A: #12706@1000] tryFill 9604
+[A: #12706@1000] callDefense 9701
+[A: #12706@1000] Robot turn 9724
+[A: #12706@1000] Robot navigation 12755
+[A: #12706@1000] main turn 12778
+[A: #12706@1000] comm end 13313
+[A: #12706@1000] round end 13479
+[B: #11700@1000] setup 42
+[B: #11700@1000] comm start 590
+[B: #11700@1000] preround tasks 617
+[B: #11700@1000] premoveSetGlobals 2596
+[B: #11700@1000] checkPickupFlag 2892
+[B: #11700@1000] checkBuildTraps 5488
+[B: #11700@1000] updateCurrentTarget 5649
+[B: #11700@1000] attackLogic 5759
+[B: #11700@1000] tryheal 5829
+[B: #11700@1000] movement 6371
+[B: #11700@1000] postmoveSetGlobals 6889
+[B: #11700@1000] checkBuildTraps 2 9485
+[B: #11700@1000] attackLogic 2 9585
+[B: #11700@1000] tryHeal 2 9657
+[B: #11700@1000] tryFill 9950
+[B: #11700@1000] callDefense 10047
+[B: #11700@1000] Robot turn 10070
+[B: #11700@1000] Robot navigation 13107
+[B: #11700@1000] main turn 13130
+[B: #11700@1000] comm end 13745
+[B: #11700@1000] round end 13911
+[A: #11887@1100] -1 <-- Symm
+[A: #11887@1100] 0<-- flags captured
+[B: #11558@1100] -1 <-- Symm
+[B: #11558@1100] 0<-- flags captured
+[A: #12706@1100] setup 42
+[A: #12706@1100] comm start 590
+[A: #12706@1100] preround tasks 617
+[A: #12706@1100] premoveSetGlobals 2989
+[A: #12706@1100] checkPickupFlag 3285
+[A: #12706@1100] checkBuildTraps 5881
+[A: #12706@1100] updateCurrentTarget 6042
+[A: #12706@1100] attackLogic 6155
+[A: #12706@1100] tryheal 6190
+[A: #12706@1100] movement 8791
+[A: #12706@1100] postmoveSetGlobals 9309
+[A: #12706@1100] checkBuildTraps 2 11905
+[A: #12706@1100] attackLogic 2 12005
+[A: #12706@1100] tryHeal 2 12030
+[A: #12706@1100] tryFill 12065
+[A: #12706@1100] callDefense 12231
+[A: #12706@1100] Robot turn 12254
+[A: #12706@1100] Robot navigation 15308
+[A: #12706@1100] main turn 15331
+[A: #12706@1100] comm end 15866
+[A: #12706@1100] round end 16032
+[B: #11700@1100] setup 42
+[B: #11700@1100] comm start 590
+[B: #11700@1100] preround tasks 617
+[B: #11700@1100] premoveSetGlobals 2510
+[B: #11700@1100] checkPickupFlag 2806
+[B: #11700@1100] checkBuildTraps 5036
+[B: #11700@1100] updateCurrentTarget 5197
+[B: #11700@1100] attackLogic 5307
+[B: #11700@1100] tryheal 5377
+[B: #11700@1100] movement 5897
+[B: #11700@1100] postmoveSetGlobals 6415
+[B: #11700@1100] checkBuildTraps 2 8645
+[B: #11700@1100] attackLogic 2 8745
+[B: #11700@1100] tryHeal 2 8817
+[B: #11700@1100] tryFill 9062
+[B: #11700@1100] callDefense 9159
+[B: #11700@1100] Robot turn 9182
+[B: #11700@1100] Robot navigation 10968
+[B: #11700@1100] main turn 10991
+[B: #11700@1100] comm end 11526
+[B: #11700@1100] round end 11692
+[A: #11887@1200] -1 <-- Symm
+[A: #11887@1200] 0<-- flags captured
+[B: #11558@1200] -1 <-- Symm
+[B: #11558@1200] 0<-- flags captured
+[A: #12706@1200] setup 56
+[A: #12706@1200] comm start 604
+[A: #12706@1200] preround tasks 631
+[A: #12706@1200] premoveSetGlobals 2850
+[A: #12706@1200] checkPickupFlag 3146
+[A: #12706@1200] checkBuildTraps 5742
+[A: #12706@1200] updateCurrentTarget 5903
+[A: #12706@1200] attackLogic 6016
+[A: #12706@1200] tryheal 6051
+[A: #12706@1200] movement 9022
+[A: #12706@1200] postmoveSetGlobals 9540
+[A: #12706@1200] checkBuildTraps 2 12136
+[A: #12706@1200] attackLogic 2 12236
+[A: #12706@1200] tryHeal 2 12261
+[A: #12706@1200] tryFill 12554
+[A: #12706@1200] callDefense 12651
+[A: #12706@1200] Robot turn 12674
+[A: #12706@1200] Robot navigation 15702
+[A: #12706@1200] main turn 15725
+[A: #12706@1200] comm end 16260
+[A: #12706@1200] round end 16426
+[B: #11700@1200] setup 56
+[B: #11700@1200] comm start 604
+[B: #11700@1200] preround tasks 631
+[B: #11700@1200] premoveSetGlobals 2563
+[B: #11700@1200] checkPickupFlag 2859
+[B: #11700@1200] checkBuildTraps 5089
+[B: #11700@1200] updateCurrentTarget 5250
+[B: #11700@1200] attackLogic 5360
+[B: #11700@1200] tryheal 5430
+[B: #11700@1200] movement 5868
+[B: #11700@1200] postmoveSetGlobals 6386
+[B: #11700@1200] checkBuildTraps 2 8982
+[B: #11700@1200] attackLogic 2 9082
+[B: #11700@1200] tryHeal 2 9154
+[B: #11700@1200] tryFill 9447
+[B: #11700@1200] callDefense 9544
+[B: #11700@1200] Robot turn 9567
+[B: #11700@1200] Robot navigation 11728
+[B: #11700@1200] main turn 11751
+[B: #11700@1200] comm end 12286
+[B: #11700@1200] round end 12452
+[A: #11887@1300] -1 <-- Symm
+[A: #11887@1300] 0<-- flags captured
+[B: #11558@1300] -1 <-- Symm
+[B: #11558@1300] 0<-- flags captured
+[A: #12706@1300] setup 42
+[A: #12706@1300] comm start 590
+[A: #12706@1300] preround tasks 617
+[A: #12706@1300] premoveSetGlobals 3307
+[A: #12706@1300] checkPickupFlag 3603
+[A: #12706@1300] checkBuildTraps 6752
+[A: #12706@1300] updateCurrentTarget 6913
+[A: #12706@1300] attackLogic 6960
+[A: #12706@1300] tryheal 6995
+[A: #12706@1300] movement 10835
+[A: #12706@1300] postmoveSetGlobals 11353
+[A: #12706@1300] checkBuildTraps 2 13949
+[A: #12706@1300] attackLogic 2 13983
+[A: #12706@1300] tryHeal 2 14008
+[A: #12706@1300] tryFill 14036
+[A: #12706@1300] callDefense 14202
+[A: #12706@1300] Robot turn 14225
+[A: #12706@1300] Robot navigation 14253
+[A: #12706@1300] main turn 14276
+[A: #12706@1300] comm end 14811
+[A: #12706@1300] round end 14977
+[B: #11700@1300] setup 42
+[B: #11700@1300] comm start 590
+[B: #11700@1300] preround tasks 617
+[B: #11700@1300] premoveSetGlobals 2575
+[B: #11700@1300] checkPickupFlag 2871
+[B: #11700@1300] checkBuildTraps 5467
+[B: #11700@1300] updateCurrentTarget 5628
+[B: #11700@1300] attackLogic 5738
+[B: #11700@1300] tryheal 5808
+[B: #11700@1300] movement 6325
+[B: #11700@1300] postmoveSetGlobals 6843
+[B: #11700@1300] checkBuildTraps 2 9439
+[B: #11700@1300] attackLogic 2 9539
+[B: #11700@1300] tryHeal 2 9611
+[B: #11700@1300] tryFill 9904
+[B: #11700@1300] callDefense 10001
+[B: #11700@1300] Robot turn 10024
+[B: #11700@1300] Robot navigation 13055
+[B: #11700@1300] main turn 13078
+[B: #11700@1300] comm end 13613
+[B: #11700@1300] round end 13779
+[A: #11887@1400] -1 <-- Symm
+[A: #11887@1400] 0<-- flags captured
+[B: #11558@1400] -1 <-- Symm
+[B: #11558@1400] 0<-- flags captured
+[A: #12706@1400] setup 42
+[A: #12706@1400] comm start 590
+[A: #12706@1400] preround tasks 617
+[A: #12706@1400] premoveSetGlobals 2901
+[A: #12706@1400] checkPickupFlag 3197
+[A: #12706@1400] checkBuildTraps 5793
+[A: #12706@1400] updateCurrentTarget 5954
+[A: #12706@1400] attackLogic 6067
+[A: #12706@1400] tryheal 6102
+[A: #12706@1400] movement 8714
+[A: #12706@1400] postmoveSetGlobals 9232
+[A: #12706@1400] checkBuildTraps 2 12244
+[A: #12706@1400] attackLogic 2 12344
+[A: #12706@1400] tryHeal 2 12369
+[A: #12706@1400] tryFill 12404
+[A: #12706@1400] callDefense 12560
+[A: #12706@1400] Robot turn 12583
+[A: #12706@1400] Robot navigation 16727
+[A: #12706@1400] main turn 16750
+[A: #12706@1400] comm end 17285
+[A: #12706@1400] round end 17450
+[B: #11700@1400] setup 42
+[B: #11700@1400] comm start 590
+[B: #11700@1400] preround tasks 617
+[B: #11700@1400] premoveSetGlobals 2591
+[B: #11700@1400] checkPickupFlag 2887
+[B: #11700@1400] checkBuildTraps 5483
+[B: #11700@1400] updateCurrentTarget 5644
+[B: #11700@1400] attackLogic 5754
+[B: #11700@1400] tryheal 5858
+[B: #11700@1400] movement 6872
+[B: #11700@1400] postmoveSetGlobals 7390
+[B: #11700@1400] checkBuildTraps 2 9986
+[B: #11700@1400] attackLogic 2 10086
+[B: #11700@1400] tryHeal 2 10192
+[B: #11700@1400] tryFill 10485
+[B: #11700@1400] callDefense 10582
+[B: #11700@1400] Robot turn 10605
+[B: #11700@1400] Robot navigation 13421
+[B: #11700@1400] main turn 13444
+[B: #11700@1400] comm end 13979
+[B: #11700@1400] round end 14145
+[A: #11887@1500] -1 <-- Symm
+[A: #11887@1500] 0<-- flags captured
+[B: #11558@1500] -1 <-- Symm
+[B: #11558@1500] 0<-- flags captured
+[A: #12706@1500] setup 42
+[A: #12706@1500] comm start 590
+[A: #12706@1500] preround tasks 617
+[A: #12706@1500] premoveSetGlobals 2843
+[A: #12706@1500] checkPickupFlag 3139
+[A: #12706@1500] checkBuildTraps 6669
+[A: #12706@1500] updateCurrentTarget 6830
+[A: #12706@1500] attackLogic 6877
+[A: #12706@1500] tryheal 6912
+[A: #12706@1500] movement 10051
+[A: #12706@1500] postmoveSetGlobals 10569
+[A: #12706@1500] checkBuildTraps 2 13414
+[A: #12706@1500] attackLogic 2 13448
+[A: #12706@1500] tryHeal 2 13473
+[A: #12706@1500] tryFill 13501
+[A: #12706@1500] callDefense 13667
+[A: #12706@1500] Robot turn 13690
+[A: #12706@1500] Robot navigation 13718
+[A: #12706@1500] main turn 13741
+[A: #12706@1500] comm end 14276
+[A: #12706@1500] round end 14442
+[B: #11700@1500] setup 42
+[B: #11700@1500] comm start 590
+[B: #11700@1500] preround tasks 617
+[B: #11700@1500] premoveSetGlobals 2554
+[B: #11700@1500] checkPickupFlag 2850
+[B: #11700@1500] checkBuildTraps 5446
+[B: #11700@1500] updateCurrentTarget 5607
+[B: #11700@1500] attackLogic 5717
+[B: #11700@1500] tryheal 5804
+[B: #11700@1500] movement 6567
+[B: #11700@1500] postmoveSetGlobals 7085
+[B: #11700@1500] checkBuildTraps 2 9681
+[B: #11700@1500] attackLogic 2 9781
+[B: #11700@1500] tryHeal 2 9853
+[B: #11700@1500] tryFill 10146
+[B: #11700@1500] callDefense 10243
+[B: #11700@1500] Robot turn 10266
+[B: #11700@1500] Robot navigation 13282
+[B: #11700@1500] main turn 13305
+[B: #11700@1500] comm end 13840
+[B: #11700@1500] round end 14006
+[A: #11887@1600] -1 <-- Symm
+[A: #11887@1600] 0<-- flags captured
+[B: #11558@1600] -1 <-- Symm
+[B: #11558@1600] 0<-- flags captured
+[A: #12706@1600] setup 42
+[A: #12706@1600] comm start 590
+[A: #12706@1600] preround tasks 617
+[A: #12706@1600] main turn 1036
+[A: #12706@1600] comm end 1571
+[A: #12706@1600] round end 1737
+[B: #11700@1600] setup 42
+[B: #11700@1600] comm start 590
+[B: #11700@1600] preround tasks 617
+[B: #11700@1600] premoveSetGlobals 2619
+[B: #11700@1600] checkPickupFlag 2915
+[B: #11700@1600] checkBuildTraps 5511
+[B: #11700@1600] updateCurrentTarget 5672
+[B: #11700@1600] attackLogic 5782
+[B: #11700@1600] tryheal 5886
+[B: #11700@1600] movement 6891
+[B: #11700@1600] postmoveSetGlobals 7409
+[B: #11700@1600] checkBuildTraps 2 10005
+[B: #11700@1600] attackLogic 2 10105
+[B: #11700@1600] tryHeal 2 10211
+[B: #11700@1600] tryFill 10504
+[B: #11700@1600] callDefense 10601
+[B: #11700@1600] Robot turn 10624
+[B: #11700@1600] Robot navigation 13440
+[B: #11700@1600] main turn 13463
+[B: #11700@1600] comm end 13998
+[B: #11700@1600] round end 14163
+[A: #11887@1700] -1 <-- Symm
+[A: #11887@1700] 0<-- flags captured
+[B: #11558@1700] -1 <-- Symm
+[B: #11558@1700] 0<-- flags captured
+[A: #12706@1700] setup 42
+[A: #12706@1700] comm start 590
+[A: #12706@1700] preround tasks 617
+[A: #12706@1700] premoveSetGlobals 2517
+[A: #12706@1700] checkPickupFlag 2813
+[A: #12706@1700] checkBuildTraps 5409
+[A: #12706@1700] updateCurrentTarget 5570
+[A: #12706@1700] attackLogic 5680
+[A: #12706@1700] tryheal 5750
+[A: #12706@1700] movement 6267
+[A: #12706@1700] postmoveSetGlobals 6785
+[A: #12706@1700] checkBuildTraps 2 9381
+[A: #12706@1700] attackLogic 2 9481
+[A: #12706@1700] tryHeal 2 9553
+[A: #12706@1700] tryFill 9846
+[A: #12706@1700] callDefense 9943
+[A: #12706@1700] Robot turn 9966
+[A: #12706@1700] Robot navigation 13015
+[A: #12706@1700] main turn 13038
+[A: #12706@1700] comm end 13573
+[A: #12706@1700] round end 13739
+[B: #11700@1700] setup 42
+[B: #11700@1700] comm start 590
+[B: #11700@1700] preround tasks 617
+[B: #11700@1700] premoveSetGlobals 2597
+[B: #11700@1700] checkPickupFlag 2893
+[B: #11700@1700] checkBuildTraps 5123
+[B: #11700@1700] updateCurrentTarget 5284
+[B: #11700@1700] attackLogic 5394
+[B: #11700@1700] tryheal 5464
+[B: #11700@1700] movement 5984
+[B: #11700@1700] postmoveSetGlobals 6502
+[B: #11700@1700] checkBuildTraps 2 8732
+[B: #11700@1700] attackLogic 2 8832
+[B: #11700@1700] tryHeal 2 8921
+[B: #11700@1700] tryFill 9166
+[B: #11700@1700] callDefense 9263
+[B: #11700@1700] Robot turn 9286
+[B: #11700@1700] Robot navigation 11075
+[B: #11700@1700] main turn 11098
+[B: #11700@1700] comm end 11633
+[B: #11700@1700] round end 11799
+[A: #11887@1800] -1 <-- Symm
+[A: #11887@1800] 0<-- flags captured
+[B: #11558@1800] -1 <-- Symm
+[B: #11558@1800] 0<-- flags captured
+[A: #12706@1800] setup 56
+[A: #12706@1800] comm start 604
+[A: #12706@1800] preround tasks 631
+[A: #12706@1800] main turn 1050
+[A: #12706@1800] comm end 1585
+[A: #12706@1800] round end 1751
+[B: #11700@1800] setup 56
+[B: #11700@1800] comm start 604
+[B: #11700@1800] preround tasks 631
+[B: #11700@1800] premoveSetGlobals 2601
+[B: #11700@1800] checkPickupFlag 2897
+[B: #11700@1800] checkBuildTraps 5493
+[B: #11700@1800] updateCurrentTarget 5654
+[B: #11700@1800] attackLogic 5764
+[B: #11700@1800] tryheal 5834
+[B: #11700@1800] movement 6354
+[B: #11700@1800] postmoveSetGlobals 6872
+[B: #11700@1800] checkBuildTraps 2 9468
+[B: #11700@1800] attackLogic 2 9568
+[B: #11700@1800] tryHeal 2 9640
+[B: #11700@1800] tryFill 9933
+[B: #11700@1800] callDefense 10030
+[B: #11700@1800] Robot turn 10053
+[B: #11700@1800] Robot navigation 12586
+[B: #11700@1800] main turn 12609
+[B: #11700@1800] comm end 13144
+[B: #11700@1800] round end 13310
+[A: #11887@1900] -1 <-- Symm
+[A: #11887@1900] 0<-- flags captured
+[B: #11558@1900] -1 <-- Symm
+[B: #11558@1900] 0<-- flags captured
+[A: #12706@1900] setup 42
+[A: #12706@1900] comm start 590
+[A: #12706@1900] preround tasks 617
+[A: #12706@1900] premoveSetGlobals 2866
+[A: #12706@1900] checkPickupFlag 3162
+[A: #12706@1900] checkBuildTraps 5647
+[A: #12706@1900] updateCurrentTarget 5808
+[A: #12706@1900] attackLogic 5855
+[A: #12706@1900] tryheal 5890
+[A: #12706@1900] movement 6001
+[A: #12706@1900] postmoveSetGlobals 6519
+[A: #12706@1900] checkBuildTraps 2 9004
+[A: #12706@1900] attackLogic 2 9038
+[A: #12706@1900] tryHeal 2 9063
+[A: #12706@1900] tryFill 9091
+[A: #12706@1900] callDefense 9188
+[A: #12706@1900] Robot turn 9211
+[A: #12706@1900] Robot navigation 12298
+[A: #12706@1900] main turn 12321
+[A: #12706@1900] comm end 12856
+[A: #12706@1900] round end 13022
+[B: #11700@1900] setup 42
+[B: #11700@1900] comm start 590
+[B: #11700@1900] preround tasks 617
+[B: #11700@1900] premoveSetGlobals 2633
+[B: #11700@1900] checkPickupFlag 2929
+[B: #11700@1900] checkBuildTraps 5525
+[B: #11700@1900] updateCurrentTarget 5686
+[B: #11700@1900] attackLogic 5796
+[B: #11700@1900] tryheal 5900
+[B: #11700@1900] movement 6457
+[B: #11700@1900] postmoveSetGlobals 6975
+[B: #11700@1900] checkBuildTraps 2 9571
+[B: #11700@1900] attackLogic 2 9671
+[B: #11700@1900] tryHeal 2 9760
+[B: #11700@1900] tryFill 10053
+[B: #11700@1900] callDefense 10150
+[B: #11700@1900] Robot turn 10173
+[B: #11700@1900] Robot navigation 12995
+[B: #11700@1900] main turn 13018
+[B: #11700@1900] comm end 13553
+[B: #11700@1900] round end 13718
+[A: #11887@2000] -1 <-- Symm
+[A: #11887@2000] 0<-- flags captured
+[B: #11558@2000] -1 <-- Symm
+[B: #11558@2000] 0<-- flags captured
+[A: #12706@2000] setup 42
+[A: #12706@2000] comm start 590
+[A: #12706@2000] preround tasks 617
+[A: #12706@2000] premoveSetGlobals 3130
+[A: #12706@2000] checkPickupFlag 3426
+[A: #12706@2000] checkBuildTraps 6630
+[A: #12706@2000] updateCurrentTarget 6791
+[A: #12706@2000] attackLogic 6904
+[A: #12706@2000] tryheal 6939
+[A: #12706@2000] movement 9577
+[A: #12706@2000] postmoveSetGlobals 10095
+[A: #12706@2000] checkBuildTraps 2 13299
+[A: #12706@2000] attackLogic 2 13399
+[A: #12706@2000] tryHeal 2 13424
+[A: #12706@2000] tryFill 13459
+[A: #12706@2000] callDefense 13660
+[A: #12706@2000] Robot turn 13683
+[A: #12706@2000] Robot navigation 13711
+[A: #12706@2000] main turn 13734
+[A: #12706@2000] comm end 14349
+[A: #12706@2000] round end 14515
+[B: #11700@2000] setup 42
+[B: #11700@2000] comm start 590
+[B: #11700@2000] preround tasks 617
+[B: #11700@2000] premoveSetGlobals 2619
+[B: #11700@2000] checkPickupFlag 2915
+[B: #11700@2000] checkBuildTraps 5511
+[B: #11700@2000] updateCurrentTarget 5672
+[B: #11700@2000] attackLogic 5782
+[B: #11700@2000] tryheal 5886
+[B: #11700@2000] movement 6851
+[B: #11700@2000] postmoveSetGlobals 7369
+[B: #11700@2000] checkBuildTraps 2 9965
+[B: #11700@2000] attackLogic 2 10065
+[B: #11700@2000] tryHeal 2 10171
+[B: #11700@2000] tryFill 10464
+[B: #11700@2000] callDefense 10561
+[B: #11700@2000] Robot turn 10584
+[B: #11700@2000] Robot navigation 13406
+[B: #11700@2000] main turn 13429
+[B: #11700@2000] comm end 13964
+[B: #11700@2000] round end 14130
+[server]                 waxthebuilder (B) wins (round 2000)
+[server] Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 1m 3s
+7 actionable tasks: 2 executed, 5 up-to-date

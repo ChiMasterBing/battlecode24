@@ -1,0 +1,1258 @@
+> Task :compileJava UP-TO-DATE
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :assemble UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test UP-TO-DATE
+> Task :check UP-TO-DATE
+> Task :unpackClient UP-TO-DATE
+> Task :checkNewVersion
+> Task :build UP-TO-DATE
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] waxthebuilder vs. waxthebuilder on BigDucksBigPond
+[A: #12669@100] 2 <-- Symm
+[A: #12669@100] 0<-- flags captured
+[B: #10440@100] 2 <-- Symm
+[B: #10440@100] 0<-- flags captured
+[A: #12399@100] setup 42
+[A: #12399@100] comm start 590
+[A: #12399@100] preround tasks 617
+[A: #12399@100] premoveSetGlobals 2505
+[A: #12399@100] checkPickupFlag 2801
+[A: #12399@100] checkBuildTraps 2829
+[A: #12399@100] updateCurrentTarget 3021
+[A: #12399@100] attackLogic 3131
+[A: #12399@100] tryheal 3218
+[A: #12399@100] movement 3611
+[A: #12399@100] postmoveSetGlobals 4129
+[A: #12399@100] checkBuildTraps 2 4157
+[A: #12399@100] attackLogic 2 4257
+[A: #12399@100] tryHeal 2 4346
+[A: #12399@100] tryFill 4648
+[A: #12399@100] callDefense 4745
+[A: #12399@100] Robot turn 4768
+[A: #12399@100] Robot navigation 7414
+[A: #12399@100] main turn 7437
+[A: #12399@100] comm end 7972
+[A: #12399@100] round end 8100
+[B: #12017@100] setup 42
+[B: #12017@100] comm start 590
+[B: #12017@100] preround tasks 617
+[B: #12017@100] premoveSetGlobals 2481
+[B: #12017@100] checkPickupFlag 2777
+[B: #12017@100] checkBuildTraps 2805
+[B: #12017@100] updateCurrentTarget 2997
+[B: #12017@100] attackLogic 3107
+[B: #12017@100] tryheal 3177
+[B: #12017@100] movement 3606
+[B: #12017@100] postmoveSetGlobals 4124
+[B: #12017@100] checkBuildTraps 2 4152
+[B: #12017@100] attackLogic 2 4252
+[B: #12017@100] tryHeal 2 4324
+[B: #12017@100] tryFill 4617
+[B: #12017@100] callDefense 4714
+[B: #12017@100] Robot turn 4737
+[B: #12017@100] Robot navigation 9051
+[B: #12017@100] main turn 9074
+[B: #12017@100] comm end 9609
+[B: #12017@100] round end 9737
+[A: #12669@200] 2 <-- Symm
+[A: #12669@200] 0<-- flags captured
+[B: #10440@200] 2 <-- Symm
+[B: #10440@200] 0<-- flags captured
+[A: #12399@200] setup 42
+[A: #12399@200] comm start 590
+[A: #12399@200] preround tasks 617
+[A: #12399@200] premoveSetGlobals 2784
+[A: #12399@200] checkPickupFlag 3080
+[A: #12399@200] checkBuildTraps 3108
+[A: #12399@200] updateCurrentTarget 3269
+[A: #12399@200] attackLogic 3379
+[A: #12399@200] tryheal 3534
+[A: #12399@200] movement 4324
+[A: #12399@200] postmoveSetGlobals 4842
+[A: #12399@200] checkBuildTraps 2 4870
+[A: #12399@200] attackLogic 2 4970
+[A: #12399@200] tryHeal 2 5127
+[A: #12399@200] tryFill 5456
+[A: #12399@200] callDefense 5553
+[A: #12399@200] Robot turn 5576
+[A: #12399@200] Robot navigation 8757
+[A: #12399@200] main turn 8780
+[A: #12399@200] comm end 9315
+[A: #12399@200] round end 9443
+[B: #12017@200] setup 42
+[B: #12017@200] comm start 590
+[B: #12017@200] preround tasks 617
+[B: #12017@200] premoveSetGlobals 2840
+[B: #12017@200] checkPickupFlag 3136
+[B: #12017@200] checkBuildTraps 3164
+[B: #12017@200] updateCurrentTarget 3325
+[B: #12017@200] attackLogic 3438
+[B: #12017@200] tryheal 3473
+[B: #12017@200] movement 6962
+[B: #12017@200] postmoveSetGlobals 7480
+[B: #12017@200] checkBuildTraps 2 7508
+[B: #12017@200] attackLogic 2 7608
+[B: #12017@200] tryHeal 2 7633
+[B: #12017@200] tryFill 7668
+[B: #12017@200] callDefense 7765
+[B: #12017@200] Robot turn 7788
+[B: #12017@200] Robot navigation 10960
+[B: #12017@200] main turn 10983
+[B: #12017@200] comm end 11518
+[B: #12017@200] round end 11646
+[B: #10511@209] Bytecode limit reached last turn?
+[B: #13415@238] Bytecode limit reached last turn?
+[B: #11304@259] Bytecode limit reached last turn?
+[A: #12908@286] Bytecode limit reached last turn?
+[A: #12669@300] 2 <-- Symm
+[A: #12669@300] 0<-- flags captured
+[B: #10440@300] 2 <-- Symm
+[B: #10440@300] 0<-- flags captured
+[A: #12399@300] setup 42
+[A: #12399@300] comm start 590
+[A: #12399@300] preround tasks 617
+[A: #12399@300] premoveSetGlobals 3897
+[A: #12399@300] checkPickupFlag 4193
+[A: #12399@300] checkBuildTraps 7803
+[A: #12399@300] updateCurrentTarget 7964
+[A: #12399@300] attackLogic 8011
+[A: #12399@300] tryheal 8046
+[A: #12399@300] movement 8157
+[A: #12399@300] postmoveSetGlobals 8675
+[A: #12399@300] checkBuildTraps 2 12285
+[A: #12399@300] attackLogic 2 12319
+[A: #12399@300] tryHeal 2 12344
+[A: #12399@300] tryFill 12372
+[A: #12399@300] callDefense 12536
+[A: #12399@300] Robot turn 12559
+[A: #12399@300] Robot navigation 15728
+[A: #12399@300] main turn 15751
+[A: #12399@300] comm end 16286
+[A: #12399@300] round end 16414
+[B: #12017@300] setup 42
+[B: #12017@300] comm start 590
+[B: #12017@300] preround tasks 617
+[B: #12017@300] premoveSetGlobals 2621
+[B: #12017@300] checkPickupFlag 2917
+[B: #12017@300] checkBuildTraps 5513
+[B: #12017@300] updateCurrentTarget 5674
+[B: #12017@300] attackLogic 5784
+[B: #12017@300] tryheal 5888
+[B: #12017@300] movement 6268
+[B: #12017@300] postmoveSetGlobals 6786
+[B: #12017@300] checkBuildTraps 2 9382
+[B: #12017@300] attackLogic 2 9482
+[B: #12017@300] tryHeal 2 9571
+[B: #12017@300] tryFill 9606
+[B: #12017@300] callDefense 9703
+[B: #12017@300] Robot turn 9726
+[B: #12017@300] Robot navigation 14113
+[B: #12017@300] main turn 14136
+[B: #12017@300] comm end 14671
+[B: #12017@300] round end 14799
+[B: #13841@309] Bytecode limit reached last turn?
+[B: #12263@328] Bytecode limit reached last turn?
+[B: #10135@363] Bytecode limit reached last turn?
+[B: #11370@366] Bytecode limit reached last turn?
+[B: #11315@368] Bytecode limit reached last turn?
+[B: #13817@368] Bytecode limit reached last turn?
+[B: #11315@370] Bytecode limit reached last turn?
+[B: #13771@372] Bytecode limit reached last turn?
+[B: #13771@374] Bytecode limit reached last turn?
+[B: #12263@384] Bytecode limit reached last turn?
+[A: #12669@400] 2 <-- Symm
+[A: #12669@400] 0<-- flags captured
+[B: #10440@400] 2 <-- Symm
+[B: #10440@400] 0<-- flags captured
+[A: #12399@400] setup 42
+[A: #12399@400] comm start 590
+[A: #12399@400] preround tasks 617
+[A: #12399@400] premoveSetGlobals 2983
+[A: #12399@400] checkPickupFlag 3279
+[A: #12399@400] checkBuildTraps 5431
+[A: #12399@400] updateCurrentTarget 5592
+[A: #12399@400] attackLogic 5639
+[A: #12399@400] tryheal 5674
+[A: #12399@400] movement 10034
+[A: #12399@400] postmoveSetGlobals 10552
+[A: #12399@400] checkBuildTraps 2 12704
+[A: #12399@400] attackLogic 2 12738
+[A: #12399@400] tryHeal 2 12763
+[A: #12399@400] tryFill 12791
+[A: #12399@400] callDefense 12888
+[A: #12399@400] Robot turn 12911
+[A: #12399@400] Robot navigation 17784
+[A: #12399@400] main turn 17807
+[A: #12399@400] comm end 18342
+[A: #12399@400] round end 18470
+[B: #12017@400] setup 42
+[B: #12017@400] comm start 590
+[B: #12017@400] preround tasks 617
+[B: #12017@400] premoveSetGlobals 3466
+[B: #12017@400] checkPickupFlag 3762
+[B: #12017@400] checkBuildTraps 6358
+[B: #12017@400] updateCurrentTarget 6519
+[B: #12017@400] attackLogic 6566
+[B: #12017@400] tryheal 6601
+[B: #12017@400] movement 6712
+[B: #12017@400] postmoveSetGlobals 7230
+[B: #12017@400] checkBuildTraps 2 9826
+[B: #12017@400] attackLogic 2 9860
+[B: #12017@400] tryHeal 2 9885
+[B: #12017@400] tryFill 9913
+[B: #12017@400] callDefense 10077
+[B: #12017@400] Robot turn 10100
+[B: #12017@400] Robot navigation 13261
+[B: #12017@400] main turn 13284
+[B: #12017@400] comm end 13819
+[B: #12017@400] round end 13947
+[A: #12669@500] 2 <-- Symm
+[A: #12669@500] 0<-- flags captured
+[B: #10440@500] 2 <-- Symm
+[B: #10440@500] 0<-- flags captured
+[A: #12399@500] setup 42
+[A: #12399@500] comm start 590
+[A: #12399@500] preround tasks 617
+[A: #12399@500] premoveSetGlobals 2715
+[A: #12399@500] checkPickupFlag 3011
+[A: #12399@500] checkBuildTraps 5607
+[A: #12399@500] updateCurrentTarget 5768
+[A: #12399@500] attackLogic 5878
+[A: #12399@500] tryheal 5965
+[A: #12399@500] movement 6370
+[A: #12399@500] postmoveSetGlobals 6888
+[A: #12399@500] checkBuildTraps 2 9484
+[A: #12399@500] attackLogic 2 9584
+[A: #12399@500] tryHeal 2 9690
+[A: #12399@500] tryFill 9983
+[A: #12399@500] callDefense 10080
+[A: #12399@500] Robot turn 10103
+[A: #12399@500] Robot navigation 14644
+[A: #12399@500] main turn 14667
+[A: #12399@500] comm end 15202
+[A: #12399@500] round end 15330
+[B: #12017@500] setup 42
+[B: #12017@500] comm start 590
+[B: #12017@500] preround tasks 617
+[B: #12017@500] main turn 1036
+[B: #12017@500] comm end 1571
+[B: #12017@500] round end 1698
+[A: #13028@531] I DEPOSITED FLAG WOO!
+[A: #12669@600] 2 <-- Symm
+[A: #12669@600] 0<-- flags captured
+[B: #10440@600] 2 <-- Symm
+[B: #10440@600] 0<-- flags captured
+[A: #12399@600] setup 56
+[A: #12399@600] comm start 604
+[A: #12399@600] preround tasks 631
+[A: #12399@600] main turn 1048
+[A: #12399@600] comm end 1583
+[A: #12399@600] round end 1711
+[B: #12017@600] setup 56
+[B: #12017@600] comm start 604
+[B: #12017@600] preround tasks 631
+[B: #12017@600] main turn 1045
+[B: #12017@600] comm end 1580
+[B: #12017@600] round end 1707
+[B: #13874@614] Whoops, seems like the sitting duck has died?
+[B: #13874@615] Whoops, seems like the sitting duck has died?
+[B: #13874@616] Whoops, seems like the sitting duck has died?
+[B: #10713@616] Whoops, seems like the sitting duck has died?
+[B: #13874@617] Whoops, seems like the sitting duck has died?
+[B: #10713@617] Whoops, seems like the sitting duck has died?
+[B: #10713@618] Whoops, seems like the sitting duck has died?
+[B: #10713@619] Whoops, seems like the sitting duck has died?
+[B: #10713@620] Whoops, seems like the sitting duck has died?
+[A: #11097@675] I DEPOSITED FLAG WOO!
+[A: #12669@700] 2 <-- Symm
+[A: #12669@700] 0<-- flags captured
+[B: #10440@700] 2 <-- Symm
+[B: #10440@700] 0<-- flags captured
+[A: #12399@700] setup 42
+[A: #12399@700] comm start 590
+[A: #12399@700] preround tasks 617
+[A: #12399@700] premoveSetGlobals 3439
+[A: #12399@700] checkPickupFlag 3735
+[A: #12399@700] checkBuildTraps 6443
+[A: #12399@700] updateCurrentTarget 6604
+[A: #12399@700] attackLogic 6651
+[A: #12399@700] tryheal 6686
+[A: #12399@700] movement 7470
+[A: #12399@700] postmoveSetGlobals 7988
+[A: #12399@700] checkBuildTraps 2 12105
+[A: #12399@700] attackLogic 2 12139
+[A: #12399@700] tryHeal 2 12164
+[A: #12399@700] tryFill 12192
+[A: #12399@700] callDefense 12356
+[A: #12399@700] Robot turn 12379
+[A: #12399@700] Robot navigation 15247
+[A: #12399@700] main turn 15270
+[A: #12399@700] comm end 15805
+[A: #12399@700] round end 15933
+[B: #12017@700] setup 42
+[B: #12017@700] comm start 590
+[B: #12017@700] preround tasks 617
+[B: #12017@700] main turn 1031
+[B: #12017@700] comm end 1566
+[B: #12017@700] round end 1693
+[B: #13771@705] Whoops, seems like the sitting duck has died?
+[B: #13771@706] Whoops, seems like the sitting duck has died?
+[B: #13771@708] Whoops, seems like the sitting duck has died?
+[B: #10135@709] Whoops, seems like the sitting duck has died?
+[B: #11589@709] Whoops, seems like the sitting duck has died?
+[B: #10135@710] Whoops, seems like the sitting duck has died?
+[B: #13771@710] Whoops, seems like the sitting duck has died?
+[B: #13771@711] Whoops, seems like the sitting duck has died?
+[B: #11589@712] Whoops, seems like the sitting duck has died?
+[B: #13771@712] Whoops, seems like the sitting duck has died?
+[B: #13771@713] Whoops, seems like the sitting duck has died?
+[B: #11304@716] Whoops, seems like the sitting duck has died?
+[B: #12017@718] Whoops, seems like the sitting duck has died?
+[B: #10776@718] Whoops, seems like the sitting duck has died?
+[B: #12017@719] Whoops, seems like the sitting duck has died?
+[B: #10776@719] Whoops, seems like the sitting duck has died?
+[B: #12017@720] Whoops, seems like the sitting duck has died?
+[B: #12017@722] Whoops, seems like the sitting duck has died?
+[B: #10119@723] Whoops, seems like the sitting duck has died?
+[B: #10119@724] Whoops, seems like the sitting duck has died?
+[B: #10119@725] Whoops, seems like the sitting duck has died?
+[B: #12017@725] Whoops, seems like the sitting duck has died?
+[B: #11117@725] Whoops, seems like the sitting duck has died?
+[B: #10119@726] Whoops, seems like the sitting duck has died?
+[B: #13874@727] Whoops, seems like the sitting duck has died?
+[B: #11753@727] Whoops, seems like the sitting duck has died?
+[B: #10119@727] Whoops, seems like the sitting duck has died?
+[B: #10119@728] Whoops, seems like the sitting duck has died?
+[B: #12017@728] Whoops, seems like the sitting duck has died?
+[B: #10776@728] Whoops, seems like the sitting duck has died?
+[B: #11117@728] Whoops, seems like the sitting duck has died?
+[B: #11304@728] Whoops, seems like the sitting duck has died?
+[B: #10119@729] Whoops, seems like the sitting duck has died?
+[B: #11117@729] Whoops, seems like the sitting duck has died?
+[B: #11304@729] Whoops, seems like the sitting duck has died?
+[B: #10119@730] Whoops, seems like the sitting duck has died?
+[B: #11315@730] Whoops, seems like the sitting duck has died?
+[B: #11117@730] Whoops, seems like the sitting duck has died?
+[B: #11304@730] Whoops, seems like the sitting duck has died?
+[B: #10776@731] Whoops, seems like the sitting duck has died?
+[B: #13763@731] Whoops, seems like the sitting duck has died?
+[B: #11304@731] Whoops, seems like the sitting duck has died?
+[B: #12235@754] Whoops, seems like the sitting duck has died?
+[B: #10227@754] Whoops, seems like the sitting duck has died?
+[B: #12235@755] Whoops, seems like the sitting duck has died?
+[B: #10227@755] Whoops, seems like the sitting duck has died?
+[B: #12235@756] Whoops, seems like the sitting duck has died?
+[B: #10227@756] Whoops, seems like the sitting duck has died?
+[B: #10713@756] Whoops, seems like the sitting duck has died?
+[B: #10511@756] Whoops, seems like the sitting duck has died?
+[B: #10119@756] Whoops, seems like the sitting duck has died?
+[B: #11304@756] Whoops, seems like the sitting duck has died?
+[B: #13771@756] Whoops, seems like the sitting duck has died?
+[B: #12235@757] Whoops, seems like the sitting duck has died?
+[B: #10713@757] Whoops, seems like the sitting duck has died?
+[B: #10511@757] Whoops, seems like the sitting duck has died?
+[B: #10119@757] Whoops, seems like the sitting duck has died?
+[B: #11304@757] Whoops, seems like the sitting duck has died?
+[B: #13771@757] Whoops, seems like the sitting duck has died?
+[B: #12235@758] Whoops, seems like the sitting duck has died?
+[B: #10227@758] Whoops, seems like the sitting duck has died?
+[B: #10713@758] Whoops, seems like the sitting duck has died?
+[B: #10119@758] Whoops, seems like the sitting duck has died?
+[B: #13138@758] Whoops, seems like the sitting duck has died?
+[B: #11304@758] Whoops, seems like the sitting duck has died?
+[B: #13771@758] Whoops, seems like the sitting duck has died?
+[B: #12235@759] Whoops, seems like the sitting duck has died?
+[B: #10227@759] Whoops, seems like the sitting duck has died?
+[B: #10713@759] Whoops, seems like the sitting duck has died?
+[B: #10511@759] Whoops, seems like the sitting duck has died?
+[B: #10119@759] Whoops, seems like the sitting duck has died?
+[B: #13138@759] Whoops, seems like the sitting duck has died?
+[B: #11304@759] Whoops, seems like the sitting duck has died?
+[B: #13771@759] Whoops, seems like the sitting duck has died?
+[B: #10227@760] Whoops, seems like the sitting duck has died?
+[B: #10713@760] Whoops, seems like the sitting duck has died?
+[B: #10511@760] Whoops, seems like the sitting duck has died?
+[B: #14020@760] Whoops, seems like the sitting duck has died?
+[B: #13818@760] Whoops, seems like the sitting duck has died?
+[B: #10228@760] Whoops, seems like the sitting duck has died?
+[B: #13138@760] Whoops, seems like the sitting duck has died?
+[B: #11304@760] Whoops, seems like the sitting duck has died?
+[B: #10227@761] Whoops, seems like the sitting duck has died?
+[B: #10713@761] Whoops, seems like the sitting duck has died?
+[B: #10511@761] Whoops, seems like the sitting duck has died?
+[B: #11589@761] Whoops, seems like the sitting duck has died?
+[B: #13818@761] Whoops, seems like the sitting duck has died?
+[B: #10228@761] Whoops, seems like the sitting duck has died?
+[B: #13138@761] Whoops, seems like the sitting duck has died?
+[B: #11304@761] Whoops, seems like the sitting duck has died?
+[B: #13771@761] Whoops, seems like the sitting duck has died?
+[B: #10511@762] Whoops, seems like the sitting duck has died?
+[B: #14020@762] Whoops, seems like the sitting duck has died?
+[B: #11589@762] Whoops, seems like the sitting duck has died?
+[B: #12017@762] Whoops, seems like the sitting duck has died?
+[B: #13818@762] Whoops, seems like the sitting duck has died?
+[B: #10228@762] Whoops, seems like the sitting duck has died?
+[B: #10776@762] Whoops, seems like the sitting duck has died?
+[B: #13817@762] Whoops, seems like the sitting duck has died?
+[B: #13138@762] Whoops, seems like the sitting duck has died?
+[B: #11304@762] Whoops, seems like the sitting duck has died?
+[B: #10951@762] Whoops, seems like the sitting duck has died?
+[B: #13771@762] Whoops, seems like the sitting duck has died?
+[B: #10511@763] Whoops, seems like the sitting duck has died?
+[B: #14020@763] Whoops, seems like the sitting duck has died?
+[B: #11589@763] Whoops, seems like the sitting duck has died?
+[B: #12017@763] Whoops, seems like the sitting duck has died?
+[B: #13818@763] Whoops, seems like the sitting duck has died?
+[B: #10228@763] Whoops, seems like the sitting duck has died?
+[B: #10776@763] Whoops, seems like the sitting duck has died?
+[B: #13817@763] Whoops, seems like the sitting duck has died?
+[B: #13138@763] Whoops, seems like the sitting duck has died?
+[B: #11304@763] Whoops, seems like the sitting duck has died?
+[B: #13771@763] Whoops, seems like the sitting duck has died?
+[B: #10511@764] Whoops, seems like the sitting duck has died?
+[B: #14020@764] Whoops, seems like the sitting duck has died?
+[B: #11589@764] Whoops, seems like the sitting duck has died?
+[B: #12017@764] Whoops, seems like the sitting duck has died?
+[B: #13818@764] Whoops, seems like the sitting duck has died?
+[B: #10228@764] Whoops, seems like the sitting duck has died?
+[B: #10776@764] Whoops, seems like the sitting duck has died?
+[B: #13817@764] Whoops, seems like the sitting duck has died?
+[B: #13138@764] Whoops, seems like the sitting duck has died?
+[B: #11304@764] Whoops, seems like the sitting duck has died?
+[B: #10511@765] Whoops, seems like the sitting duck has died?
+[B: #13991@765] Whoops, seems like the sitting duck has died?
+[B: #14020@765] Whoops, seems like the sitting duck has died?
+[B: #11589@765] Whoops, seems like the sitting duck has died?
+[B: #12017@765] Whoops, seems like the sitting duck has died?
+[B: #11232@765] Whoops, seems like the sitting duck has died?
+[B: #13818@765] Whoops, seems like the sitting duck has died?
+[B: #10776@765] Whoops, seems like the sitting duck has died?
+[B: #13817@765] Whoops, seems like the sitting duck has died?
+[B: #13138@765] Whoops, seems like the sitting duck has died?
+[B: #10636@765] Whoops, seems like the sitting duck has died?
+[B: #11304@765] Whoops, seems like the sitting duck has died?
+[B: #10951@765] Whoops, seems like the sitting duck has died?
+[B: #13871@765] Whoops, seems like the sitting duck has died?
+[B: #13771@765] Whoops, seems like the sitting duck has died?
+[B: #13991@766] Whoops, seems like the sitting duck has died?
+[B: #14020@766] Whoops, seems like the sitting duck has died?
+[B: #11589@766] Whoops, seems like the sitting duck has died?
+[B: #11232@766] Whoops, seems like the sitting duck has died?
+[B: #13818@766] Whoops, seems like the sitting duck has died?
+[B: #13817@766] Whoops, seems like the sitting duck has died?
+[B: #13138@766] Whoops, seems like the sitting duck has died?
+[B: #11304@766] Whoops, seems like the sitting duck has died?
+[B: #10951@766] Whoops, seems like the sitting duck has died?
+[B: #13871@766] Whoops, seems like the sitting duck has died?
+[B: #13771@766] Whoops, seems like the sitting duck has died?
+[B: #10746@767] Whoops, seems like the sitting duck has died?
+[B: #10511@767] Whoops, seems like the sitting duck has died?
+[B: #11589@767] Whoops, seems like the sitting duck has died?
+[B: #11232@767] Whoops, seems like the sitting duck has died?
+[B: #13818@767] Whoops, seems like the sitting duck has died?
+[B: #10228@767] Whoops, seems like the sitting duck has died?
+[B: #13817@767] Whoops, seems like the sitting duck has died?
+[B: #13138@767] Whoops, seems like the sitting duck has died?
+[B: #11304@767] Whoops, seems like the sitting duck has died?
+[B: #10951@767] Whoops, seems like the sitting duck has died?
+[B: #13871@767] Whoops, seems like the sitting duck has died?
+[B: #13771@767] Whoops, seems like the sitting duck has died?
+[B: #13415@768] Whoops, seems like the sitting duck has died?
+[B: #10746@768] Whoops, seems like the sitting duck has died?
+[B: #11172@768] Whoops, seems like the sitting duck has died?
+[B: #13263@768] Whoops, seems like the sitting duck has died?
+[B: #10511@768] Whoops, seems like the sitting duck has died?
+[B: #13841@768] Whoops, seems like the sitting duck has died?
+[B: #12180@768] Whoops, seems like the sitting duck has died?
+[B: #11315@768] Whoops, seems like the sitting duck has died?
+[B: #12259@768] Whoops, seems like the sitting duck has died?
+[B: #11232@768] Whoops, seems like the sitting duck has died?
+[B: #13818@768] Whoops, seems like the sitting duck has died?
+[B: #10330@768] Whoops, seems like the sitting duck has died?
+[B: #12542@768] Whoops, seems like the sitting duck has died?
+[B: #13871@768] Whoops, seems like the sitting duck has died?
+[B: #12263@768] Whoops, seems like the sitting duck has died?
+[B: #11452@768] Whoops, seems like the sitting duck has died?
+[B: #13415@769] Whoops, seems like the sitting duck has died?
+[B: #10746@769] Whoops, seems like the sitting duck has died?
+[B: #13263@769] Whoops, seems like the sitting duck has died?
+[B: #12180@769] Whoops, seems like the sitting duck has died?
+[B: #11315@769] Whoops, seems like the sitting duck has died?
+[B: #10330@769] Whoops, seems like the sitting duck has died?
+[B: #12542@769] Whoops, seems like the sitting duck has died?
+[B: #13871@769] Whoops, seems like the sitting duck has died?
+[B: #12263@769] Whoops, seems like the sitting duck has died?
+[B: #11452@769] Whoops, seems like the sitting duck has died?
+[B: #10746@770] Whoops, seems like the sitting duck has died?
+[B: #13263@770] Whoops, seems like the sitting duck has died?
+[B: #12180@770] Whoops, seems like the sitting duck has died?
+[B: #11315@770] Whoops, seems like the sitting duck has died?
+[B: #10330@770] Whoops, seems like the sitting duck has died?
+[B: #12542@770] Whoops, seems like the sitting duck has died?
+[B: #13871@770] Whoops, seems like the sitting duck has died?
+[B: #12263@770] Whoops, seems like the sitting duck has died?
+[B: #11452@770] Whoops, seems like the sitting duck has died?
+[B: #13415@771] Whoops, seems like the sitting duck has died?
+[B: #10746@771] Whoops, seems like the sitting duck has died?
+[B: #13263@771] Whoops, seems like the sitting duck has died?
+[B: #12180@771] Whoops, seems like the sitting duck has died?
+[B: #11315@771] Whoops, seems like the sitting duck has died?
+[B: #10330@771] Whoops, seems like the sitting duck has died?
+[B: #12542@771] Whoops, seems like the sitting duck has died?
+[B: #13871@771] Whoops, seems like the sitting duck has died?
+[B: #12263@771] Whoops, seems like the sitting duck has died?
+[B: #11452@771] Whoops, seems like the sitting duck has died?
+[B: #13415@772] Whoops, seems like the sitting duck has died?
+[B: #10746@772] Whoops, seems like the sitting duck has died?
+[B: #13263@772] Whoops, seems like the sitting duck has died?
+[B: #13841@772] Whoops, seems like the sitting duck has died?
+[B: #12180@772] Whoops, seems like the sitting duck has died?
+[B: #11315@772] Whoops, seems like the sitting duck has died?
+[B: #10228@772] Whoops, seems like the sitting duck has died?
+[B: #10330@772] Whoops, seems like the sitting duck has died?
+[B: #12542@772] Whoops, seems like the sitting duck has died?
+[B: #13871@772] Whoops, seems like the sitting duck has died?
+[B: #12263@772] Whoops, seems like the sitting duck has died?
+[B: #11452@772] Whoops, seems like the sitting duck has died?
+[B: #13415@773] Whoops, seems like the sitting duck has died?
+[B: #10746@773] Whoops, seems like the sitting duck has died?
+[B: #13263@773] Whoops, seems like the sitting duck has died?
+[B: #12180@773] Whoops, seems like the sitting duck has died?
+[B: #11315@773] Whoops, seems like the sitting duck has died?
+[B: #13818@773] Whoops, seems like the sitting duck has died?
+[B: #10228@773] Whoops, seems like the sitting duck has died?
+[B: #13138@773] Whoops, seems like the sitting duck has died?
+[B: #10330@773] Whoops, seems like the sitting duck has died?
+[B: #11304@773] Whoops, seems like the sitting duck has died?
+[B: #13871@773] Whoops, seems like the sitting duck has died?
+[B: #12263@773] Whoops, seems like the sitting duck has died?
+[B: #11452@773] Whoops, seems like the sitting duck has died?
+[B: #13415@774] Whoops, seems like the sitting duck has died?
+[B: #10746@774] Whoops, seems like the sitting duck has died?
+[B: #13263@774] Whoops, seems like the sitting duck has died?
+[B: #13841@774] Whoops, seems like the sitting duck has died?
+[B: #12180@774] Whoops, seems like the sitting duck has died?
+[B: #11315@774] Whoops, seems like the sitting duck has died?
+[B: #13818@774] Whoops, seems like the sitting duck has died?
+[B: #13354@774] Whoops, seems like the sitting duck has died?
+[B: #13871@774] Whoops, seems like the sitting duck has died?
+[B: #13771@774] Whoops, seems like the sitting duck has died?
+[B: #12263@774] Whoops, seems like the sitting duck has died?
+[B: #11452@774] Whoops, seems like the sitting duck has died?
+[B: #13415@775] Whoops, seems like the sitting duck has died?
+[B: #10746@775] Whoops, seems like the sitting duck has died?
+[B: #11172@775] Whoops, seems like the sitting duck has died?
+[B: #13263@775] Whoops, seems like the sitting duck has died?
+[B: #10511@775] Whoops, seems like the sitting duck has died?
+[B: #13841@775] Whoops, seems like the sitting duck has died?
+[B: #11315@775] Whoops, seems like the sitting duck has died?
+[B: #13354@775] Whoops, seems like the sitting duck has died?
+[B: #10951@775] Whoops, seems like the sitting duck has died?
+[B: #13871@775] Whoops, seems like the sitting duck has died?
+[B: #13771@775] Whoops, seems like the sitting duck has died?
+[B: #12263@775] Whoops, seems like the sitting duck has died?
+[B: #11452@775] Whoops, seems like the sitting duck has died?
+[B: #10746@776] Whoops, seems like the sitting duck has died?
+[B: #13263@776] Whoops, seems like the sitting duck has died?
+[B: #10511@776] Whoops, seems like the sitting duck has died?
+[B: #10135@776] Whoops, seems like the sitting duck has died?
+[B: #13841@776] Whoops, seems like the sitting duck has died?
+[B: #11315@776] Whoops, seems like the sitting duck has died?
+[B: #11232@776] Whoops, seems like the sitting duck has died?
+[B: #13138@776] Whoops, seems like the sitting duck has died?
+[B: #13354@776] Whoops, seems like the sitting duck has died?
+[B: #10951@776] Whoops, seems like the sitting duck has died?
+[B: #13871@776] Whoops, seems like the sitting duck has died?
+[B: #13771@776] Whoops, seems like the sitting duck has died?
+[B: #11452@776] Whoops, seems like the sitting duck has died?
+[B: #13415@777] Whoops, seems like the sitting duck has died?
+[B: #10746@777] Whoops, seems like the sitting duck has died?
+[B: #12373@777] Whoops, seems like the sitting duck has died?
+[B: #13263@777] Whoops, seems like the sitting duck has died?
+[B: #10511@777] Whoops, seems like the sitting duck has died?
+[B: #10135@777] Whoops, seems like the sitting duck has died?
+[B: #13841@777] Whoops, seems like the sitting duck has died?
+[B: #11232@777] Whoops, seems like the sitting duck has died?
+[B: #13138@777] Whoops, seems like the sitting duck has died?
+[B: #13354@777] Whoops, seems like the sitting duck has died?
+[B: #10951@777] Whoops, seems like the sitting duck has died?
+[B: #13871@777] Whoops, seems like the sitting duck has died?
+[B: #13771@777] Whoops, seems like the sitting duck has died?
+[B: #11452@777] Whoops, seems like the sitting duck has died?
+[B: #13415@778] Whoops, seems like the sitting duck has died?
+[B: #10746@778] Whoops, seems like the sitting duck has died?
+[B: #12373@778] Whoops, seems like the sitting duck has died?
+[B: #10511@778] Whoops, seems like the sitting duck has died?
+[B: #10135@778] Whoops, seems like the sitting duck has died?
+[B: #13841@778] Whoops, seems like the sitting duck has died?
+[B: #10841@778] Whoops, seems like the sitting duck has died?
+[B: #13138@778] Whoops, seems like the sitting duck has died?
+[B: #13354@778] Whoops, seems like the sitting duck has died?
+[B: #13481@778] Whoops, seems like the sitting duck has died?
+[B: #10951@778] Whoops, seems like the sitting duck has died?
+[B: #13771@778] Whoops, seems like the sitting duck has died?
+[B: #13415@779] Whoops, seems like the sitting duck has died?
+[B: #11084@779] Whoops, seems like the sitting duck has died?
+[B: #10746@779] Whoops, seems like the sitting duck has died?
+[B: #12373@779] Whoops, seems like the sitting duck has died?
+[B: #10511@779] Whoops, seems like the sitting duck has died?
+[B: #10135@779] Whoops, seems like the sitting duck has died?
+[B: #10841@779] Whoops, seems like the sitting duck has died?
+[B: #13138@779] Whoops, seems like the sitting duck has died?
+[B: #13354@779] Whoops, seems like the sitting duck has died?
+[B: #13481@779] Whoops, seems like the sitting duck has died?
+[B: #10951@779] Whoops, seems like the sitting duck has died?
+[B: #13771@779] Whoops, seems like the sitting duck has died?
+[B: #13415@780] Whoops, seems like the sitting duck has died?
+[B: #11084@780] Whoops, seems like the sitting duck has died?
+[B: #13986@780] Whoops, seems like the sitting duck has died?
+[B: #12373@780] Whoops, seems like the sitting duck has died?
+[B: #10241@780] Whoops, seems like the sitting duck has died?
+[B: #11753@780] Whoops, seems like the sitting duck has died?
+[B: #12133@780] Whoops, seems like the sitting duck has died?
+[B: #10135@780] Whoops, seems like the sitting duck has died?
+[B: #12449@780] Whoops, seems like the sitting duck has died?
+[B: #10841@780] Whoops, seems like the sitting duck has died?
+[B: #13438@780] Whoops, seems like the sitting duck has died?
+[B: #13481@780] Whoops, seems like the sitting duck has died?
+[B: #10951@780] Whoops, seems like the sitting duck has died?
+[B: #13415@781] Whoops, seems like the sitting duck has died?
+[B: #11084@781] Whoops, seems like the sitting duck has died?
+[B: #13986@781] Whoops, seems like the sitting duck has died?
+[B: #10838@781] Whoops, seems like the sitting duck has died?
+[B: #12373@781] Whoops, seems like the sitting duck has died?
+[B: #10241@781] Whoops, seems like the sitting duck has died?
+[B: #12133@781] Whoops, seems like the sitting duck has died?
+[B: #10135@781] Whoops, seems like the sitting duck has died?
+[B: #12449@781] Whoops, seems like the sitting duck has died?
+[B: #13438@781] Whoops, seems like the sitting duck has died?
+[B: #13481@781] Whoops, seems like the sitting duck has died?
+[B: #10951@781] Whoops, seems like the sitting duck has died?
+[B: #13415@782] Whoops, seems like the sitting duck has died?
+[B: #11084@782] Whoops, seems like the sitting duck has died?
+[B: #13986@782] Whoops, seems like the sitting duck has died?
+[B: #10838@782] Whoops, seems like the sitting duck has died?
+[B: #12373@782] Whoops, seems like the sitting duck has died?
+[B: #10241@782] Whoops, seems like the sitting duck has died?
+[B: #12133@782] Whoops, seems like the sitting duck has died?
+[B: #10135@782] Whoops, seems like the sitting duck has died?
+[B: #12449@782] Whoops, seems like the sitting duck has died?
+[B: #10841@782] Whoops, seems like the sitting duck has died?
+[B: #13438@782] Whoops, seems like the sitting duck has died?
+[B: #13481@782] Whoops, seems like the sitting duck has died?
+[B: #13415@783] Whoops, seems like the sitting duck has died?
+[B: #11084@783] Whoops, seems like the sitting duck has died?
+[B: #10838@783] Whoops, seems like the sitting duck has died?
+[B: #12373@783] Whoops, seems like the sitting duck has died?
+[B: #10241@783] Whoops, seems like the sitting duck has died?
+[B: #12133@783] Whoops, seems like the sitting duck has died?
+[B: #10135@783] Whoops, seems like the sitting duck has died?
+[B: #12449@783] Whoops, seems like the sitting duck has died?
+[B: #10841@783] Whoops, seems like the sitting duck has died?
+[B: #11117@783] Whoops, seems like the sitting duck has died?
+[B: #13438@783] Whoops, seems like the sitting duck has died?
+[B: #13481@783] Whoops, seems like the sitting duck has died?
+[B: #13415@784] Whoops, seems like the sitting duck has died?
+[B: #11084@784] Whoops, seems like the sitting duck has died?
+[B: #10838@784] Whoops, seems like the sitting duck has died?
+[B: #12373@784] Whoops, seems like the sitting duck has died?
+[B: #10241@784] Whoops, seems like the sitting duck has died?
+[B: #12133@784] Whoops, seems like the sitting duck has died?
+[B: #10841@784] Whoops, seems like the sitting duck has died?
+[B: #13481@784] Whoops, seems like the sitting duck has died?
+[B: #13415@785] Whoops, seems like the sitting duck has died?
+[B: #11084@785] Whoops, seems like the sitting duck has died?
+[B: #10838@785] Whoops, seems like the sitting duck has died?
+[B: #12373@785] Whoops, seems like the sitting duck has died?
+[B: #10241@785] Whoops, seems like the sitting duck has died?
+[B: #12133@785] Whoops, seems like the sitting duck has died?
+[B: #10841@785] Whoops, seems like the sitting duck has died?
+[B: #13415@786] Whoops, seems like the sitting duck has died?
+[B: #10838@786] Whoops, seems like the sitting duck has died?
+[B: #12373@786] Whoops, seems like the sitting duck has died?
+[B: #12235@786] Whoops, seems like the sitting duck has died?
+[B: #10241@786] Whoops, seems like the sitting duck has died?
+[B: #10227@786] Whoops, seems like the sitting duck has died?
+[B: #10713@786] Whoops, seems like the sitting duck has died?
+[B: #10119@786] Whoops, seems like the sitting duck has died?
+[B: #10841@786] Whoops, seems like the sitting duck has died?
+[B: #13415@787] Whoops, seems like the sitting duck has died?
+[B: #10838@787] Whoops, seems like the sitting duck has died?
+[B: #12373@787] Whoops, seems like the sitting duck has died?
+[B: #10241@787] Whoops, seems like the sitting duck has died?
+[B: #10227@787] Whoops, seems like the sitting duck has died?
+[B: #10713@787] Whoops, seems like the sitting duck has died?
+[B: #10119@787] Whoops, seems like the sitting duck has died?
+[B: #10841@787] Whoops, seems like the sitting duck has died?
+[B: #13415@788] Whoops, seems like the sitting duck has died?
+[B: #10838@788] Whoops, seems like the sitting duck has died?
+[B: #12373@788] Whoops, seems like the sitting duck has died?
+[B: #10241@788] Whoops, seems like the sitting duck has died?
+[B: #10227@788] Whoops, seems like the sitting duck has died?
+[B: #10713@788] Whoops, seems like the sitting duck has died?
+[B: #10119@788] Whoops, seems like the sitting duck has died?
+[B: #10841@788] Whoops, seems like the sitting duck has died?
+[B: #13415@789] Whoops, seems like the sitting duck has died?
+[B: #10838@789] Whoops, seems like the sitting duck has died?
+[B: #12373@789] Whoops, seems like the sitting duck has died?
+[B: #10241@789] Whoops, seems like the sitting duck has died?
+[B: #10227@789] Whoops, seems like the sitting duck has died?
+[B: #10713@789] Whoops, seems like the sitting duck has died?
+[B: #10119@789] Whoops, seems like the sitting duck has died?
+[B: #10841@789] Whoops, seems like the sitting duck has died?
+[B: #10838@790] Whoops, seems like the sitting duck has died?
+[B: #10241@790] Whoops, seems like the sitting duck has died?
+[B: #10227@790] Whoops, seems like the sitting duck has died?
+[B: #10713@790] Whoops, seems like the sitting duck has died?
+[B: #10119@790] Whoops, seems like the sitting duck has died?
+[B: #10841@790] Whoops, seems like the sitting duck has died?
+[B: #10241@791] Whoops, seems like the sitting duck has died?
+[B: #10227@791] Whoops, seems like the sitting duck has died?
+[B: #10713@791] Whoops, seems like the sitting duck has died?
+[B: #10119@791] Whoops, seems like the sitting duck has died?
+[B: #10841@791] Whoops, seems like the sitting duck has died?
+[B: #10440@792] Whoops, seems like the sitting duck has died?
+[B: #13874@792] Whoops, seems like the sitting duck has died?
+[B: #10241@792] Whoops, seems like the sitting duck has died?
+[B: #10227@792] Whoops, seems like the sitting duck has died?
+[B: #10713@792] Whoops, seems like the sitting duck has died?
+[B: #13991@792] Whoops, seems like the sitting duck has died?
+[B: #14020@792] Whoops, seems like the sitting duck has died?
+[B: #11589@792] Whoops, seems like the sitting duck has died?
+[B: #12017@792] Whoops, seems like the sitting duck has died?
+[B: #10776@792] Whoops, seems like the sitting duck has died?
+[B: #10841@792] Whoops, seems like the sitting duck has died?
+[B: #10636@792] Whoops, seems like the sitting duck has died?
+[B: #10440@793] Whoops, seems like the sitting duck has died?
+[B: #13874@793] Whoops, seems like the sitting duck has died?
+[B: #10241@793] Whoops, seems like the sitting duck has died?
+[B: #10227@793] Whoops, seems like the sitting duck has died?
+[B: #10713@793] Whoops, seems like the sitting duck has died?
+[B: #13991@793] Whoops, seems like the sitting duck has died?
+[B: #14020@793] Whoops, seems like the sitting duck has died?
+[B: #11589@793] Whoops, seems like the sitting duck has died?
+[B: #12017@793] Whoops, seems like the sitting duck has died?
+[B: #10776@793] Whoops, seems like the sitting duck has died?
+[B: #10636@793] Whoops, seems like the sitting duck has died?
+[B: #10440@794] Whoops, seems like the sitting duck has died?
+[B: #13874@794] Whoops, seems like the sitting duck has died?
+[B: #10241@794] Whoops, seems like the sitting duck has died?
+[B: #10227@794] Whoops, seems like the sitting duck has died?
+[B: #10713@794] Whoops, seems like the sitting duck has died?
+[B: #13991@794] Whoops, seems like the sitting duck has died?
+[B: #14020@794] Whoops, seems like the sitting duck has died?
+[B: #11589@794] Whoops, seems like the sitting duck has died?
+[B: #12017@794] Whoops, seems like the sitting duck has died?
+[B: #10776@794] Whoops, seems like the sitting duck has died?
+[B: #10440@795] Whoops, seems like the sitting duck has died?
+[B: #13874@795] Whoops, seems like the sitting duck has died?
+[B: #10241@795] Whoops, seems like the sitting duck has died?
+[B: #10227@795] Whoops, seems like the sitting duck has died?
+[B: #10713@795] Whoops, seems like the sitting duck has died?
+[B: #14020@795] Whoops, seems like the sitting duck has died?
+[B: #11589@795] Whoops, seems like the sitting duck has died?
+[B: #12017@795] Whoops, seems like the sitting duck has died?
+[B: #12259@795] Whoops, seems like the sitting duck has died?
+[B: #10776@795] Whoops, seems like the sitting duck has died?
+[B: #10440@796] Whoops, seems like the sitting duck has died?
+[B: #13874@796] Whoops, seems like the sitting duck has died?
+[B: #10227@796] Whoops, seems like the sitting duck has died?
+[B: #14020@796] Whoops, seems like the sitting duck has died?
+[B: #12017@796] Whoops, seems like the sitting duck has died?
+[B: #12259@796] Whoops, seems like the sitting duck has died?
+[B: #10776@796] Whoops, seems like the sitting duck has died?
+[B: #10440@797] Whoops, seems like the sitting duck has died?
+[B: #13874@797] Whoops, seems like the sitting duck has died?
+[B: #10227@797] Whoops, seems like the sitting duck has died?
+[B: #14020@797] Whoops, seems like the sitting duck has died?
+[B: #12017@797] Whoops, seems like the sitting duck has died?
+[B: #12259@797] Whoops, seems like the sitting duck has died?
+[B: #10776@797] Whoops, seems like the sitting duck has died?
+[B: #13874@798] Whoops, seems like the sitting duck has died?
+[B: #14020@798] Whoops, seems like the sitting duck has died?
+[B: #12259@798] Whoops, seems like the sitting duck has died?
+[B: #10228@798] Whoops, seems like the sitting duck has died?
+[B: #10776@798] Whoops, seems like the sitting duck has died?
+[B: #13817@798] Whoops, seems like the sitting duck has died?
+[B: #10330@798] Whoops, seems like the sitting duck has died?
+[B: #12542@798] Whoops, seems like the sitting duck has died?
+[B: #13874@799] Whoops, seems like the sitting duck has died?
+[B: #14020@799] Whoops, seems like the sitting duck has died?
+[B: #10776@799] Whoops, seems like the sitting duck has died?
+[B: #13817@799] Whoops, seems like the sitting duck has died?
+[B: #12542@799] Whoops, seems like the sitting duck has died?
+[A: #12669@800] 2 <-- Symm
+[A: #12669@800] 0<-- flags captured
+[B: #10440@800] 2 <-- Symm
+[B: #10440@800] 0<-- flags captured
+[B: #13874@800] Whoops, seems like the sitting duck has died?
+[A: #12399@800] setup 42
+[A: #12399@800] comm start 590
+[A: #12399@800] preround tasks 617
+[A: #12399@800] premoveSetGlobals 2709
+[A: #12399@800] checkPickupFlag 3005
+[A: #12399@800] checkBuildTraps 5601
+[A: #12399@800] updateCurrentTarget 5755
+[A: #12399@800] attackLogic 5799
+[A: #12399@800] tryheal 5840
+[A: #12399@800] movement 6370
+[A: #12399@800] postmoveSetGlobals 6888
+[A: #12399@800] checkBuildTraps 2 9484
+[A: #12399@800] attackLogic 2 9518
+[A: #12399@800] tryHeal 2 9561
+[A: #12399@800] tryFill 9589
+[A: #12399@800] callDefense 9686
+[A: #12399@800] Robot turn 9709
+[A: #12399@800] Robot navigation 12867
+[A: #12399@800] main turn 12890
+[A: #12399@800] comm end 13425
+[A: #12399@800] round end 13553
+[B: #12017@800] setup 42
+[B: #12017@800] comm start 590
+[B: #12017@800] preround tasks 617
+[B: #12017@800] main turn 789
+[B: #12017@800] comm end 1324
+[B: #12017@800] round end 1451
+[B: #13874@801] Whoops, seems like the sitting duck has died?
+[B: #11172@801] Whoops, seems like the sitting duck has died?
+[B: #12180@801] Whoops, seems like the sitting duck has died?
+[B: #11315@801] Whoops, seems like the sitting duck has died?
+[B: #13818@801] Whoops, seems like the sitting duck has died?
+[B: #11304@801] Whoops, seems like the sitting duck has died?
+[B: #12263@801] Whoops, seems like the sitting duck has died?
+[B: #13874@802] Whoops, seems like the sitting duck has died?
+[B: #11172@802] Whoops, seems like the sitting duck has died?
+[B: #12180@802] Whoops, seems like the sitting duck has died?
+[B: #13818@802] Whoops, seems like the sitting duck has died?
+[B: #11304@802] Whoops, seems like the sitting duck has died?
+[B: #12263@802] Whoops, seems like the sitting duck has died?
+[B: #13874@803] Whoops, seems like the sitting duck has died?
+[B: #11172@803] Whoops, seems like the sitting duck has died?
+[B: #12180@803] Whoops, seems like the sitting duck has died?
+[B: #13818@803] Whoops, seems like the sitting duck has died?
+[B: #11304@803] Whoops, seems like the sitting duck has died?
+[B: #10746@804] Whoops, seems like the sitting duck has died?
+[B: #13874@804] Whoops, seems like the sitting duck has died?
+[B: #11172@804] Whoops, seems like the sitting duck has died?
+[B: #13263@804] Whoops, seems like the sitting duck has died?
+[B: #10511@804] Whoops, seems like the sitting duck has died?
+[B: #13841@804] Whoops, seems like the sitting duck has died?
+[B: #12180@804] Whoops, seems like the sitting duck has died?
+[B: #11232@804] Whoops, seems like the sitting duck has died?
+[B: #13818@804] Whoops, seems like the sitting duck has died?
+[B: #13138@804] Whoops, seems like the sitting duck has died?
+[B: #13354@804] Whoops, seems like the sitting duck has died?
+[B: #11304@804] Whoops, seems like the sitting duck has died?
+[B: #13771@804] Whoops, seems like the sitting duck has died?
+[B: #13874@805] Whoops, seems like the sitting duck has died?
+[B: #11172@805] Whoops, seems like the sitting duck has died?
+[B: #13263@805] Whoops, seems like the sitting duck has died?
+[B: #10511@805] Whoops, seems like the sitting duck has died?
+[B: #13841@805] Whoops, seems like the sitting duck has died?
+[B: #11232@805] Whoops, seems like the sitting duck has died?
+[B: #13818@805] Whoops, seems like the sitting duck has died?
+[B: #13138@805] Whoops, seems like the sitting duck has died?
+[B: #13354@805] Whoops, seems like the sitting duck has died?
+[B: #13771@805] Whoops, seems like the sitting duck has died?
+[B: #10746@806] Whoops, seems like the sitting duck has died?
+[B: #13874@806] Whoops, seems like the sitting duck has died?
+[B: #11172@806] Whoops, seems like the sitting duck has died?
+[B: #13263@806] Whoops, seems like the sitting duck has died?
+[B: #10511@806] Whoops, seems like the sitting duck has died?
+[B: #13841@806] Whoops, seems like the sitting duck has died?
+[B: #11232@806] Whoops, seems like the sitting duck has died?
+[B: #13818@806] Whoops, seems like the sitting duck has died?
+[B: #13354@806] Whoops, seems like the sitting duck has died?
+[B: #13771@806] Whoops, seems like the sitting duck has died?
+[B: #13986@807] Whoops, seems like the sitting duck has died?
+[B: #10746@807] Whoops, seems like the sitting duck has died?
+[B: #13874@807] Whoops, seems like the sitting duck has died?
+[B: #11172@807] Whoops, seems like the sitting duck has died?
+[B: #11753@807] Whoops, seems like the sitting duck has died?
+[B: #10511@807] Whoops, seems like the sitting duck has died?
+[B: #13841@807] Whoops, seems like the sitting duck has died?
+[B: #11232@807] Whoops, seems like the sitting duck has died?
+[B: #13818@807] Whoops, seems like the sitting duck has died?
+[B: #13354@807] Whoops, seems like the sitting duck has died?
+[B: #10951@807] Whoops, seems like the sitting duck has died?
+[B: #13871@807] Whoops, seems like the sitting duck has died?
+[B: #13771@807] Whoops, seems like the sitting duck has died?
+[B: #13986@808] Whoops, seems like the sitting duck has died?
+[B: #10746@808] Whoops, seems like the sitting duck has died?
+[B: #13874@808] Whoops, seems like the sitting duck has died?
+[B: #11172@808] Whoops, seems like the sitting duck has died?
+[B: #11753@808] Whoops, seems like the sitting duck has died?
+[B: #10511@808] Whoops, seems like the sitting duck has died?
+[B: #13841@808] Whoops, seems like the sitting duck has died?
+[B: #11232@808] Whoops, seems like the sitting duck has died?
+[B: #13818@808] Whoops, seems like the sitting duck has died?
+[B: #10951@808] Whoops, seems like the sitting duck has died?
+[B: #13871@808] Whoops, seems like the sitting duck has died?
+[B: #13771@808] Whoops, seems like the sitting duck has died?
+[B: #13986@809] Whoops, seems like the sitting duck has died?
+[B: #10746@809] Whoops, seems like the sitting duck has died?
+[B: #13874@809] Whoops, seems like the sitting duck has died?
+[B: #11172@809] Whoops, seems like the sitting duck has died?
+[B: #11753@809] Whoops, seems like the sitting duck has died?
+[B: #10511@809] Whoops, seems like the sitting duck has died?
+[B: #13841@809] Whoops, seems like the sitting duck has died?
+[B: #11232@809] Whoops, seems like the sitting duck has died?
+[B: #10951@809] Whoops, seems like the sitting duck has died?
+[B: #13871@809] Whoops, seems like the sitting duck has died?
+[B: #13771@809] Whoops, seems like the sitting duck has died?
+[B: #13986@810] Whoops, seems like the sitting duck has died?
+[B: #10746@810] Whoops, seems like the sitting duck has died?
+[B: #13874@810] Whoops, seems like the sitting duck has died?
+[B: #11172@810] Whoops, seems like the sitting duck has died?
+[B: #11753@810] Whoops, seems like the sitting duck has died?
+[B: #10511@810] Whoops, seems like the sitting duck has died?
+[B: #12133@810] Whoops, seems like the sitting duck has died?
+[B: #10135@810] Whoops, seems like the sitting duck has died?
+[B: #12449@810] Whoops, seems like the sitting duck has died?
+[B: #13841@810] Whoops, seems like the sitting duck has died?
+[B: #11232@810] Whoops, seems like the sitting duck has died?
+[B: #10951@810] Whoops, seems like the sitting duck has died?
+[B: #13871@810] Whoops, seems like the sitting duck has died?
+[B: #13771@810] Whoops, seems like the sitting duck has died?
+[B: #11452@810] Whoops, seems like the sitting duck has died?
+[B: #13986@811] Whoops, seems like the sitting duck has died?
+[B: #10746@811] Whoops, seems like the sitting duck has died?
+[B: #13874@811] Whoops, seems like the sitting duck has died?
+[B: #11172@811] Whoops, seems like the sitting duck has died?
+[B: #10511@811] Whoops, seems like the sitting duck has died?
+[B: #12133@811] Whoops, seems like the sitting duck has died?
+[B: #10135@811] Whoops, seems like the sitting duck has died?
+[B: #12449@811] Whoops, seems like the sitting duck has died?
+[B: #13841@811] Whoops, seems like the sitting duck has died?
+[B: #11232@811] Whoops, seems like the sitting duck has died?
+[B: #10951@811] Whoops, seems like the sitting duck has died?
+[B: #13871@811] Whoops, seems like the sitting duck has died?
+[B: #13771@811] Whoops, seems like the sitting duck has died?
+[B: #11452@811] Whoops, seems like the sitting duck has died?
+[B: #13986@812] Whoops, seems like the sitting duck has died?
+[B: #10746@812] Whoops, seems like the sitting duck has died?
+[B: #13874@812] Whoops, seems like the sitting duck has died?
+[B: #11172@812] Whoops, seems like the sitting duck has died?
+[B: #10511@812] Whoops, seems like the sitting duck has died?
+[B: #12133@812] Whoops, seems like the sitting duck has died?
+[B: #10135@812] Whoops, seems like the sitting duck has died?
+[B: #12449@812] Whoops, seems like the sitting duck has died?
+[B: #11232@812] Whoops, seems like the sitting duck has died?
+[B: #10951@812] Whoops, seems like the sitting duck has died?
+[B: #13871@812] Whoops, seems like the sitting duck has died?
+[B: #13771@812] Whoops, seems like the sitting duck has died?
+[B: #11452@812] Whoops, seems like the sitting duck has died?
+[B: #13986@813] Whoops, seems like the sitting duck has died?
+[B: #13874@813] Whoops, seems like the sitting duck has died?
+[B: #11172@813] Whoops, seems like the sitting duck has died?
+[B: #12235@813] Whoops, seems like the sitting duck has died?
+[B: #10511@813] Whoops, seems like the sitting duck has died?
+[B: #12133@813] Whoops, seems like the sitting duck has died?
+[B: #10135@813] Whoops, seems like the sitting duck has died?
+[B: #12449@813] Whoops, seems like the sitting duck has died?
+[B: #11232@813] Whoops, seems like the sitting duck has died?
+[B: #11117@813] Whoops, seems like the sitting duck has died?
+[B: #10951@813] Whoops, seems like the sitting duck has died?
+[B: #13871@813] Whoops, seems like the sitting duck has died?
+[B: #13771@813] Whoops, seems like the sitting duck has died?
+[B: #13986@814] Whoops, seems like the sitting duck has died?
+[B: #13874@814] Whoops, seems like the sitting duck has died?
+[B: #11172@814] Whoops, seems like the sitting duck has died?
+[B: #12235@814] Whoops, seems like the sitting duck has died?
+[B: #12133@814] Whoops, seems like the sitting duck has died?
+[B: #10135@814] Whoops, seems like the sitting duck has died?
+[B: #12449@814] Whoops, seems like the sitting duck has died?
+[B: #11232@814] Whoops, seems like the sitting duck has died?
+[B: #11117@814] Whoops, seems like the sitting duck has died?
+[B: #10951@814] Whoops, seems like the sitting duck has died?
+[B: #13771@814] Whoops, seems like the sitting duck has died?
+[B: #13986@815] Whoops, seems like the sitting duck has died?
+[B: #13874@815] Whoops, seems like the sitting duck has died?
+[B: #11172@815] Whoops, seems like the sitting duck has died?
+[B: #12235@815] Whoops, seems like the sitting duck has died?
+[B: #12133@815] Whoops, seems like the sitting duck has died?
+[B: #10135@815] Whoops, seems like the sitting duck has died?
+[B: #12449@815] Whoops, seems like the sitting duck has died?
+[B: #11232@815] Whoops, seems like the sitting duck has died?
+[B: #11117@815] Whoops, seems like the sitting duck has died?
+[B: #10951@815] Whoops, seems like the sitting duck has died?
+[B: #13771@815] Whoops, seems like the sitting duck has died?
+[B: #13415@816] Whoops, seems like the sitting duck has died?
+[B: #13986@816] Whoops, seems like the sitting duck has died?
+[B: #13874@816] Whoops, seems like the sitting duck has died?
+[B: #12373@816] Whoops, seems like the sitting duck has died?
+[B: #11172@816] Whoops, seems like the sitting duck has died?
+[B: #12235@816] Whoops, seems like the sitting duck has died?
+[B: #10119@816] Whoops, seems like the sitting duck has died?
+[B: #12133@816] Whoops, seems like the sitting duck has died?
+[B: #10135@816] Whoops, seems like the sitting duck has died?
+[B: #12449@816] Whoops, seems like the sitting duck has died?
+[B: #11232@816] Whoops, seems like the sitting duck has died?
+[B: #11117@816] Whoops, seems like the sitting duck has died?
+[B: #10951@816] Whoops, seems like the sitting duck has died?
+[B: #13771@816] Whoops, seems like the sitting duck has died?
+[B: #13415@817] Whoops, seems like the sitting duck has died?
+[B: #13986@817] Whoops, seems like the sitting duck has died?
+[B: #13874@817] Whoops, seems like the sitting duck has died?
+[B: #12373@817] Whoops, seems like the sitting duck has died?
+[B: #11172@817] Whoops, seems like the sitting duck has died?
+[B: #12235@817] Whoops, seems like the sitting duck has died?
+[B: #10119@817] Whoops, seems like the sitting duck has died?
+[B: #12133@817] Whoops, seems like the sitting duck has died?
+[B: #10135@817] Whoops, seems like the sitting duck has died?
+[B: #12449@817] Whoops, seems like the sitting duck has died?
+[B: #11232@817] Whoops, seems like the sitting duck has died?
+[B: #11117@817] Whoops, seems like the sitting duck has died?
+[B: #10951@817] Whoops, seems like the sitting duck has died?
+[B: #13771@817] Whoops, seems like the sitting duck has died?
+[B: #13415@818] Whoops, seems like the sitting duck has died?
+[B: #13986@818] Whoops, seems like the sitting duck has died?
+[B: #13874@818] Whoops, seems like the sitting duck has died?
+[B: #12373@818] Whoops, seems like the sitting duck has died?
+[B: #11172@818] Whoops, seems like the sitting duck has died?
+[B: #12235@818] Whoops, seems like the sitting duck has died?
+[B: #10119@818] Whoops, seems like the sitting duck has died?
+[B: #10135@818] Whoops, seems like the sitting duck has died?
+[B: #12449@818] Whoops, seems like the sitting duck has died?
+[B: #11232@818] Whoops, seems like the sitting duck has died?
+[B: #11117@818] Whoops, seems like the sitting duck has died?
+[B: #10951@818] Whoops, seems like the sitting duck has died?
+[B: #13771@818] Whoops, seems like the sitting duck has died?
+[B: #13415@819] Whoops, seems like the sitting duck has died?
+[B: #13986@819] Whoops, seems like the sitting duck has died?
+[B: #13874@819] Whoops, seems like the sitting duck has died?
+[B: #12373@819] Whoops, seems like the sitting duck has died?
+[B: #11172@819] Whoops, seems like the sitting duck has died?
+[B: #12235@819] Whoops, seems like the sitting duck has died?
+[B: #10119@819] Whoops, seems like the sitting duck has died?
+[B: #13991@819] Whoops, seems like the sitting duck has died?
+[B: #10135@819] Whoops, seems like the sitting duck has died?
+[B: #12449@819] Whoops, seems like the sitting duck has died?
+[B: #11232@819] Whoops, seems like the sitting duck has died?
+[B: #10841@819] Whoops, seems like the sitting duck has died?
+[B: #13438@819] Whoops, seems like the sitting duck has died?
+[B: #10951@819] Whoops, seems like the sitting duck has died?
+[B: #13771@819] Whoops, seems like the sitting duck has died?
+[B: #13415@820] Whoops, seems like the sitting duck has died?
+[B: #11084@820] Whoops, seems like the sitting duck has died?
+[B: #13986@820] Whoops, seems like the sitting duck has died?
+[B: #11172@820] Whoops, seems like the sitting duck has died?
+[B: #12235@820] Whoops, seems like the sitting duck has died?
+[B: #10119@820] Whoops, seems like the sitting duck has died?
+[B: #13991@820] Whoops, seems like the sitting duck has died?
+[B: #12449@820] Whoops, seems like the sitting duck has died?
+[B: #11232@820] Whoops, seems like the sitting duck has died?
+[B: #10841@820] Whoops, seems like the sitting duck has died?
+[B: #13438@820] Whoops, seems like the sitting duck has died?
+[B: #10951@820] Whoops, seems like the sitting duck has died?
+[B: #13771@820] Whoops, seems like the sitting duck has died?
+[B: #13415@821] Whoops, seems like the sitting duck has died?
+[B: #11084@821] Whoops, seems like the sitting duck has died?
+[B: #13986@821] Whoops, seems like the sitting duck has died?
+[B: #11172@821] Whoops, seems like the sitting duck has died?
+[B: #12235@821] Whoops, seems like the sitting duck has died?
+[B: #10119@821] Whoops, seems like the sitting duck has died?
+[B: #12449@821] Whoops, seems like the sitting duck has died?
+[B: #11232@821] Whoops, seems like the sitting duck has died?
+[B: #13438@821] Whoops, seems like the sitting duck has died?
+[B: #10951@821] Whoops, seems like the sitting duck has died?
+[B: #13771@821] Whoops, seems like the sitting duck has died?
+[B: #10440@822] Whoops, seems like the sitting duck has died?
+[B: #11084@822] Whoops, seems like the sitting duck has died?
+[B: #13986@822] Whoops, seems like the sitting duck has died?
+[B: #13874@822] Whoops, seems like the sitting duck has died?
+[B: #11172@822] Whoops, seems like the sitting duck has died?
+[B: #12235@822] Whoops, seems like the sitting duck has died?
+[B: #10241@822] Whoops, seems like the sitting duck has died?
+[B: #10227@822] Whoops, seems like the sitting duck has died?
+[B: #10713@822] Whoops, seems like the sitting duck has died?
+[B: #12449@822] Whoops, seems like the sitting duck has died?
+[B: #11232@822] Whoops, seems like the sitting duck has died?
+[B: #10951@822] Whoops, seems like the sitting duck has died?
+[B: #13771@822] Whoops, seems like the sitting duck has died?
+[B: #10440@823] Whoops, seems like the sitting duck has died?
+[B: #11084@823] Whoops, seems like the sitting duck has died?
+[B: #13986@823] Whoops, seems like the sitting duck has died?
+[B: #11172@823] Whoops, seems like the sitting duck has died?
+[B: #12235@823] Whoops, seems like the sitting duck has died?
+[B: #10241@823] Whoops, seems like the sitting duck has died?
+[B: #10227@823] Whoops, seems like the sitting duck has died?
+[B: #10713@823] Whoops, seems like the sitting duck has died?
+[B: #12449@823] Whoops, seems like the sitting duck has died?
+[B: #11232@823] Whoops, seems like the sitting duck has died?
+[B: #13771@823] Whoops, seems like the sitting duck has died?
+[B: #10440@824] Whoops, seems like the sitting duck has died?
+[B: #11084@824] Whoops, seems like the sitting duck has died?
+[B: #13986@824] Whoops, seems like the sitting duck has died?
+[B: #11172@824] Whoops, seems like the sitting duck has died?
+[B: #12235@824] Whoops, seems like the sitting duck has died?
+[B: #10241@824] Whoops, seems like the sitting duck has died?
+[B: #10713@824] Whoops, seems like the sitting duck has died?
+[B: #13991@824] Whoops, seems like the sitting duck has died?
+[B: #12449@824] Whoops, seems like the sitting duck has died?
+[B: #13771@824] Whoops, seems like the sitting duck has died?
+[B: #10440@825] Whoops, seems like the sitting duck has died?
+[B: #11084@825] Whoops, seems like the sitting duck has died?
+[B: #10838@825] Whoops, seems like the sitting duck has died?
+[B: #11172@825] Whoops, seems like the sitting duck has died?
+[B: #12235@825] Whoops, seems like the sitting duck has died?
+[B: #10713@825] Whoops, seems like the sitting duck has died?
+[B: #13991@825] Whoops, seems like the sitting duck has died?
+[B: #12449@825] Whoops, seems like the sitting duck has died?
+[B: #14020@825] Whoops, seems like the sitting duck has died?
+[B: #11589@825] Whoops, seems like the sitting duck has died?
+[B: #12017@825] Whoops, seems like the sitting duck has died?
+[B: #12259@825] Whoops, seems like the sitting duck has died?
+[B: #13763@825] Whoops, seems like the sitting duck has died?
+[B: #13771@825] Whoops, seems like the sitting duck has died?
+[B: #10440@826] Whoops, seems like the sitting duck has died?
+[B: #11084@826] Whoops, seems like the sitting duck has died?
+[B: #10838@826] Whoops, seems like the sitting duck has died?
+[B: #11172@826] Whoops, seems like the sitting duck has died?
+[B: #12235@826] Whoops, seems like the sitting duck has died?
+[B: #10713@826] Whoops, seems like the sitting duck has died?
+[B: #13991@826] Whoops, seems like the sitting duck has died?
+[B: #14020@826] Whoops, seems like the sitting duck has died?
+[B: #11589@826] Whoops, seems like the sitting duck has died?
+[B: #12017@826] Whoops, seems like the sitting duck has died?
+[B: #12259@826] Whoops, seems like the sitting duck has died?
+[B: #13763@826] Whoops, seems like the sitting duck has died?
+[B: #13771@826] Whoops, seems like the sitting duck has died?
+[B: #10440@827] Whoops, seems like the sitting duck has died?
+[B: #11084@827] Whoops, seems like the sitting duck has died?
+[B: #10838@827] Whoops, seems like the sitting duck has died?
+[B: #11172@827] Whoops, seems like the sitting duck has died?
+[B: #12235@827] Whoops, seems like the sitting duck has died?
+[B: #10713@827] Whoops, seems like the sitting duck has died?
+[B: #13991@827] Whoops, seems like the sitting duck has died?
+[B: #14020@827] Whoops, seems like the sitting duck has died?
+[B: #11589@827] Whoops, seems like the sitting duck has died?
+[B: #12259@827] Whoops, seems like the sitting duck has died?
+[B: #13771@827] Whoops, seems like the sitting duck has died?
+[B: #10440@828] Whoops, seems like the sitting duck has died?
+[B: #11084@828] Whoops, seems like the sitting duck has died?
+[B: #10838@828] Whoops, seems like the sitting duck has died?
+[B: #11172@828] Whoops, seems like the sitting duck has died?
+[B: #12235@828] Whoops, seems like the sitting duck has died?
+[B: #10713@828] Whoops, seems like the sitting duck has died?
+[B: #13991@828] Whoops, seems like the sitting duck has died?
+[B: #14020@828] Whoops, seems like the sitting duck has died?
+[B: #11315@828] Whoops, seems like the sitting duck has died?
+[B: #12259@828] Whoops, seems like the sitting duck has died?
+[B: #10228@828] Whoops, seems like the sitting duck has died?
+[B: #10776@828] Whoops, seems like the sitting duck has died?
+[B: #13817@828] Whoops, seems like the sitting duck has died?
+[B: #13771@828] Whoops, seems like the sitting duck has died?
+[B: #10440@829] Whoops, seems like the sitting duck has died?
+[B: #11084@829] Whoops, seems like the sitting duck has died?
+[B: #10838@829] Whoops, seems like the sitting duck has died?
+[B: #11172@829] Whoops, seems like the sitting duck has died?
+[B: #12235@829] Whoops, seems like the sitting duck has died?
+[B: #13991@829] Whoops, seems like the sitting duck has died?
+[B: #14020@829] Whoops, seems like the sitting duck has died?
+[B: #11315@829] Whoops, seems like the sitting duck has died?
+[B: #12259@829] Whoops, seems like the sitting duck has died?
+[B: #10228@829] Whoops, seems like the sitting duck has died?
+[B: #10776@829] Whoops, seems like the sitting duck has died?
+[B: #13817@829] Whoops, seems like the sitting duck has died?
+[B: #13771@829] Whoops, seems like the sitting duck has died?
+[B: #10440@830] Whoops, seems like the sitting duck has died?
+[B: #11084@830] Whoops, seems like the sitting duck has died?
+[B: #10838@830] Whoops, seems like the sitting duck has died?
+[B: #11172@830] Whoops, seems like the sitting duck has died?
+[B: #12235@830] Whoops, seems like the sitting duck has died?
+[B: #13991@830] Whoops, seems like the sitting duck has died?
+[B: #14020@830] Whoops, seems like the sitting duck has died?
+[B: #11315@830] Whoops, seems like the sitting duck has died?
+[B: #10228@830] Whoops, seems like the sitting duck has died?
+[B: #10776@830] Whoops, seems like the sitting duck has died?
+[B: #13771@830] Whoops, seems like the sitting duck has died?
+[B: #10440@831] Whoops, seems like the sitting duck has died?
+[B: #11084@831] Whoops, seems like the sitting duck has died?
+[B: #10838@831] Whoops, seems like the sitting duck has died?
+[B: #11172@831] Whoops, seems like the sitting duck has died?
+[B: #12235@831] Whoops, seems like the sitting duck has died?
+[B: #13263@831] Whoops, seems like the sitting duck has died?
+[B: #13991@831] Whoops, seems like the sitting duck has died?
+[B: #12180@831] Whoops, seems like the sitting duck has died?
+[B: #11315@831] Whoops, seems like the sitting duck has died?
+[B: #10228@831] Whoops, seems like the sitting duck has died?
+[B: #13138@831] Whoops, seems like the sitting duck has died?
+[B: #10330@831] Whoops, seems like the sitting duck has died?
+[B: #12542@831] Whoops, seems like the sitting duck has died?
+[B: #10636@831] Whoops, seems like the sitting duck has died?
+[B: #13481@831] Whoops, seems like the sitting duck has died?
+[B: #13771@831] Whoops, seems like the sitting duck has died?
+[B: #12263@831] Whoops, seems like the sitting duck has died?
+[B: #11084@832] Whoops, seems like the sitting duck has died?
+[B: #10838@832] Whoops, seems like the sitting duck has died?
+[B: #11172@832] Whoops, seems like the sitting duck has died?
+[B: #12235@832] Whoops, seems like the sitting duck has died?
+[B: #13263@832] Whoops, seems like the sitting duck has died?
+[B: #12180@832] Whoops, seems like the sitting duck has died?
+[B: #10228@832] Whoops, seems like the sitting duck has died?
+[B: #13138@832] Whoops, seems like the sitting duck has died?
+[B: #10330@832] Whoops, seems like the sitting duck has died?
+[B: #12542@832] Whoops, seems like the sitting duck has died?
+[B: #10636@832] Whoops, seems like the sitting duck has died?
+[B: #13481@832] Whoops, seems like the sitting duck has died?
+[B: #13771@832] Whoops, seems like the sitting duck has died?
+[B: #12263@832] Whoops, seems like the sitting duck has died?
+[B: #11084@833] Whoops, seems like the sitting duck has died?
+[B: #10838@833] Whoops, seems like the sitting duck has died?
+[B: #11172@833] Whoops, seems like the sitting duck has died?
+[B: #12235@833] Whoops, seems like the sitting duck has died?
+[B: #13263@833] Whoops, seems like the sitting duck has died?
+[B: #13991@833] Whoops, seems like the sitting duck has died?
+[B: #10228@833] Whoops, seems like the sitting duck has died?
+[B: #13138@833] Whoops, seems like the sitting duck has died?
+[B: #10330@833] Whoops, seems like the sitting duck has died?
+[B: #13481@833] Whoops, seems like the sitting duck has died?
+[B: #13771@833] Whoops, seems like the sitting duck has died?
+[B: #12263@833] Whoops, seems like the sitting duck has died?
+[B: #11084@834] Whoops, seems like the sitting duck has died?
+[B: #10838@834] Whoops, seems like the sitting duck has died?
+[B: #11172@834] Whoops, seems like the sitting duck has died?
+[B: #12235@834] Whoops, seems like the sitting duck has died?
+[B: #13991@834] Whoops, seems like the sitting duck has died?
+[B: #13818@834] Whoops, seems like the sitting duck has died?
+[B: #10228@834] Whoops, seems like the sitting duck has died?
+[B: #13138@834] Whoops, seems like the sitting duck has died?
+[B: #10330@834] Whoops, seems like the sitting duck has died?
+[B: #13481@834] Whoops, seems like the sitting duck has died?
+[B: #11304@834] Whoops, seems like the sitting duck has died?
+[B: #13771@834] Whoops, seems like the sitting duck has died?
+[B: #12263@834] Whoops, seems like the sitting duck has died?
+[B: #11084@835] Whoops, seems like the sitting duck has died?
+[B: #11172@835] Whoops, seems like the sitting duck has died?
+[B: #12235@835] Whoops, seems like the sitting duck has died?
+[B: #13991@835] Whoops, seems like the sitting duck has died?
+[B: #13818@835] Whoops, seems like the sitting duck has died?
+[B: #10228@835] Whoops, seems like the sitting duck has died?
+[B: #13138@835] Whoops, seems like the sitting duck has died?
+[B: #13481@835] Whoops, seems like the sitting duck has died?
+[B: #13771@835] Whoops, seems like the sitting duck has died?
+[B: #11084@836] Whoops, seems like the sitting duck has died?
+[A: #13550@836] I DEPOSITED FLAG WOO!
+[B: #11172@836] Whoops, seems like the sitting duck has died?
+[B: #12235@836] Whoops, seems like the sitting duck has died?
+[B: #13991@836] Whoops, seems like the sitting duck has died?
+[B: #10228@836] Whoops, seems like the sitting duck has died?
+[B: #13138@836] Whoops, seems like the sitting duck has died?
+[B: #13481@836] Whoops, seems like the sitting duck has died?
+[B: #13771@836] Whoops, seems like the sitting duck has died?
+[server]                 waxthebuilder (A) wins (round 836)
+[server] Reason: The winning team captured all flags.
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 27s
+7 actionable tasks: 2 executed, 5 up-to-date

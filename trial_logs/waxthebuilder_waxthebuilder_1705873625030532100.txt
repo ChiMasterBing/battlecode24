@@ -1,0 +1,136 @@
+Sun Jan 21 16:56:35 2024
+-------------------- waxthebuilder vs. waxthebuilder --------------------
+result: waxthebuilder (23 - 19) waxthebuilder
+DefaultHuge
+		waxthebuilder (A) wins (round 603)
+		Reason: The winning team captured all flags.
+AceOfSpaces
+		> Task :compileJava UP-TO-DATE
+		> Task :compileScala NO-SOURCE
+DefaultSmall
+		waxthebuilder (A) wins (round 1532)
+		Reason: The winning team captured all flags.
+DefaultLarge
+		waxthebuilder (B) wins (round 1516)
+		Reason: The winning team captured all flags.
+Alien
+		waxthebuilder (B) wins (round 862)
+		Reason: The winning team captured all flags.
+Ambush
+		waxthebuilder (A) wins (round 478)
+		Reason: The winning team captured all flags.
+DefaultMedium
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+CH3353C4K3F4CT0RY
+		waxthebuilder (A) wins (round 647)
+		Reason: The winning team captured all flags.
+BigDucksBigPond
+		waxthebuilder (A) wins (round 836)
+		Reason: The winning team captured all flags.
+Battlecode24
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+Canals
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+Duck
+		waxthebuilder (A) wins (round 1479)
+		Reason: The winning team captured all flags.
+Fountain
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+Hockey
+		waxthebuilder (A) wins (round 1540)
+		Reason: The winning team captured all flags.
+Rivers
+		waxthebuilder (A) wins (round 1245)
+		Reason: The winning team captured all flags.
+MazeRunner
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+SteamboatMickey
+		waxthebuilder (A) wins (round 902)
+		Reason: The winning team captured all flags.
+Soccer
+		waxthebuilder (A) wins (round 1579)
+		Reason: The winning team captured all flags.
+Snake
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+Yinyang
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+anthole
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+asteroids
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+attackmicro
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+clout
+		> Task :compileJava UP-TO-DATE
+		> Task :compileScala NO-SOURCE
+bananas
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+castle
+		waxthebuilder (B) wins (round 1243)
+		Reason: The winning team captured all flags.
+crosshatch
+		waxthebuilder (B) wins (round 709)
+		Reason: The winning team captured all flags.
+checkerb
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+cookie jar
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+funnySpawns1
+		waxthebuilder (A) wins (round 1466)
+		Reason: The winning team captured all flags.
+flappy bird
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+lanes
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+lol
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+meanders
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+pathfind1
+		waxthebuilder (B) wins (round 865)
+		Reason: The winning team captured all flags.
+maze2
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+rails
+		waxthebuilder (B) wins (round 360)
+		Reason: The winning team captured all flags.
+ninjastar
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+pie slice
+		waxthebuilder (B) wins (round 1019)
+		Reason: The winning team captured all flags.
+water wall
+		waxthebuilder (A) wins (round 804)
+		Reason: The winning team captured all flags.
+pokemon battle
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+secret passage
+		waxthebuilder (A) wins (round 2000)
+		Reason: The winning team won on tiebreakers (captured more flags).
+tetris
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+wtf3
+		waxthebuilder (B) wins (round 2000)
+		Reason: The winning team won on tiebreakers (higher sum of all unit levels).
+
