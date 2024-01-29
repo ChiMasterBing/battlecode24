@@ -1,4 +1,4 @@
-package waxingmoon;
+package crescentmoon;
 
 import battlecode.common.*;
 import waxingmoon.fast.*;
@@ -39,9 +39,9 @@ public class bugNav {
     }
 
     static public void move(MapLocation loc) {
-        if (!rc.isMovementReady()) return;
         initTurn();
 //        Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
+        if (!rc.isMovementReady()) return;
         target = loc;
         nav();
     }
