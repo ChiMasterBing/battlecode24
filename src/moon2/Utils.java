@@ -77,6 +77,8 @@ public class Utils {
         (1 << 16) - 1
     };
 
+    static FastIntSet atkRadiusDeltas;
+
     // init
 
     static void init(RobotController r) {
@@ -86,6 +88,20 @@ public class Utils {
         MAP_HEIGHT = rc.getMapHeight();
         MAP_WIDTH = rc.getMapWidth();
         MAP_AREA = MAP_HEIGHT * MAP_WIDTH;
+
+        atkRadiusDeltas.add(-2*MAP_WIDTH);
+        atkRadiusDeltas.add(-1-MAP_WIDTH);
+        atkRadiusDeltas.add(-MAP_WIDTH);
+        atkRadiusDeltas.add(1-MAP_WIDTH);
+        atkRadiusDeltas.add(-2);
+        atkRadiusDeltas.add(-1);
+        atkRadiusDeltas.add(1);
+        atkRadiusDeltas.add(2);
+        atkRadiusDeltas.add(2*MAP_WIDTH);
+        atkRadiusDeltas.add(MAP_WIDTH-1);
+        atkRadiusDeltas.add(MAP_WIDTH);
+        atkRadiusDeltas.add(MAP_WIDTH+1);
+        atkRadiusDeltas.add(2*MAP_WIDTH);
 
         for (MapLocation m: rc.getAllySpawnLocations()) {
             spawnIntLocations.add(locationToInt(m));
