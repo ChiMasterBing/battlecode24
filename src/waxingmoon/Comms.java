@@ -215,23 +215,69 @@ public class Comms {
     // action methods: write data to comms //
     // ----------------------------------- //
 
+    public static void writeOccupy(int index, int status) {
+        if (index < 9) {
+            writeToBufferPool(60, overwriteBits(bufferPool[60], status, index, 1));
+        } else if (index < 18) {
+            index -= 9;
+            writeToBufferPool(61, overwriteBits(bufferPool[61], status, index, 1));
+        } else {
+            index -= 18;
+            writeToBufferPool(62, overwriteBits(bufferPool[62], status, index, 1));
+        }
+    }
+
+    public static boolean readOccupy(int index) {
+        if (index < 9) {
+            return Utils.isBitOne(bufferPool[60], index);
+        } else if (index < 18) {
+            index -= 9;
+            return Utils.isBitOne(bufferPool[61], index);
+        } else {
+            index -= 18;
+            return Utils.isBitOne(bufferPool[62], index);
+        }
+    }
+
+
+    public static void writeAlive(int delta) {
+        writeToBufferPool(63, bufferPool[63] + delta);
+    }
+
+    public static int getAlive() {
+        return bufferPool[63] + 3;
+    }
+
+    //SNIPER METHODS
+    public static void writeSniperStatus(int mySpawn, int status) {
+        //Sniper status is 13, 14, 15 on MAIN_IDX
+        int mask = overwriteBits(bufferPool[MAIN_IDX], status, 13 + mySpawn, 1);
+        writeToBufferPool(MAIN_IDX, mask);
+    }
+
+    public static int getNextAvailableSniperSlot() {
+        int mask = ((7 << 13) & bufferPool[MAIN_IDX]) >> 13;
+        if (mask == 7) return -1; //all snipers exist already
+        if ((1 & mask) == 0) return 0;
+        if ((2 & mask) == 0) return 1;
+        if ((4 & mask) == 0) return 2;
+        return -1; //this should never happen
+    }
+
+
     public static void invalidateSymmetry(int symm) {
         writeToBufferPool(MAIN_IDX, bufferPool[MAIN_IDX] | (1 << symm));
     }
 
     public static void depositFlag(int flagID) {
-        flagsCaptured += 1;
+        flagsCaptured = countFlagsCaptured() + 1;
         writeToBufferPool(MAIN_IDX, overwriteBits(bufferPool[MAIN_IDX], flagsCaptured, 3, 2));
     }
 
     public static int countFlagsCaptured() {
-        return flagsCaptured;
+        return readBits(bufferPool[MAIN_IDX], 3, 2);
     }
 
-
-    public static void distressFlag() {
-
-    }
     public static void updateFlagID(int flagID){
         for(int i= FLAG_ID_HEADER; i<FLAG_ID_HEADER+NUM_FLAGS; i++){
             if(bufferPool[i]==0){
@@ -325,7 +371,7 @@ public class Comms {
 
     private static int overwriteBits(int message, int newValue, int left, int length) {
         assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
-        assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large";
+        //assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large " + newValue; //this assert doesnt seem to work
         int sectionWiped = wipeBits(message, left, length);
         return sectionWiped | (newValue << left);
     }
@@ -409,7 +455,7 @@ public class Comms {
     }
 
     private static void flushBufferPool() throws GameActionException {
-        if (dirtyFlags[0])
+        if (dirtyFlags[0]) 
             rc.writeSharedArray(0, bufferPool[0]);
         if (dirtyFlags[1])
             rc.writeSharedArray(1, bufferPool[1]);
@@ -721,6 +767,15 @@ public class Comms {
         writeToBufferPool(3, (1 << 5));
     }
 
+    
+    public static void distressFlag(int flagnum, int status) {
+        writeToBufferPool(flagnum+1, overwriteBits(bufferPool[flagnum+1], status, 14, 1));
+    }
+
+    public static boolean checkDistressFlag(int flagnum) {
+        return Utils.isBitOne(bufferPool[flagnum+1], 14);
+    }
+
     public static boolean myFlagExists(int flagnum) {
         //This should only be run in main phase.
         return Utils.isBitOne(bufferPool[flagnum], 5);
@@ -894,6 +949,9 @@ public class Comms {
         if (location == null) writeToBufferPool(BUILDER_IDX + builderNumber, overwriteBits(message, Utils.BASIC_MASKS[8], 0, 8));
         else writeToBufferPool(BUILDER_IDX + builderNumber, overwriteBits(message, Utils.locationToSector(location), 0, 8));
     }
+
+
+
 }
 
 

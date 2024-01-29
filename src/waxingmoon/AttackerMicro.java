@@ -64,6 +64,7 @@ public class AttackerMicro {
         }
 
         for (RobotInfo r:enemyRobots) {
+            if (Clock.getBytecodesLeft() < 3000) break;
             int dps;
             if (roundNumber >= 600) {
                 dps = uAttackerDPS[r.getAttackLevel()];
@@ -82,6 +83,7 @@ public class AttackerMicro {
         }
 
         for (RobotInfo r:friendlyRobots) {
+            if (Clock.getBytecodesLeft() < 3000) break;
             int hps;
             if (roundNumber >= 1200) {
                 hps = uhealerHPS[r.getHealLevel()];
@@ -141,6 +143,7 @@ public class AttackerMicro {
 
         void updateEnemy(RobotInfo unit, int dps){
             if (!canMove) return;
+            if (unit.hasFlag) return; //poses no threat in terms of dmg
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
 

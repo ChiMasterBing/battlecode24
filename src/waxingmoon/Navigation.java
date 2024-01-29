@@ -207,6 +207,16 @@ public class Navigation {
         else return d;
     }
 
+    public static MapLocation getTripleMaxLocation(MapLocation a, MapLocation b, MapLocation c, MapLocation d) {
+        int d1 = a.distanceSquaredTo(b);
+        int d2 = a.distanceSquaredTo(c);
+        int d3 = a.distanceSquaredTo(d);
+        int d4 = Math.max(d1, Math.max(d2, d3));
+        if (d4 == d1) return b;
+        else if (d4 == d2) return c;
+        else return d;
+    }
+
     public static void eliminateSpawnSymmetries(MapLocation s1, MapLocation s2, MapLocation s3) throws GameActionException {
         MapLocation o1, o2, o3;
         //H_SYM

@@ -87,6 +87,7 @@ public class Attacker extends Robot {
 //        if(Clock.getBytecodesLeft()<5000){
 //            System.out.println(Clock.getBytecodesLeft());
 //        }
+        buildSpawnTraps();
     }
 
     public void deadFunctions() throws GameActionException {
@@ -346,6 +347,8 @@ public class Attacker extends Robot {
                         dist = cdist;
                         targ = i.getLocation();
                     }
+                } else if (!i.getLocation().equals(myFlags[0]) && !i.getLocation().equals(myFlags[1]) && !i.getLocation().equals(myFlags[2])) {
+                    targ = i.getLocation();
                 }
             }else {
                 if(!i.isPickedUp()){ //if their flag aint picked up
@@ -390,14 +393,14 @@ public class Attacker extends Robot {
     }
     public void checkPickupFlag() throws GameActionException {
         if(rc.getRoundNum()<200){
-            if (myMoveNumber < 3 && roundNumber < 20) {
-                for (FlagInfo f:flags) {
-                    if (rc.canPickupFlag(f.getLocation()) && (f.getLocation().equals(myFlags[0]) || f.getLocation().equals(myFlags[1]) || f.getLocation().equals(myFlags[2]))) {
-                        rc.pickupFlag(f.getLocation());
-                    }
-                }
-            }
-            return;
+            // if (myMoveNumber < 3 && roundNumber < 20) {
+            //     for (FlagInfo f:flags) {
+            //         if (rc.canPickupFlag(f.getLocation()) && (f.getLocation().equals(myFlags[0]) || f.getLocation().equals(myFlags[1]) || f.getLocation().equals(myFlags[2]))) {
+            //             rc.pickupFlag(f.getLocation());
+            //         }
+            //     }
+            // }
+            // return;
         }
         for (Direction d:allDirections) {
             MapLocation nxt = myLoc.add(d);
@@ -663,10 +666,10 @@ public class Attacker extends Robot {
                 return;
             }
         } else {
-            if (rc.hasFlag() || (myMoveNumber < 3 && roundNumber == 189)) {
-                hideFlag();
-                return;
-            }
+            // if (rc.hasFlag() || (myMoveNumber < 3 && roundNumber == 189)) {
+            //     hideFlag();
+            //     return;
+            // }
         }
 
         if(crumbMovementLogic()) return;
@@ -902,61 +905,67 @@ public class Attacker extends Robot {
     public void buildSpawnTraps() throws GameActionException {
         Direction[] diagonal = {Direction.NORTHEAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.SOUTHWEST};
         if(myLoc.distanceSquaredTo(myFlags[0])<3){
-            MapLocation centerLoc = myFlags[0];
-            if(myLoc.distanceSquaredTo(centerLoc)>0){
-                bugNav.move(myLoc);
-            }
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
+            if(flags.length==0){
                 return;
             }
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
-            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+
+            MapLocation centerLoc = myFlags[0];
+            // if(myLoc.distanceSquaredTo(centerLoc)>0){
+            //     bugNav.move(myLoc);
             // }
+            // if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+            //     bugNav.move(myLoc);
+            //     return;
+            // }
+            // for(Direction d: diagonal){
+            //     if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+            //         rc.build(TrapType.STUN, centerLoc.add(d));
+            //     }
+            // }
+            if(rc.canBuild(TrapType.STUN, centerLoc)){
+                rc.build(TrapType.STUN, centerLoc);
+            }
 
         }else if(myLoc.distanceSquaredTo(myFlags[1])<3){
+            //System.out.println("trying to build spawn traps");
 
-            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+            if(flags.length==0){
                 return;
             }
 
             MapLocation centerLoc = myFlags[1];
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
-                return;
-            }
-
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
-            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+            // if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+            //     bugNav.move(myLoc);
+            //     return;
             // }
 
+            // for(Direction d: diagonal){
+            //     if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+            //         rc.build(TrapType.STUN, centerLoc.add(d));
+            //     }
+            // }
+            if(rc.canBuild(TrapType.STUN, centerLoc)){
+                rc.build(TrapType.STUN, centerLoc);
+            }
         }else if(myLoc.distanceSquaredTo(myFlags[2])<3){
-            if(rc.senseNearbyFlags(-1,rc.getTeam()).length==0){
+            //System.out.println("trying to build spawn traps");
+
+            if(flags.length==0){
                 return;
             }
             MapLocation centerLoc = myFlags[2];
-            if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
-                bugNav.move(myLoc);
-                return;
-            }
-            for(Direction d: diagonal){
-                if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
-                    rc.build(TrapType.STUN, centerLoc.add(d));
-                }
-            }
-            // if(rc.canBuild(TrapType.EXPLOSIVE, centerLoc)){
-            //     rc.build(TrapType.EXPLOSIVE, centerLoc);
+            // if(myLoc.distanceSquaredTo(centerLoc)>0&&rc.senseMapInfo(centerLoc).getTrapType()==TrapType.NONE){
+            //     bugNav.move(myLoc);
+            //     return;
             // }
+            // for(Direction d: diagonal){
+            //     if(rc.canBuild(TrapType.STUN, centerLoc.add(d))){
+            //         rc.build(TrapType.STUN, centerLoc.add(d));
+            //     }
+            // }
+            if(rc.canBuild(TrapType.STUN, centerLoc)){
+                rc.build(TrapType.STUN, centerLoc);
+            }
         }
     }
 

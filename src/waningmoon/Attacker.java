@@ -170,7 +170,7 @@ public class Attacker extends Robot {
             int d4 = Math.min(d1, Math.min(d2, d3));
 
             if (d4 == 10000) {
-                Debug.println("Whoops, seems like the sitting duck has died?");
+                //Debug.println("Whoops, seems like the sitting duck has died?");
                 return;
             }
 
