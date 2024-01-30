@@ -123,7 +123,7 @@ public class AttackerMicro {
         int stunLikely = 0;
         boolean enemyTerritory;
         int heals = 0;
-        int stunScrew = 0; //how many allies am i screwing if I move here and stun goes off
+        int stunned = 0;
         int lowestHealth = 1000000;
         int alliesNearby = 0;
 
@@ -148,6 +148,7 @@ public class AttackerMicro {
             if (dist <= 12) DPSreceived += dps;
 
             if (dist <= 20) enemiesTargeting += dps;
+//            assert(moveOrder>=0);
             if (dist <= 4) stunLikely++;
         }
 
@@ -164,10 +165,31 @@ public class AttackerMicro {
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist <= 2)
                 stunLikely--;
-            if(dist<=4)
+            if(dist<=4){
                 heals+=hps;
-            if(dist<=4)
                 alliesNearby++;
+//            if(unit.getID()!=12853) {
+//                int[] penis =  Comms.IDToMoveOrder.getKeys();
+//                System.out.println(unit.getLocation());
+//                for(int i: penis){
+//                    if(i==12853){
+//                        assert false;
+//                    }
+//                    System.out.println(i);
+//                    System.out.println(Comms.IDToMoveOrder.getVal(i));
+//                    System.out.println();
+//                }
+//                System.out.println(Comms.IDToMoveOrder.size);
+            }
+            if(dist<=4){
+                int moveOrder = Comms.IDToMoveOrder.getVal(unit.getID());
+                if (Comms.checkStunned(moveOrder)) {
+                    stunned++;
+                }
+            }
+
+//            }
+
         }
         int safe(){
             if (!canMove) return -1;
@@ -204,6 +226,12 @@ public class AttackerMicro {
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
 
+                    if(stunned>M.stunned){
+                        return true;
+                    }else if(M.stunned>stunned){
+                        return false;
+                    }
+
                     if (enemiesTargeting < M.enemiesTargeting) return true;
                     else if (enemiesTargeting > M.enemiesTargeting) return false;
 
@@ -231,9 +259,13 @@ public class AttackerMicro {
 //                    }else{
 //                        return false;
 //                    }
-
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }else{
+//                    if(minDistanceToEnemy<M.minDistanceToEnemy){
+//                        return true;
+//                    }else if(M.minDistanceToEnemy<minDistanceToEnemy){
+//                        return false;
+//                    }
                     if(alliesNearby>=M.alliesNearby){
                         return true;
                     }else{

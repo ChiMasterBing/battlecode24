@@ -126,6 +126,7 @@ public class HealerMicro {
         int allysNear = 0;
         int stunScrew = 0; //how many allies am i screwing if I move here and stun goes off
         int lowestHealth = 1000000;
+        int stunned = 0;
         int getMinDistanceToAlly = 100000;
 
         public MicroInfo(Direction dir) throws GameActionException {
@@ -169,6 +170,13 @@ public class HealerMicro {
                 heals+=hps;
             if(dist<=4)
                 allysNear+=uAttackerDPS[unit.attackLevel];
+//            if(dist<=4){
+//                int moveOrder = Comms.IDToMoveOrder.getVal(unit.getID());
+//                if (Comms.checkStunned(moveOrder)) {
+//                    stunned++;
+//                }
+//            }
+
             getMinDistanceToAlly = Math.min(getMinDistanceToAlly, dist);
 
         }
