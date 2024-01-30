@@ -317,6 +317,10 @@ public class Comms {
         }
     }
 
+    public static void writeEnemyFlagStatusByNumber(int flagnum, int status) {
+        writeToBufferPool(4 + flagnum, overwriteBits(bufferPool[4], status, 14, 2));
+    }
+
     public static void depositFlag(int flagID) {
         flagsCaptured = countFlagsCaptured() + 1;
         writeToBufferPool(MAIN_IDX, overwriteBits(bufferPool[MAIN_IDX], flagsCaptured, 3, 2));

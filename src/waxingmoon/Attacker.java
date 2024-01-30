@@ -127,7 +127,7 @@ public class Attacker extends Robot {
         if (callTarget == null) callTarget = myLoc;
 
         if(isFlagPickedUp || (friendlyRobots.length>5 && enemyRobots.length>7 && friendlyRobots.length < 15)) {
-            if(Comms.squadronMessages.size()>100){
+            if(Comms.squadronMessages.size()>100) {
                 System.out.println("comms squadron size wayy too big");
             }
 
@@ -681,6 +681,19 @@ public class Attacker extends Robot {
                     currentTarget = exploreTarget();
                 }
             } else {
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(0)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(0) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(0, 2);
+                }
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(1)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(1) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(1, 2);
+                }
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(2)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(2) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(2, 2);
+                }
+
                 if (Comms.getEnemyFlagLocation(0).x < 70 && Comms.getEnemyFlagStatus(0) == 1) {
                     currentTarget = Comms.getEnemyFlagLocation(0);
                 }
@@ -775,7 +788,62 @@ public class Attacker extends Robot {
     
     public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
-        if (numberOfEnemies == 0) return false;
+
+        int realNumberOfEnemies = numberOfEnemies;
+        if (Clock.getBytecodesLeft() > 15000) {
+            // VisionBitBFS VB = new VisionBitBFS(rc.getLocation(), rc.senseNearbyMapInfos());
+            // int[] reachable = VB.floodfill(4);
+            // System.out.println(Arrays.toString(reachable));
+            // int x = 4 + myLoc.x;
+            // int y = 4 + myLoc.y;
+            // for (RobotInfo ri:enemyRobots) {
+            //     MapLocation m = ri.getLocation();
+            //     if ((reachable[y - m.y] & (1 << (x - m.x))) == 0) {
+            //         realNumberOfEnemies--;
+            //         System.out.println(Arrays.toString(VB.floodfill(1)));
+            //         System.out.println(Arrays.toString(VB.floodfill(2)));
+            //         System.out.println(Arrays.toString(VB.floodfill(3)));
+            //         rc.resign();
+            //     }
+            // }
+            //int start = Clock.getBytecodesLeft();
+            for (RobotInfo ri:enemyRobots) {
+                if (Clock.getBytecodesLeft() < 15000) break;
+                MapLocation m = ri.getLocation();
+                if (m.distanceSquaredTo(myLoc) <= 4) continue;
+                Direction toMe = m.directionTo(myLoc);
+                if (rc.onTheMap(m.add(toMe)) && rc.senseMapInfo(m.add(toMe)).isPassable()) {
+                    m = m.add(toMe);
+                } else if (rc.onTheMap(m.add(toMe.rotateLeft())) && rc.senseMapInfo(m.add(toMe.rotateLeft())).isPassable()) {
+                    m = m.add(toMe.rotateLeft());
+                } else if (rc.onTheMap(m.add(toMe.rotateRight())) && rc.senseMapInfo(m.add(toMe.rotateRight())).isPassable()) {
+                    m = m.add(toMe.rotateRight());
+                }
+                if (m.distanceSquaredTo(myLoc) <= 4) continue;
+                toMe = m.directionTo(myLoc);
+                if (rc.onTheMap(m.add(toMe)) && rc.senseMapInfo(m.add(toMe)).isPassable()) {
+                    m = m.add(toMe);
+                } else if (rc.onTheMap(m.add(toMe.rotateLeft())) && rc.senseMapInfo(m.add(toMe.rotateLeft())).isPassable()) {
+                    m = m.add(toMe.rotateLeft());
+                } else if (rc.onTheMap(m.add(toMe.rotateRight())) && rc.senseMapInfo(m.add(toMe.rotateRight())).isPassable()) {
+                    m = m.add(toMe.rotateRight());
+                }
+                if (m.distanceSquaredTo(myLoc) <= 4) continue;
+                toMe = m.directionTo(myLoc);
+                if (rc.onTheMap(m.add(toMe)) && rc.senseMapInfo(m.add(toMe)).isPassable()) {
+                    m = m.add(toMe);
+                } else if (rc.onTheMap(m.add(toMe.rotateLeft())) && rc.senseMapInfo(m.add(toMe.rotateLeft())).isPassable()) {
+                    m = m.add(toMe.rotateLeft());
+                } else if (rc.onTheMap(m.add(toMe.rotateRight())) &&  rc.senseMapInfo(m.add(toMe.rotateRight())).isPassable()) {
+                    m = m.add(toMe.rotateRight());
+                }
+                if (m.distanceSquaredTo(myLoc) > 4) {
+                    realNumberOfEnemies--;
+                }
+            }
+        }
+
+        if (realNumberOfEnemies == 0) return false;
         
         if(rc.getHealth()<=chickenLevel){
             ChickenMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
