@@ -185,6 +185,8 @@ public abstract class Robot {
     MapLocation lastLocation = new MapLocation(80, 80);
     public void spawnedTurn() throws GameActionException {
         senseGlobals();
+
+
         if (roundNumber == 3) {
             commFlagID();
         }
@@ -195,6 +197,7 @@ public abstract class Robot {
         int s1 = Comms.getEnemyFlagStatus(0);
         int s2 = Comms.getEnemyFlagStatus(1);
         int s3 = Comms.getEnemyFlagStatus(2);
+
 
         if (s1 == 1) {
             rc.setIndicatorDot(m1, 255, 0, 0);
@@ -240,11 +243,12 @@ public abstract class Robot {
             }
         }
         else {
-            if (Clock.getBytecodesLeft() > 12000 && roundNumber > 10) {
+            if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
                 Navigation.scout();
                 Navigation.updateSymm();
             }
         }
+
     }
 
     // todo for me:
@@ -309,6 +313,7 @@ public abstract class Robot {
 
     boolean isSwiper = false;
     private boolean trySpawn() throws GameActionException {
+
         if (myMoveNumber == 49) {
             if (roundNumber > 20) {
                 for (int i=0; i<spawnLocs.length; i++) {
@@ -328,7 +333,6 @@ public abstract class Robot {
             }
             return false;
         }
-
 
         if (roundNumber < 200) {
             if (roundNumber == 1) { //find closest you can get to your opp via dam
@@ -366,6 +370,7 @@ public abstract class Robot {
             }
         }
         else if (roundNumber > 200) {
+
             MapLocation center = null;
             isSwiper = false;
 
@@ -381,7 +386,7 @@ public abstract class Robot {
             } else {
                 //find the closest spawn to where combat is happening and spawn there
                 int minDist = 100000;
-                if(Comms.squadronMessages.size()>100) Debug.println(Comms.squadronMessages.size() + " ");
+                // if(Comms.squadronMessages.size()>100) Debug.println(Comms.squadronMessages.size() + " ");
 
                 Navigation.spawnScores[0] = 0;
                 Navigation.spawnScores[1] = 0;
@@ -390,8 +395,8 @@ public abstract class Robot {
 
                 for(int i = 0; i<Comms.squadronMessages.size(); i++){
                     Integer message = Comms.squadronMessages.get(i);
-                    int cury = 2*((message>>6)&Utils.BASIC_MASKS[5]);
-                    int curx = 2*((message>>11)&Utils.BASIC_MASKS[5]);
+                    int cury = 2*((message>>6)&0x1f);
+                    int curx = 2*((message>>11)&0x1f);
                     //int cval=message&Utils.BASIC_MASKS[6];
                     MapLocation cur = new MapLocation(curx, cury);                    
                     int d1 = myFlags[0].distanceSquaredTo(cur);
@@ -424,9 +429,9 @@ public abstract class Robot {
             }
 
             for (int i=8; i>=0; i--) {
-                Direction d = allDirections[i];
-                if (rc.canSpawn(center.add(d))) {
-                    rc.spawn(center.add(d));
+                MapLocation attempt = center.add(allDirections[i]);
+                if (rc.canSpawn(attempt)) {
+                    rc.spawn(attempt);
                     if (isSwiper) {
                         // System.out.println("I am new swiper # " + mySpawn + " @ " + center);
                         Comms.writeSniperStatus(mySpawn, 1);
@@ -435,20 +440,25 @@ public abstract class Robot {
                 }
             }
         }
+
         return false;
     }
 
     boolean aliveLastTurn = false;
     FlagInfo heldFlagLastTurn = null;
+    
 
     public void play() throws GameActionException {
         roundNumber = rc.getRoundNum();
 
-        if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
-            Debug.println(Comms.readSymmetry() + " <-- Symm");
-            Debug.println(Comms.countFlagsCaptured() + "<-- flags captured");
-        }
+        // if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
+        //     Debug.println(Comms.readSymmetry() + " <-- Symm");
+        //     Debug.println(Comms.countFlagsCaptured() + "<-- flags captured");
+        // }
 
+
+        if (myMoveNumber == 20 && roundNumber % 20 == 0) System.out.println("------------");
+        
         buyUpgrades();
 
         Comms.commsStartTurn(roundNumber);
@@ -456,32 +466,13 @@ public abstract class Robot {
         doPreRoundTasks();
 
         if (!rc.isSpawned()){
-            if (aliveLastTurn) { //i died
-                if (spawnLocToIndex.contains(lastLocation)) {
-                    Comms.writeOccupy(spawnLocToIndex.getVal(lastLocation), 0);
-                    lastLocation = new MapLocation(80, 80);
-                }
-
-                if (heldFlagLastTurn != null) {
-                    Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
-                    heldFlagLastTurn = null;
-                }
-
-                if (isSwiper) {
-                    //System.out.println("I was swiper # " + mySpawn + " and I died :(");
-                    Comms.writeSniperStatus(mySpawn, 0);
-                }
-            }
-            mySpawn = -1; 
+            mySpawn = -1;
             if (trySpawn()) {
-                spawnedTurn(); aliveLastTurn = true;
-            } else  {
-                deadFunctions(); aliveLastTurn = false;
+                spawnedTurn();
             }
+            else deadFunctions();
         }else {
-            aliveLastTurn = true;
             spawnedTurn();
-            Comms.writeAlive();
         }
 
         Comms.commsEndTurn(); 
@@ -494,6 +485,10 @@ public abstract class Robot {
             }
         }
 
-        //rc.setIndicatorString(Comms.getAlive() + " ");
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " f");
+
+//        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
     }
 }

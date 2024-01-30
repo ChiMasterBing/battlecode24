@@ -300,16 +300,16 @@ public abstract class Robot {
     public void play() throws GameActionException {
         roundNumber = rc.getRoundNum();
 
-        if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
-            Debug.println(Comms.readSymmetry() + " <-- Symm");
-            Debug.println(Comms.countFlagsCaptured() + "<-- flags captured");
-        }
+        // if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
+        //     Debug.println(Comms.readSymmetry() + " <-- Symm");
+        //     Debug.println(Comms.countFlagsCaptured() + "<-- flags captured");
+        // }
 
         buyUpgrades();
 
         Comms.commsStartTurn(roundNumber);
-
         doPreRoundTasks();
+
 
         if (!rc.isSpawned()){
             mySpawn = -1;
@@ -318,6 +318,7 @@ public abstract class Robot {
         }else {
             spawnedTurn();
         }
+
 
         Comms.commsEndTurn(); 
 
@@ -328,6 +329,8 @@ public abstract class Robot {
                 updateSymmetryComputations();
             }
         }
+
+
 
 //        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
     }

@@ -171,10 +171,12 @@ public class Comms {
     // ------------------------------- //
 
     public static void commsStartTurn(int round) throws GameActionException {
-        initBufferPool();
-        squadronMessages = new FastQueue<Integer>();
-
         roundNumber = round;
+        initBufferPool();
+        
+
+        squadronMessages.clear();
+
 
         if (roundNumber == 1) {
             writeBotID();
@@ -194,10 +196,12 @@ public class Comms {
         //     parseEnemyFlags();
         // }
         parseAllyStatuses();
+
         if (roundNumber > 150) {
             //     readSectorMessages();
             readSquadronMessages();
         }
+
         // if (true /*& Robot.type = BUILDER*/) parseBuilderMessages();
     }
 
@@ -210,7 +214,6 @@ public class Comms {
         //flushQueue(priorityMessageQueue);
         flushQueue(messageQueue);
         writeRegularUpdate();
-
 
         // sends all messages at once
         flushBufferPool();
@@ -254,7 +257,7 @@ public class Comms {
 
     static int numberAlive = 49;
     public static int getAlive() {
-        Debug.println("idk if this actually works");
+        // Debug.println("idk if this actually works");
         if (roundNumber % 2 == 1) {
             numberAlive = bufferPool[63];
         }
@@ -307,11 +310,12 @@ public class Comms {
     }
 
     public static void writeEnemyFlagStatus(FlagInfo f, int status) {
-        if (f.getID() % 61 == getEnemyFlagID(0)) {
+        int ID = f.getID() % 61;
+        if (ID == getEnemyFlagID(0)) {
             writeToBufferPool(4, overwriteBits(bufferPool[4], status, 14, 2));
-        } else if (f.getID() % 61 == getEnemyFlagID(1)) {
+        } else if (ID == getEnemyFlagID(1)) {
             writeToBufferPool(5, overwriteBits(bufferPool[5], status, 14, 2));
-        } else if (f.getID() % 61 == getEnemyFlagID(2)) {
+        } else if (ID == getEnemyFlagID(2)) {
             writeToBufferPool(6, overwriteBits(bufferPool[6], status, 14, 2));
         }
     }
@@ -324,13 +328,13 @@ public class Comms {
         flagsCaptured = countFlagsCaptured() + 1;
         writeToBufferPool(MAIN_IDX, overwriteBits(bufferPool[MAIN_IDX], flagsCaptured, 3, 2));
         if (getEnemyFlagID(0) == flagID % 61) {
-            System.out.println(getEnemyFlagStatus(0));
+            // System.out.println(getEnemyFlagStatus(0));
             writeToBufferPool(4, overwriteBits(bufferPool[4], 3, 14, 2));
-            System.out.println(getEnemyFlagStatus(0));
+            // System.out.println(getEnemyFlagStatus(0));
         } else if (getEnemyFlagID(1) == flagID % 61) {
-            System.out.println(getEnemyFlagStatus(1));
+            // System.out.println(getEnemyFlagStatus(1));
             writeToBufferPool(5, overwriteBits(bufferPool[5], 3, 14, 2));
-            System.out.println(getEnemyFlagStatus(1));
+            // System.out.println(getEnemyFlagStatus(1));
         } else {    
             writeToBufferPool(6, overwriteBits(bufferPool[6], 3, 14, 2));
         }
@@ -426,13 +430,11 @@ public class Comms {
     // ---------------------------------------------------------------------- //
 
     private static int wipeBits(int message, int left, int length) {
-        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         int mask = ~(Utils.BASIC_MASKS[length] << left);
         return message & mask;
     }
 
     private static int overwriteBits(int message, int newValue, int left, int length) {
-        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         //assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large " + newValue; //this assert doesnt seem to work
         int sectionWiped = wipeBits(message, left, length);
         //System.out.println("override " + String.valueOf(message) +" "+ String.valueOf(sectionWiped) +" "+ String.valueOf(newValue) +" " + String.valueOf(sectionWiped | (newValue << left)));
@@ -440,7 +442,6 @@ public class Comms {
     }
 
     private static int readBits(int message, int left, int length) {
-        assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         return (message >> left) & Utils.BASIC_MASKS[length];
     }
 
@@ -771,16 +772,16 @@ public class Comms {
     }
 
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
+        int index;
         while (!queue.isEmpty()) {
             if (Clock.getBytecodesLeft() < 2000) break;
 
             int encodedMessage = queue.poll();
-            int queueType = encodedMessage & Utils.BASIC_MASKS[2];
-            int index = 63;
+            int queueType = encodedMessage & 0x3;
             switch (queueType) {
                 case QUEUE_SQUADRON:
                     if (squadronMessagesLen >= SQUADRON_QUEUE_LEN) break;
-                    index = SQUADRON_QUEUE_IDX+(squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
+                    index = SQUADRON_QUEUE_IDX + (squadronMessagesOffset + squadronMessagesLen) % SQUADRON_QUEUE_LEN;
                     squadronMessagesSent += 1;
                     squadronMessagesLen += 1;
                     int message = encodedMessage >> 2;
@@ -922,10 +923,10 @@ public class Comms {
 
     public static void readSquadronMessages()  {
 //        System.out.println(bufferPool[SQUADRON_QUEUE_HEADER]);
-        squadronMessagesOffset = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 0, 6);
+        squadronMessagesOffset = bufferPool[SQUADRON_QUEUE_HEADER] & 0x3f;
         squadronMessagesOffset += squadronMessagesSent;
         squadronMessagesOffset %= SQUADRON_QUEUE_LEN;
-        squadronMessagesLen = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 6, 6);
+        squadronMessagesLen = (bufferPool[SQUADRON_QUEUE_HEADER] >> 6) & 0x3f;
 //        assert (squadronMessagesLen>=squadronMessagesSent);
         if(squadronMessagesSent>squadronMessagesLen) {
             System.out.println(squadronMessagesLen + " " + squadronMessagesSent);

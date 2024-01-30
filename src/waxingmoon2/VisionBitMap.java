@@ -1,4 +1,4 @@
-package waxingmoon;
+package waxingmoon2;
 
 //! battlecode package
 import battlecode.common.*;

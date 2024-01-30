@@ -104,7 +104,7 @@ public class bugNav {
             }
             
             if (!rc.isSpawned()) {
-                System.out.println("WHATT");
+                // System.out.println("WHATT");
             }
             
             // I rotate clockwise or counterclockwise (depends on 'rotateRight'). If I try

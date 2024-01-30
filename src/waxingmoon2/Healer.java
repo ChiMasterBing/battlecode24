@@ -84,17 +84,17 @@ public class Healer extends Robot {
     public void callFriends() {
         if (isSwiper) return;
         if(friendlyRobots.length>7&&enemyRobots.length>7) {
-            if(Comms.squadronMessages.size()>100){
-                System.out.println("comms squadron size wayy too big");
-//                rc.resign();
-            }
+//             if(Comms.squadronMessages.size()>100){
+//                 System.out.println("comms squadron size wayy too big");
+// //                rc.resign();
+//             }
 
             boolean alreadyExists = false;
             for(int i = 0; i<Comms.squadronMessages.size(); i++) {
-                if(Comms.squadronMessages==null){
-                    System.out.println("comms squadron messages null??");
-//                    rc.resign();;
-                }
+//                 if(Comms.squadronMessages==null){
+//                     System.out.println("comms squadron messages null??");
+// //                    rc.resign();;
+//                 }
                 Integer message = Comms.squadronMessages.get(i);
 
                 int cury = (message>>6)&Utils.BASIC_MASKS[5];
@@ -114,9 +114,9 @@ public class Healer extends Robot {
         if(friendlyRobots.length<=7||enemyRobots.length<=7){
             MapLocation ret = null;
             int rval = 0;
-            if(Comms.squadronMessages.size()>100){
-                System.out.println(Comms.squadronMessages.size());
-            }
+            // if(Comms.squadronMessages.size()>100){
+            //     System.out.println(Comms.squadronMessages.size());
+            // }
             for(int i = 0; i<Comms.squadronMessages.size(); i++){
                 Integer message = Comms.squadronMessages.get(i);
                 int cury = 2*((message>>6)&Utils.BASIC_MASKS[5]);
@@ -150,10 +150,10 @@ public class Healer extends Robot {
                 d3 = myLoc.distanceSquaredTo(myFlags[2]);
             int d4 = Math.min(d1, Math.min(d2, d3));
 
-            if (d4 == 10000) {
-                Debug.println("Whoops, seems like the sitting duck has died?");
-                return;
-            }
+            // if (d4 == 10000) {
+            //     Debug.println("Whoops, seems like the sitting duck has died?");
+            //     return;
+            // }
 
             if (d4 <= 10) {
                 if (numberOfEnemies > 5 && numberOfFriendlies <= 2) {
@@ -259,7 +259,7 @@ public class Healer extends Robot {
             bugNav.move(closestSpawn);
 
             if (spawnSet.contains(rc.getLocation())) {
-                Debug.println("I DEPOSITED FLAG WOO!");
+                // Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag(0);
             }
             return true;

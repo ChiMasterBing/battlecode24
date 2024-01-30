@@ -38,12 +38,13 @@ public class bugNav {
         impassable = new boolean[directions.length];
     }
 
-    static public void move(MapLocation loc) {
+    static public void move(MapLocation loc) throws GameActionException {
         initTurn();
 //        Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
         if (!rc.isMovementReady()) return;
         target = loc;
-        nav();
+        Direction dir = nav();
+        if (dir != null) rc.move(dir);
     }
 
     static boolean canMove(Direction dir) {
@@ -63,7 +64,7 @@ public class bugNav {
         return Math.max(Math.abs(A.x - B.x), Math.abs(A.y - B.y));
     }
 
-    static boolean nav() {
+    static Direction nav() {
         try {
             // different target? ==> previous data does not help!
             if (prevTarget == null || target.distanceSquaredTo(prevTarget) > 0) {
@@ -103,9 +104,9 @@ public class bugNav {
                 resetPathfinding();
             }
             
-            if (!rc.isSpawned()) {
-                System.out.println("WHATT");
-            }
+            // if (!rc.isSpawned()) {
+            //     System.out.println("WHATT");
+            // }
             
             // I rotate clockwise or counterclockwise (depends on 'rotateRight'). If I try
             // to go out of the map I change the orientation
@@ -115,8 +116,7 @@ public class bugNav {
                 MapLocation newLoc = myLoc.add(dir);
                 if (rc.canSenseLocation(newLoc)) {
                     if (canMove(dir)) {
-                        rc.move(dir);
-                        return true;
+                        return dir;
                     }
                 }
                 RobotInfo ri; 
@@ -178,12 +178,12 @@ public class bugNav {
                 else dir = dir.rotateLeft();
             }
 
-            if (canMove(dir)) rc.move(dir);
+            if (canMove(dir)) return dir;
         } catch (Exception e) {
             e.printStackTrace();
         }
         // Debug.println("Last exit", id);
-        return true;
+        return null;
     }
 
     // clear some of the previous data

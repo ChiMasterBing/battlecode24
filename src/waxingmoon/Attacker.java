@@ -42,23 +42,27 @@ public class Attacker extends Robot {
 
     public void turn() throws GameActionException{
         premoveSetGlobals();
+
         callFriends();
+
         checkPickupFlag();
 
         checkBuildTraps();
 
         updateCurrentTarget();
+
         prevEnemies--;
         if(numberOfEnemies>0){
             prevEnemies = 1;
         }
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
-        }
-        if(rc.getLevel(SkillType.HEAL)<=3){
+        } else {
             attackLogic();
-            attackLogic();
+            if(rc.getLevel(SkillType.ATTACK) == 6)
+                attackLogic();
         }
+
         if(rc.getID()%3<2&&rc.getLevel(SkillType.HEAL)>2) {
             if (rc.getHealth() <= chickenLevel || ((rc.getLevel(SkillType.HEAL) != 3 || rc.getLevel(SkillType.ATTACK) > 3 || myMoveNumber % 3 < 2) && numberOfEnemies == 0)) {
                 tryHeal();
@@ -66,18 +70,26 @@ public class Attacker extends Robot {
         }
 
         movement();
+
         postmoveSetGlobals();
+
         callFriends();
 
         checkBuildTraps();
+
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
+        
         attackLogic();
-        attackLogic();
+        if(rc.getLevel(SkillType.ATTACK) == 6)
+            attackLogic();
+
         if(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))>3){
             chickenLevel = 450+150*(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))-3);
         }
+
+
         if(rc.getLevel(SkillType.ATTACK)>3||(rc.getLevel(SkillType.HEAL)<=3&&rc.getID()%3==0)) {
             if (rc.getHealth()<=chickenLevel||closestEnemy == null || enemyRobots.length==0) {
                 tryHeal();
@@ -87,6 +99,7 @@ public class Attacker extends Robot {
                 tryHeal();
             }
         }
+
         tryFill();
 //        if(Clock.getBytecodesLeft()<5000){
 //            System.out.println(Clock.getBytecodesLeft());
@@ -127,15 +140,15 @@ public class Attacker extends Robot {
         if (callTarget == null) callTarget = myLoc;
 
         if(isFlagPickedUp || (friendlyRobots.length>5 && enemyRobots.length>7 && friendlyRobots.length < 15)) {
-            if(Comms.squadronMessages.size()>100) {
-                System.out.println("comms squadron size wayy too big");
-            }
+            // if(Comms.squadronMessages.size()>100) {
+            //     System.out.println("comms squadron size wayy too big");
+            // }
 
             boolean alreadyExists = false;
             for(int i = 0; i<Comms.squadronMessages.size(); i++) {
-                if(Comms.squadronMessages==null){
-                    System.out.println("comms squadron messages null??");
-                }
+                // if(Comms.squadronMessages==null){
+                //     System.out.println("comms squadron messages null??");
+                // }
                 Integer message = Comms.squadronMessages.get(i);
 
                 int cury = (message>>6)&Utils.BASIC_MASKS[5];
@@ -158,9 +171,9 @@ public class Attacker extends Robot {
         if(friendlyRobots.length<=7||enemyRobots.length<=7){
             MapLocation ret = currentTarget;
             int rval = 0;
-            if(Comms.squadronMessages.size()>100){
-                System.out.println(Comms.squadronMessages.size());
-            }
+            // if(Comms.squadronMessages.size()>100){
+            //     System.out.println(Comms.squadronMessages.size());
+            // }
             for(int i = 0; i<Comms.squadronMessages.size(); i++){
                 Integer message = Comms.squadronMessages.get(i);
                 int cury = 2*((message>>6)&Utils.BASIC_MASKS[5]);
@@ -196,11 +209,11 @@ public class Attacker extends Robot {
                 Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
             }
 
-            for (Direction d:allDirections) {
+            for (Direction d:Utils.DIRS_CENTER) {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
                     rc.move(d);
                     if (spawnSet.contains(rc.getLocation())) {
-                        Debug.println("I DEPOSITED FLAG WOO!");
+                        // Debug.println("I DEPOSITED FLAG WOO!");
                         Comms.depositFlag(heldFlagLastTurn.getID());
                     }
                     return true;
@@ -237,7 +250,7 @@ public class Attacker extends Robot {
             }
             
             if (spawnSet.contains(rc.getLocation())) { //this should never happen?
-                Debug.println("I DEPOSITED FLAG WOO!");
+                // Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag(0);
             }
             return true;
@@ -317,13 +330,13 @@ public class Attacker extends Robot {
     public void checkPickupFlag() throws GameActionException {
         if(rc.getRoundNum()<=200) return;
 
-        for (Direction d:allDirections) {
+        for (Direction d: Utils.DIRS_CENTER) {
             MapLocation nxt = myLoc.add(d);
             if(rc.canPickupFlag(nxt)) {
                 boolean isDead = true;
                 FlagInfo i = rc.senseNearbyFlags(2)[0];
-                for(RobotInfo ri : friendlyRobots) {
-                    if(Comms.closeToFlag(i.getID(), ri.getID())) {
+                for(int j = friendlyRobots.length; j-- > 0;) {
+                    if(Comms.closeToFlag(i.getID(), friendlyRobots[j].getID())) {
                         isDead = false;
                     }
                 }
@@ -353,7 +366,7 @@ public class Attacker extends Robot {
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/1.5){
             MapLocation choice;
-            choice = myLoc.add(allDirections[random.nextInt(8)]);
+            choice = myLoc.add(Utils.DIRS_CENTER[random.nextInt(8)]);
             bugNav.move(choice);
             return true;
         }
@@ -369,6 +382,7 @@ public class Attacker extends Robot {
     }
 
     public void movement() throws GameActionException {
+
         if(flagMovementLogic()) {
             explorePtr = 0;
             centerOfExploration = null;
@@ -377,11 +391,27 @@ public class Attacker extends Robot {
  
         if(crumbMovementLogic()) return;
 
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " premicro");
+        //* END HLIGHT //
+
         if (attackMicro()) {
             explorePtr = 0;
             centerOfExploration = null;
+            //! HIGHLIGHT //
+            if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+            System.out.println(Clock.getBytecodeNum() + " postmicro");
+            //* END HLIGHT //
             return;
         }
+
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " postmicro");
+        //* END HLIGHT //
+
+        
 
         int ret = 0;
         for(RobotInfo i: closeFriendlyRobots){
@@ -398,12 +428,14 @@ public class Attacker extends Robot {
         if(lowestHealthLoc!=null&&(rc.getLevel(SkillType.HEAL)>3||rc.getID()%3<2)){
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
+
         if(enemyRobots.length==0 && !isSwiper) {
             MapLocation combatLoc = findCombatLocation();
             if (combatLoc != null) {
                 lastCombatLoc = combatLoc;
             }
         }
+
         if(lastCombatLoc!=null&&myLoc.distanceSquaredTo(lastCombatLoc)<20||enemyRobots.length>0){
             lastCombatLoc = null;
         }
@@ -414,6 +446,7 @@ public class Attacker extends Robot {
             if (myInfo.getTeamTerritory() == rc.getTeam().opponent() && rc.getHealth() < 900 && friendlyRobots.length > 2) return;
             bugNav.move(currentTarget);
         }
+
     }
     public void premoveSetGlobals() throws GameActionException {
         myLoc = rc.getLocation();
@@ -426,10 +459,7 @@ public class Attacker extends Robot {
         numberOfCloseEnemies = closeEnemyRobots.length;
         numberOfCloseFriends = closeFriendlyRobots.length;
 
-        tooCloseToSpawn= false;
-        if(roundNumber>200&&currentTarget!=null&&myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget)){
-            tooCloseToSpawn = true;
-        }
+        tooCloseToSpawn = roundNumber>200 && currentTarget!=null && myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget);
 
         int lowestHealth = 1000;
         lowestHealthLoc = null;
@@ -441,7 +471,7 @@ public class Attacker extends Robot {
         }
 
         int dist = Integer.MAX_VALUE;
-        for(MapLocation spawn : spawnLocs){
+        for(MapLocation spawn : myFlags) {
             int cdist = myLoc.distanceSquaredTo(spawn);
             if(cdist<dist){
                 dist = cdist;
@@ -509,8 +539,8 @@ public class Attacker extends Robot {
 
         if(roundNumber>200) {
             MapLocation nxt;
-            int threshold = Math.max(2, 5 - rc.getCrumbs()/1000);
-            int threshold2 = Math.max(2, 5-rc.getCrumbs()/1000);
+            // int threshold = Math.max(2, 5 - rc.getCrumbs()/1000);
+            int threshold2 = Math.max(2, 5 - rc.getCrumbs()/1000);
             Direction d1 = null, d2 = null, d3 = null;
             if (closestEnemy != null) {
                 d1 = closestEnemy.directionTo(myFlags[0]);
@@ -518,13 +548,194 @@ public class Attacker extends Robot {
                 d3 = closestEnemy.directionTo(myFlags[2]);
                 Direction toMyLoc = closestEnemy.directionTo(myLoc);
                 if (!(toMyLoc == d1 || toMyLoc == d2 || toMyLoc == d3)) {
-                    threshold += 5;
+                    // threshold += 5;
                     threshold2 += 5;
                 }
             }
 
 
-            for (Direction d:allDirections) {
+            int[] dirEC = new int[9];
+            for (int i = enemyRobots.length; i-- > 0;) {
+                MapLocation delta = Utils.locationDelta(myLoc, enemyRobots[i].getLocation());
+                switch (delta.y) {
+                    case 3:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[1] += 1; 
+                                            break;
+                                    case 2:
+                                            dirEC[0] += 1; dirEC[1] += 1; 
+                                            break;
+                                    case 1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[7] += 1; 
+                                            break;
+                                    case 0:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[7] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[7] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[0] += 1; dirEC[7] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[7] += 1;
+                                            break;
+                            }
+                            break;
+                    case 2:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[1] += 1; dirEC[2] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 0:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[0] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[6] += 1; dirEC[7] += 1;
+                                            break;
+                            }
+                            break;
+                    case 1:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 0:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[0] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1;
+                                            break;
+                            }
+                            break;
+                    case 0:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 0:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[0] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1;
+                                            break;
+                            }
+                            break;
+                    case -1:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 0:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[0] += 1; dirEC[1] += 1; dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[0] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[5] += 1; dirEC[6] += 1; dirEC[7] += 1;
+                                            break;
+                            }
+                            break;
+                    case -2:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[2] += 1; dirEC[3] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[8] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[8] += 1;                                            break;
+                                    case 0:
+                                            dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[2] += 1; dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[4] += 1; dirEC[5] += 1; dirEC[6] += 1; dirEC[8] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[5] += 1; dirEC[6] += 1;
+                                            break;
+                            }
+                            break;
+                    case -3:
+                            switch (delta.x) {
+                                    case 3:
+                                            dirEC[3] += 1;
+                                            break;
+                                    case 2:
+                                            dirEC[3] += 1; dirEC[4] += 1;
+                                            break;
+                                    case 1:
+                                            dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1;
+                                            break;
+                                    case 0:
+                                            dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1;
+                                            break;
+                                    case -1:
+                                            dirEC[3] += 1; dirEC[4] += 1; dirEC[5] += 1;
+                                            break;
+                                    case -2:
+                                            dirEC[4] += 1; dirEC[5] += 1;
+                                            break;
+                                    case -3:
+                                            dirEC[5] += 1;
+                                            break;
+                            }
+                            break;
+                }
+            }
+            for (int k = -1; ++k < 9;) {
+                Direction d = Utils.DIRS_CENTER[k];
                 nxt = myLoc.add(d);
                 // if (nxt.equals(myLoc) && nxt.equals(mirrorFlags[0]) || nxt.equals(mirrorFlags[1]) || nxt.equals(mirrorFlags[2])) {
                 //     if (rc.canBuild(TrapType.WATER, nxt) && rc.senseNearbyFlags(-1, rc.getTeam().opponent()).length == 0) {
@@ -532,29 +743,28 @@ public class Attacker extends Robot {
                 //     }
                 // }
 
-                int t2 = threshold2;
-                if(rc.senseMapInfo(myLoc).getTeamTerritory()!=rc.getTeam()){
-                    t2= threshold;
-                }
-                int num = rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length;
-                if(num>=t2){
+                // if (rc.senseMapInfo(myLoc).getTeamTerritory()!=rc.getTeam()){
+                //     t2 = threshold;
+                // }
+                
+                //int num = rc.senseNearbyRobots(nxt, 8, rc.getTeam().opponent()).length;
+                if(dirEC[k] >= threshold2){
                     MapInfo[] mp = rc.senseNearbyMapInfos(nxt, 4);
                     boolean stun = false;
-                    for(MapInfo i: mp){
-                        if (i.getTrapType()==TrapType.STUN) {
-                            int dist = i.getMapLocation().distanceSquaredTo(nxt);
+                    for(MapInfo m: mp){
+                        if (m.getTrapType()==TrapType.STUN) {
+                            int dist = m.getMapLocation().distanceSquaredTo(nxt);
                             if (dist == 1 || dist == 4) {
                                 stun = true;
                             }
                         }
                     }
-                    if(!stun) {
-                        if(rc.canBuild(TrapType.STUN, nxt)) {
-                            rc.build(TrapType.STUN, nxt);
-                        }
+                    if(!stun && rc.canBuild(TrapType.STUN, nxt)) {
+                        rc.build(TrapType.STUN, nxt);
                     }
                 }
             }
+
         }
         if (roundNumber > 202)
             prevTurnCrumbs = rc.getCrumbs();
@@ -790,6 +1000,12 @@ public class Attacker extends Robot {
         if (!rc.isMovementReady()) return true;
 
         int realNumberOfEnemies = numberOfEnemies;
+
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(0));
+        //* END HLIGHT //
+
         if (Clock.getBytecodesLeft() > 15000) {
             // VisionBitBFS VB = new VisionBitBFS(rc.getLocation(), rc.senseNearbyMapInfos());
             // int[] reachable = VB.floodfill(4);
@@ -843,14 +1059,33 @@ public class Attacker extends Robot {
             }
         }
 
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(1));
+        //* END HLIGHT //
+
         if (realNumberOfEnemies == 0) return false;
         
         if(rc.getHealth()<=chickenLevel){
             ChickenMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
+            //! HIGHLIGHT //
+            if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+            System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(2));
+            //* END HLIGHT //
             return true;
         }
 
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(2));
+        //* END HLIGHT //
+        
         int cooldown = rc.getActionCooldownTurns();
+
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(3));
+        //* END HLIGHT //
 
         int mosthealth = 0;
         for(RobotInfo ri : closeFriendlyRobots){
@@ -859,6 +1094,11 @@ public class Attacker extends Robot {
         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
         MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
 
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(4));
+        //* END HLIGHT //
+
         if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
             BFSController.move(rc, opposite);
             //            BFSController.move(rc, opposite);
@@ -866,6 +1106,11 @@ public class Attacker extends Robot {
             // if (rc.isMovementReady()) return false;
             // else return true;
         }
+
+        //! HIGHLIGHT //
+        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
+        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(5));
+        //* END HLIGHT //
 
         // if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
         //     weakestEnemy = myLoc;
@@ -881,7 +1126,6 @@ public class Attacker extends Robot {
             return AttackerMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
         }
     }
-
 
     public MapLocation findBestAttackLocation() {
         int minHP = 1000000000;

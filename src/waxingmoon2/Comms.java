@@ -803,7 +803,7 @@ public class Comms {
         squadronMessagesLen = readBits(bufferPool[SQUADRON_QUEUE_HEADER], 6, 6);
 //        assert (squadronMessagesLen>=squadronMessagesSent);
         if(squadronMessagesSent>squadronMessagesLen) {
-            System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
+            // System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
             squadronMessagesLen = squadronMessagesSent;//SUS
 //            rc.resign();
         }

@@ -39,37 +39,57 @@ public class Attacker extends Robot {
 
     public void turn() throws GameActionException{
         premoveSetGlobals();
+
         callFriends();
+        
         checkPickupFlag();
 
         checkBuildTraps();
-
+        
         updateCurrentTarget();
         prevEnemies--;
         if(numberOfEnemies>0){
             prevEnemies = 1;
         }
+
+
+        
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
-        }
-        if(rc.getLevel(SkillType.HEAL)<=3){
+        } else if(rc.getLevel(SkillType.HEAL)<=3){
             attackLogic();
-            attackLogic();
+            if (rc.getLevel(SkillType.ATTACK) == 6)
+                attackLogic();
         }
+
+        
         if(rc.getHealth()<=chickenLevel||((rc.getLevel(SkillType.HEAL)!=3||rc.getLevel(SkillType.ATTACK)>3||myMoveNumber%3<2)&&numberOfEnemies==0)) {
             tryHeal();
         }
 
+        
         movement();
+
+        
         postmoveSetGlobals();
+        
+                
         callFriends();
 
+                
         checkBuildTraps();
+        
+        
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
+
+        
         attackLogic();
-        attackLogic();
+        if (rc.getLevel(SkillType.ATTACK) == 6)
+                attackLogic();
+
+        
         if(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))>3){
             chickenLevel = 450+150*(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))-3);
         }
@@ -82,8 +102,14 @@ public class Attacker extends Robot {
                 tryHeal();
             }
         }
+
+        
         tryFill();
+
+        
         callDefense();
+
+        
 //        if(Clock.getBytecodesLeft()<5000){
 //            System.out.println(Clock.getBytecodesLeft());
 //        }
@@ -107,14 +133,14 @@ public class Attacker extends Robot {
         if (isSwiper) return;
         if(friendlyRobots.length>7&&enemyRobots.length>7) {
             if(Comms.squadronMessages.size()>100){
-                System.out.println("comms squadron size wayy too big");
+                // System.out.println("comms squadron size wayy too big");
 //                rc.resign();
             }
 
             boolean alreadyExists = false;
             for(int i = 0; i<Comms.squadronMessages.size(); i++) {
                 if(Comms.squadronMessages==null){
-                    System.out.println("comms squadron messages null??");
+                    // System.out.println("comms squadron messages null??");
 //                    rc.resign();;
                 }
                 Integer message = Comms.squadronMessages.get(i);
@@ -271,7 +297,7 @@ public class Attacker extends Robot {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
                     rc.move(d);
                     if (spawnSet.contains(rc.getLocation())) {
-                        Debug.println("I DEPOSITED FLAG WOO!");
+                        // Debug.println("I DEPOSITED FLAG WOO!");
                         Comms.depositFlag(0);
                     }
                     return true;
@@ -316,7 +342,7 @@ public class Attacker extends Robot {
             
 
             if (spawnSet.contains(rc.getLocation())) {
-                Debug.println("I DEPOSITED FLAG WOO!");
+                // Debug.println("I DEPOSITED FLAG WOO!");
                 Comms.depositFlag(0);
             }
             return true;
@@ -597,7 +623,7 @@ public class Attacker extends Robot {
                     if (score < bestFlagDist) {
                         bestFlagDist = score;
                         bestSoFar = loc;
-                        System.out.println("best config " + bestFlagDist + " " + curs[0] + " " + curs[1] + " " + curs[2]);
+                        // System.out.println("best config " + bestFlagDist + " " + curs[0] + " " + curs[1] + " " + curs[2]);
                     }
                 } else if (roundNumber % 2 == 1) {
                     //now lets try rotating to get a better config //TO DO
