@@ -67,6 +67,8 @@ public class Comms {
     final static int NUM_FLAGS = 3;
     final static int ROBOT_ID_HEADER = 10;
 
+    final static int STATUS_NEUTRAL = 0;
+    final static int STATUS_STUCK = 1;
 
     final static int SQUADRON_QUEUE_HEADER = 13;
     final static int SQUADRON_QUEUE_IDX = 14;
@@ -95,6 +97,7 @@ public class Comms {
     static FastIntIntMap IDToMoveOrder;
 
     static BotData allyBotData[];
+    static int allyStatus[];
 
     static FlagData allyFlagData[];
     static FlagData enemyFlagData[];
@@ -135,7 +138,10 @@ public class Comms {
         moveOrderToID = new int[50];
         IDToMoveOrder = new FastIntIntMap();
 
+        myStatus = STATUS_NEUTRAL;
         allyBotData = new BotData[50];
+        allyStatus = new int[50];
+
         allyFlagData = new FlagData[3];
         enemyFlagData = new FlagData[3];
         flagsCaptured = 0;
@@ -188,7 +194,7 @@ public class Comms {
         //     parseAllyFlags();
         //     parseEnemyFlags();
         // }
-        // parseAllyStatuses();
+        parseAllyStatuses();
         if (roundNumber > 150) {
             //     readSectorMessages();
             readSquadronMessages();
@@ -240,12 +246,20 @@ public class Comms {
     }
 
 
-    public static void writeAlive(int delta) {
-        writeToBufferPool(63, bufferPool[63] + delta);
+    public static void writeAlive() {
+        if (roundNumber % 2 == 0) {
+            if (myMoveOrder == 0) writeToBufferPool(63, 1);
+            else writeToBufferPool(63, bufferPool[63] + 1);
+        }
     }
 
+    static int numberAlive = 49;
     public static int getAlive() {
-        return bufferPool[63] + 3;
+        Debug.println("idk if this actually works");
+        if (roundNumber % 2 == 1) {
+            numberAlive = bufferPool[63];
+        }
+        return numberAlive;
     }
 
     //SNIPER METHODS
@@ -418,7 +432,8 @@ public class Comms {
         assert (length > 0) & (left >= 0) & (left + length <= 16) : "Invalid bounds";
         //assert (newValue >= 0) & (newValue < (1 << left)) : "Message too large " + newValue; //this assert doesnt seem to work
         int sectionWiped = wipeBits(message, left, length);
-        return sectionWiped | (newValue << left);
+        //System.out.println("override " + String.valueOf(message) +" "+ String.valueOf(sectionWiped) +" "+ String.valueOf(newValue) +" " + String.valueOf(sectionWiped | (newValue << left)));
+        return (sectionWiped | (newValue << left));
     }
 
     private static int readBits(int message, int left, int length) {
@@ -427,6 +442,8 @@ public class Comms {
     }
 
     private static void writeToBufferPool(int idx, int message) {
+        assert (65535 >= message && message >= 0);
+
         bufferPool[idx] = message;
         dirtyFlags[idx] = true;
     }
@@ -637,14 +654,14 @@ public class Comms {
     // ----------------------------------------------- //
 
     // for turn 1 only
-    private static void writeBotID() {
-        assert roundNumber == 1 : "Attempted to write bot ID to array when not turn 1.";
-
+    public static void writeBotID() throws GameActionException {
+        
+        bufferPool[0] = rc.readSharedArray(0);
         myMoveOrder = bufferPool[0];
-        writeToBufferPool(MAIN_IDX, myMoveOrder + 1);
-        writeToBufferPool(myMoveOrder + 1, rc.getID());
+        rc.writeSharedArray(MAIN_IDX, myMoveOrder + 1);
+        rc.writeSharedArray(myMoveOrder + 1, rc.getID());
         if(myMoveOrder==49){
-            writeToBufferPool(MAIN_IDX, 0);
+            rc.writeSharedArray(MAIN_IDX, 0);
         }
     }
     // for turn 2 only
@@ -713,15 +730,15 @@ public class Comms {
         writeToBufferPool(myMoveOrder+1, 0);
     }
     // for all turns after
-    private static void writeRegularUpdate() {
+    private static void writeRegularUpdate() throws GameActionException {
         // regular update contains:
 
         // status update
-        if (getAllyStatus(myMoveOrder) != myStatus) {
-            int statusMessage = bufferPool[allyIdxToStatusSlot(myMoveOrder)] & ~(Utils.BASIC_MASKS[ALLY_STATUS_BITLEN] << allyIdxToStatusBitShift(myMoveOrder)) | (myStatus << allyIdxToStatusBitShift(myMoveOrder));
-            writeToBufferPool(allyIdxToStatusSlot(myMoveOrder),  statusMessage);
-        }
-
+        myStatus = bugNav2.isStuck?STATUS_STUCK:STATUS_NEUTRAL;
+        int status = overwriteBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder]], myStatus, Utils.ALLY_IDX_TO_STATUS_BITSHIFT[myMoveOrder], ALLY_STATUS_BITLEN);
+        //writeToBufferPool(Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder], myStatus);
+        writeToBufferPool(Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder], status);
+        // queue header update
         // queue header update
         writeToBufferPool(SECTOR_QUEUE_HEADER, sectorMessagesOffset | (sectorMessagesLen << 6));
         int value = (squadronMessagesLen<<6) | (squadronMessagesOffset);
@@ -921,69 +938,62 @@ public class Comms {
     // may be a lot of bytecode? idk
     private static void parseAllyStatuses() {
         // 5 statuses per int, status length 3 bits
-        allyBotData[0].status = getAllyStatus(0);
-        allyBotData[1].status = getAllyStatus(1);
-        allyBotData[2].status = getAllyStatus(2);
-        allyBotData[3].status = getAllyStatus(3);
-        allyBotData[4].status = getAllyStatus(4);
-        allyBotData[5].status = getAllyStatus(5);
-        allyBotData[6].status = getAllyStatus(6);
-        allyBotData[7].status = getAllyStatus(7);
-        allyBotData[8].status = getAllyStatus(8);
-        allyBotData[9].status = getAllyStatus(9);
-        allyBotData[10].status = getAllyStatus(10);
-        allyBotData[11].status = getAllyStatus(11);
-        allyBotData[12].status = getAllyStatus(12);
-        allyBotData[13].status = getAllyStatus(13);
-        allyBotData[14].status = getAllyStatus(14);
-        allyBotData[15].status = getAllyStatus(15);
-        allyBotData[16].status = getAllyStatus(16);
-        allyBotData[17].status = getAllyStatus(17);
-        allyBotData[18].status = getAllyStatus(18);
-        allyBotData[19].status = getAllyStatus(19);
-        allyBotData[20].status = getAllyStatus(20);
-        allyBotData[21].status = getAllyStatus(21);
-        allyBotData[22].status = getAllyStatus(22);
-        allyBotData[23].status = getAllyStatus(23);
-        allyBotData[24].status = getAllyStatus(24);
-        allyBotData[25].status = getAllyStatus(25);
-        allyBotData[26].status = getAllyStatus(26);
-        allyBotData[27].status = getAllyStatus(27);
-        allyBotData[28].status = getAllyStatus(28);
-        allyBotData[29].status = getAllyStatus(29);
-        allyBotData[30].status = getAllyStatus(30);
-        allyBotData[31].status = getAllyStatus(31);
-        allyBotData[32].status = getAllyStatus(32);
-        allyBotData[33].status = getAllyStatus(33);
-        allyBotData[34].status = getAllyStatus(34);
-        allyBotData[35].status = getAllyStatus(35);
-        allyBotData[36].status = getAllyStatus(36);
-        allyBotData[37].status = getAllyStatus(37);
-        allyBotData[38].status = getAllyStatus(38);
-        allyBotData[39].status = getAllyStatus(39);
-        allyBotData[40].status = getAllyStatus(40);
-        allyBotData[41].status = getAllyStatus(41);
-        allyBotData[42].status = getAllyStatus(42);
-        allyBotData[43].status = getAllyStatus(43);
-        allyBotData[44].status = getAllyStatus(44);
-        allyBotData[45].status = getAllyStatus(45);
-        allyBotData[46].status = getAllyStatus(46);
-        allyBotData[47].status = getAllyStatus(47);
-        allyBotData[48].status = getAllyStatus(48);
-        allyBotData[49].status = getAllyStatus(49);
-    }
+        allyStatus[0] = (bufferPool[49] >> 0) & 0b111;
+        allyStatus[1] = (bufferPool[49] >> 3) & 0b111;
+        allyStatus[2] = (bufferPool[49] >> 6) & 0b111;
+        allyStatus[3] = (bufferPool[49] >> 9) & 0b111;
+        allyStatus[4] = (bufferPool[49] >> 12) & 0b111;
+        allyStatus[5] = (bufferPool[50] >> 0) & 0b111;
+        allyStatus[6] = (bufferPool[50] >> 3) & 0b111;
+        allyStatus[7] = (bufferPool[50] >> 6) & 0b111;
+        allyStatus[8] = (bufferPool[50] >> 9) & 0b111;
+        allyStatus[9] = (bufferPool[50] >> 12) & 0b111;
+        allyStatus[10] = (bufferPool[51] >> 0) & 0b111;
+        allyStatus[11] = (bufferPool[51] >> 3) & 0b111;
+        allyStatus[12] = (bufferPool[51] >> 6) & 0b111;
+        allyStatus[13] = (bufferPool[51] >> 9) & 0b111;
+        allyStatus[14] = (bufferPool[51] >> 12) & 0b111;
+        allyStatus[15] = (bufferPool[52] >> 0) & 0b111;
+        allyStatus[16] = (bufferPool[52] >> 3) & 0b111;
+        allyStatus[17] = (bufferPool[52] >> 6) & 0b111;
+        allyStatus[18] = (bufferPool[52] >> 9) & 0b111;
+        allyStatus[19] = (bufferPool[52] >> 12) & 0b111;
+        allyStatus[20] = (bufferPool[53] >> 0) & 0b111;
+        allyStatus[21] = (bufferPool[53] >> 3) & 0b111;
+        allyStatus[22] = (bufferPool[53] >> 6) & 0b111;
+        allyStatus[23] = (bufferPool[53] >> 9) & 0b111;
+        allyStatus[24] = (bufferPool[53] >> 12) & 0b111;
+        allyStatus[25] = (bufferPool[54] >> 0) & 0b111;
+        allyStatus[26] = (bufferPool[54] >> 3) & 0b111;
+        allyStatus[27] = (bufferPool[54] >> 6) & 0b111;
+        allyStatus[28] = (bufferPool[54] >> 9) & 0b111;
+        allyStatus[29] = (bufferPool[54] >> 12) & 0b111;
+        allyStatus[30] = (bufferPool[55] >> 0) & 0b111;
+        allyStatus[31] = (bufferPool[55] >> 3) & 0b111;
+        allyStatus[32] = (bufferPool[55] >> 6) & 0b111;
+        allyStatus[33] = (bufferPool[55] >> 9) & 0b111;
+        allyStatus[34] = (bufferPool[55] >> 12) & 0b111;
+        allyStatus[35] = (bufferPool[56] >> 0) & 0b111;
+        allyStatus[36] = (bufferPool[56] >> 3) & 0b111;
+        allyStatus[37] = (bufferPool[56] >> 6) & 0b111;
+        allyStatus[38] = (bufferPool[56] >> 9) & 0b111;
+        allyStatus[39] = (bufferPool[56] >> 12) & 0b111;
+        allyStatus[40] = (bufferPool[57] >> 0) & 0b111;
+        allyStatus[41] = (bufferPool[57] >> 3) & 0b111;
+        allyStatus[42] = (bufferPool[57] >> 6) & 0b111;
+        allyStatus[43] = (bufferPool[57] >> 9) & 0b111;
+        allyStatus[44] = (bufferPool[57] >> 12) & 0b111;
+        allyStatus[45] = (bufferPool[58] >> 0) & 0b111;
+        allyStatus[46] = (bufferPool[58] >> 3) & 0b111;
+        allyStatus[47] = (bufferPool[58] >> 6) & 0b111;
+        allyStatus[48] = (bufferPool[58] >> 9) & 0b111;
+        allyStatus[49] = (bufferPool[58] >> 12) & 0b111;
+ 
+   }
     // can use individually
     private static int getAllyStatus(int idx) {
-        return readBits(bufferPool[allyIdxToStatusSlot(idx)], allyIdxToStatusBitShift(idx), ALLY_STATUS_BITLEN);
-    }
-    // helper: converts bot index (0-49) to index for buffer pool
-    private static int allyIdxToStatusSlot(int idx) {
-        return ALLY_STATUS_IDX + idx/ALLY_STATUS_PERSLOT;
-    }
-    // helper: converts bot index to shift used
-    private static int allyIdxToStatusBitShift(int idx) {
-        return ALLY_STATUS_BITLEN * (idx%ALLY_STATUS_PERSLOT);
-    }
+        return readBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[idx]], Utils.ALLY_IDX_TO_STATUS_BITSHIFT[idx], ALLY_STATUS_BITLEN);
+     }
 
     private static void parseBuilderMessages() {
         // evaluate stuff
@@ -1040,6 +1050,7 @@ class SectorInfo {
 }
 
 class FlagData {
+    int flagIdx;
     FlagInfo recentFlagInfo;
     int flagInfoTurn;
     int flagID;
@@ -1049,8 +1060,13 @@ class FlagData {
     int currentSector;
     boolean captured;
 
+    boolean[] connectedTo;
+
     public FlagData() {
         captured = false;
         taken = true;
+
+        flagIdx = -1;
+        connectedTo = new boolean[3];
     }
 }

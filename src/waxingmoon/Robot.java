@@ -29,6 +29,7 @@ public abstract class Robot {
     public Robot(RobotController rc) throws GameActionException {
         this.rc = rc;
         bugNav.init(rc);
+        bugNav2.init(rc);
         Navigation.init(rc);
         Debug.init(rc);
         Comms.init(rc);
@@ -59,8 +60,8 @@ public abstract class Robot {
                     if (f.getID() % 61 == f1 || f.getID() % 61 == f2 || f.getID() % 61 == f3) {
                         continue;
                     }
-                    System.out.println(f1 + " " + f2 + " " + f3 + " " + f.getID() + " " + (f.getID() % 61));
-
+                    // System.out.println(f1 + " " + f2 + " " + f3 + " " + f.getID() + " " + (f.getID() % 61));
+                    
                     if (Comms.getEnemyFlagStatus(0) == 0) {
                         Comms.writeEnemyFlagLocation(0, f);
                     } else if (Comms.getEnemyFlagStatus(1) == 0) {
@@ -310,8 +311,6 @@ public abstract class Robot {
     private boolean trySpawn() throws GameActionException {
         if (myMoveNumber == 49) {
             if (roundNumber > 20) {
-
-
                 for (int i=0; i<spawnLocs.length; i++) {
                     boolean status = Comms.readOccupy(i);
                     if (!rc.canSpawn(spawnLocs[i]) && !status) { //square should be open but theres cant spawn there
@@ -424,7 +423,8 @@ public abstract class Robot {
                 center = myFlags[myMoveNumber % 3];
             }
 
-            for (Direction d:allDirections) {
+            for (int i=8; i>=0; i--) {
+                Direction d = allDirections[i];
                 if (rc.canSpawn(center.add(d))) {
                     rc.spawn(center.add(d));
                     if (isSwiper) {
@@ -471,18 +471,17 @@ public abstract class Robot {
                     //System.out.println("I was swiper # " + mySpawn + " and I died :(");
                     Comms.writeSniperStatus(mySpawn, 0);
                 }
-                Comms.writeAlive(-1);
             }
             mySpawn = -1; 
             if (trySpawn()) {
                 spawnedTurn(); aliveLastTurn = true;
-                Comms.writeAlive(1);
             } else  {
                 deadFunctions(); aliveLastTurn = false;
             }
         }else {
             aliveLastTurn = true;
             spawnedTurn();
+            Comms.writeAlive();
         }
 
         Comms.commsEndTurn(); 
