@@ -127,7 +127,7 @@ public class Attacker extends Robot {
         if (callTarget == null) callTarget = myLoc;
 
         if(isFlagPickedUp || (friendlyRobots.length>5 && enemyRobots.length>7 && friendlyRobots.length < 15)) {
-            if(Comms.squadronMessages.size()>100){
+            if(Comms.squadronMessages.size()>100) {
                 System.out.println("comms squadron size wayy too big");
             }
 
@@ -681,6 +681,19 @@ public class Attacker extends Robot {
                     currentTarget = exploreTarget();
                 }
             } else {
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(0)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(0) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(0, 2);
+                }
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(1)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(1) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(1, 2);
+                }
+                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(2)) == 0 && flags.length == 0) {
+                    if (Comms.readFlagStatus(2) == 1)
+                        Comms.writeEnemyFlagStatusByNumber(2, 2);
+                }
+
                 if (Comms.getEnemyFlagLocation(0).x < 70 && Comms.getEnemyFlagStatus(0) == 1) {
                     currentTarget = Comms.getEnemyFlagLocation(0);
                 }
@@ -775,6 +788,14 @@ public class Attacker extends Robot {
     
     public boolean attackMicro() throws GameActionException {
         if (!rc.isMovementReady()) return true;
+
+        int realNumberOfEnemies = numberOfEnemies;
+        
+
+        if (realNumberOfEnemies != numberOfEnemies && roundNumber > 210) {
+            rc.resign();
+        } 
+
         if (numberOfEnemies == 0) return false;
         
         if(rc.getHealth()<=chickenLevel){
