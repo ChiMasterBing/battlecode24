@@ -81,7 +81,7 @@ public class Utils {
     {{Direction.SOUTHEAST}, {Direction.SOUTH}, {Direction.SOUTHWEST},
     {Direction.NORTHEAST}, {Direction.NORTH}, {Direction.NORTHWEST},
     {Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH}, {Direction.WEST, Direction.SOUTHWEST, Direction.SOUTH},
-    {Direction.EAST, Direction.NORTHEAST, Direction.NORTH}, {Direction.WEST, Direction.NORTHEAST, Direction.NORTH},
+    {Direction.EAST, Direction.NORTHEAST, Direction.NORTH}, {Direction.WEST, Direction.NORTHWEST, Direction.NORTH},
     {Direction.EAST}, {Direction.WEST}
     };
     final static int EMA_SE = 0;
