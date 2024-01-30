@@ -177,6 +177,8 @@ public class Comms {
     // ------------------------------- //
 
     public static void commsStartTurn(int round) throws GameActionException {
+
+
         initBufferPool();
         //squadronMessages = new FastQueue<Integer>();
         roundNumber = round;
@@ -186,7 +188,7 @@ public class Comms {
         } else if (roundNumber == 2) {
             readBotIDs();
             return;
-        }else if(roundNumber==3){
+        } else if(roundNumber==3){
             wipeBotID();
             return;
         }
@@ -218,6 +220,18 @@ public class Comms {
 
         // sends all messages at once
         flushBufferPool();
+        if (roundNumber == 10 && myMoveOrder == 49) {
+            System.out.println(String.valueOf(allyStatus[myMoveOrder]) + " " + String.valueOf(BugNav.isStuck));
+            for (int i = 49; i < 59; i++) {
+                System.out.println(Integer.toBinaryString(bufferPool[i]));
+            }
+            for (int i = 0; i < 50; i++){
+                System.out.println(String.valueOf(allyStatus[i]) + " " + String.valueOf(moveOrderToID[i]));
+            }
+            rc.resign();
+        } else if (roundNumber == 10) {
+            System.out.println(String.valueOf(allyStatus[myMoveOrder]) + " " + ((rc.readSharedArray(Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder]) >> Utils.ALLY_IDX_TO_STATUS_BITSHIFT[myMoveOrder]) & 1) + " " + String.valueOf(BugNav.isStuck));
+        }
     }
 
     // ----------------------------------- //
@@ -333,7 +347,7 @@ public class Comms {
     private static int overwriteBits(int message, int newValue, int left, int length) {
         int sectionWiped = wipeBits(message, left, length);
         //System.out.println("override " + String.valueOf(message) +" "+ String.valueOf(sectionWiped) +" "+ String.valueOf(newValue) +" " + String.valueOf(sectionWiped | (newValue << left)));
-        return sectionWiped | (newValue << left);
+        return (sectionWiped | (newValue << left));
     }
 
     private static int readBits(int message, int left, int length) {
@@ -636,7 +650,6 @@ public class Comms {
     // for all turns after
     private static void writeRegularUpdate() throws GameActionException {
         // regular update contains:
-
         // status update
         myStatus = BugNav.isStuck?STATUS_STUCK:STATUS_NEUTRAL;
         int status = overwriteBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder]], myStatus, Utils.ALLY_IDX_TO_STATUS_BITSHIFT[myMoveOrder], ALLY_STATUS_BITLEN);
