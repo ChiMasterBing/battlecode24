@@ -1,4 +1,4 @@
-package waxingmoon;
+package crescentmoon;
 import java.util.Arrays;
 
 import battlecode.common.*;
@@ -197,26 +197,6 @@ public class Navigation {
         else return 2;
     }
 
-    public static MapLocation getTripleMinLocation(MapLocation a, MapLocation b, MapLocation c, MapLocation d) {
-        int d1 = a.distanceSquaredTo(b);
-        int d2 = a.distanceSquaredTo(c);
-        int d3 = a.distanceSquaredTo(d);
-        int d4 = Math.min(d1, Math.min(d2, d3));
-        if (d4 == d1) return b;
-        else if (d4 == d2) return c;
-        else return d;
-    }
-
-    public static MapLocation getTripleMaxLocation(MapLocation a, MapLocation b, MapLocation c, MapLocation d) {
-        int d1 = a.distanceSquaredTo(b);
-        int d2 = a.distanceSquaredTo(c);
-        int d3 = a.distanceSquaredTo(d);
-        int d4 = Math.max(d1, Math.max(d2, d3));
-        if (d4 == d1) return b;
-        else if (d4 == d2) return c;
-        else return d;
-    }
-
     public static void eliminateSpawnSymmetries(MapLocation s1, MapLocation s2, MapLocation s3) throws GameActionException {
         MapLocation o1, o2, o3;
         //H_SYM
@@ -258,12 +238,7 @@ public class Navigation {
         spawnScores[1] += Math.min(d12 + d1, d23 + d3) - d2;
         spawnScores[2] += Math.min(d13 + d1, d23 + d2) - d3;
     }
-    public static void calculateDefenderSpawn(MapLocation s1, MapLocation s2, MapLocation s3){
-        MapLocation[] hideLocations = Comms.getHiddenFlagLocations();
-        spawnHeuristic(hideLocations[0], s1, s2, s3);
-        spawnHeuristic(hideLocations[1], s1, s2, s3);
-        spawnHeuristic(hideLocations[2], s1, s2, s3);
-    }
+
     public static void calculateSpawnDistribution(MapLocation s1, MapLocation s2, MapLocation s3) {
         MapLocation o1, o2, o3;
         if (Comms.isSymmetry(H_SYM)) {
@@ -324,46 +299,4 @@ public class Navigation {
     //         spawnScores[getClosestSpawnNumber(o3, s1, s2, s3)]++;
     //     }
     // }
-
-    public static MapLocation getFurthestSpawnFromEnemy(MapLocation s1, MapLocation s2, MapLocation s3) {
-        MapLocation o1, o2, o3;
-        //lets assume its R_SYM
-        int d1 = 0, d2 = 0, d3 = 0;
-        if (Comms.isSymmetry(R_SYM)) {
-            o1 = getRSym(s1);
-            o2 = getRSym(s2);
-            o3 = getRSym(s3);
-
-            d1 = getTripleMinDist(s1, o1, o2, o3);
-            d2 = getTripleMinDist(s2, o1, o2, o3);
-            d3 = getTripleMinDist(s3, o1, o2, o3);
-        }
-        else if (Comms.isSymmetry(H_SYM)) {
-            o1 = getHSym(s1);
-            o2 = getHSym(s2);
-            o3 = getHSym(s3);
-
-            d1 = getTripleMinDist(s1, o1, o2, o3);
-            d2 = getTripleMinDist(s2, o1, o2, o3);
-            d3 = getTripleMinDist(s3, o1, o2, o3);
-
-        }
-        else if (Comms.isSymmetry(V_SYM)) {
-            o1 = getVSym(s1);
-            o2 = getVSym(s2);
-            o3 = getVSym(s3);
-
-            d1 = getTripleMinDist(s1, o1, o2, o3);
-            d2 = getTripleMinDist(s2, o1, o2, o3);
-            d3 = getTripleMinDist(s3, o1, o2, o3);
-        } 
-
-        if (d1 >= d2 && d1 >= d3) {
-            return s1;
-        } else if (d2 >= d1 && d2 >= d3) {
-            return s2;
-        } else {
-            return s3;
-        }
-    }
 }

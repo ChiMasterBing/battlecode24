@@ -126,6 +126,7 @@ public class HealerMicro {
         int allysNear = 0;
         int stunScrew = 0; //how many allies am i screwing if I move here and stun goes off
         int lowestHealth = 1000000;
+        int getMinDistanceToAlly = 100000;
 
         public MicroInfo(Direction dir) throws GameActionException {
             this.dir = dir;
@@ -168,6 +169,8 @@ public class HealerMicro {
                 heals+=hps;
             if(dist<=4)
                 allysNear+=uAttackerDPS[unit.attackLevel];
+            getMinDistanceToAlly = Math.min(getMinDistanceToAlly, dist);
+
         }
         int safe(){
             if (!canMove) return -1;
@@ -189,36 +192,51 @@ public class HealerMicro {
             if (!canMove) return false;
             if (!M.canMove) return true;
 
-            if (rc.getHealth() < DPSreceived&&rc.getHealth()>M.DPSreceived) return false;
-            if (rc.getHealth() > DPSreceived&&rc.getHealth()<M.DPSreceived) return true;
+            if (rc.getHealth() < DPSreceived-heals&&rc.getHealth()>M.DPSreceived-M.heals) return false;
+            if (rc.getHealth() > DPSreceived-heals&&rc.getHealth()<M.DPSreceived-M.heals) return true;
+
+            if (DPSreceived < M.DPSreceived) return true;
+            if (M.DPSreceived < DPSreceived) return false;
 
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
-                if (DPSreceived < M.DPSreceived) return true;
-                if (M.DPSreceived < DPSreceived) return false;
-                if(allysNear>M.allysNear){
-                    return true;
-                }
-                if(M.allysNear>allysNear){
-                    return false;
-                }
-                if(inRange()){
-                    return minDistanceToEnemy >= M.minDistanceToEnemy;
+                if(canBeHit()){
+                    if(minDistanceToEnemy>M.minDistanceToEnemy){
+                        return true;
+                    }
+                    if(M.minDistanceToEnemy>minDistanceToEnemy){
+                        return false;
+                    }
+                    return allysNear>=M.allysNear;
                 }else{
-                    return minDistanceToEnemy <= M.minDistanceToEnemy;
+                    if(allysNear>M.allysNear){
+                        return true;
+                    }
+                    if(M.allysNear>allysNear){
+                        return false;
+                    }
+                    return getMinDistanceToAlly <= M.getMinDistanceToAlly;
                 }
 
 
             } else { //mess with CanBeHit?
-                if (DPSreceived < M.DPSreceived) return true;
-                if (M.DPSreceived < DPSreceived) return false;
-                if(allysNear>M.allysNear){
-                    return true;
-                }
-                if(M.allysNear>allysNear){
-                    return false;
-                }
-                return minDistanceToEnemy <= M.minDistanceToEnemy;
+                if(canBeHit()){
+                    if(minDistanceToEnemy>M.minDistanceToEnemy){
+                        return true;
+                    }
+                    if(M.minDistanceToEnemy>minDistanceToEnemy){
+                        return false;
+                    }
+                    return allysNear>=M.allysNear;
+                }else {
 
+                    if (allysNear > M.allysNear) {
+                        return true;
+                    }
+                    if (M.allysNear > allysNear) {
+                        return false;
+                    }
+                    return getMinDistanceToAlly <= M.getMinDistanceToAlly;
+                }
             }
         }
     }

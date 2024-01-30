@@ -1,5 +1,4 @@
-package waxingmoon;
-
+package crescentmoon;
 //sometimes, full moons turn bad dreams into horrible nightmares.
 //--waxing moon
 import battlecode.common.*;
@@ -7,7 +6,7 @@ import battlecode.common.*;
 //weight squares to move in, one for each direction
 //keep track of bombs
 //stun has radius of adjacent. keeps track of where might PROC stuns, not where stuns are.
-//compute likelihood for stuns ONLY on adjacent tiles I can next walk to.
+//compute likelihood for stuns ONLY on adjacent tiles I can next walk to. 
 
 public class AttackerMicro {
     static int[][] stunTracker; // 0 --> probably no bomb, 1 IDK, 2 perhaps bomb
@@ -18,38 +17,27 @@ public class AttackerMicro {
     static int[] aroundMeX = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] aroundMeY = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int nullX, nullY;
-    static int myMoveNumber;
-    static long noStunMask;
 
     static int[] attackerDamages = {150, 158, 161, 165, 195, 203, 240};
     static int[] attackerCooldowns = {20, 19, 19, 18, 16, 13, 8};
     static int[] attackerDPS = {75, 83, 85, 92, 122, 156, 300};
-    static int[] uAttackerDPS = {105, 116, 121, 128, 170, 218, 420};
-    static int[] healerHPS = {27, 29, 31, 34, 35, 36, 44};
-    static int[] uhealerHPS = {43, 46, 51, 55, 56, 59, 72};
+    static int[] uAttackerDPS = {113, 124, 127, 138, 183, 234, 450};
+
     public static void init(RobotController r) {
         rc = r;
-//        stunTracker = new int[rc.getMapWidth() + 1][rc.getMapHeight() + 1];
+        stunTracker = new int[rc.getMapWidth() + 1][rc.getMapHeight() + 1];
         nullX = rc.getMapHeight();
         nullY = rc.getMapWidth();
     }
 
     public static boolean processTurn(RobotInfo[] er, RobotInfo[] fr, RobotInfo[] ecr, RobotInfo[] fcr) throws GameActionException {
-        setGlobals(er, fr, ecr, fcr, -1); //dont worry about movenumber rn, not used in this version I sent u
-        return movementMicro();
-    }
-
-    public static void setGlobals(RobotInfo[] er, RobotInfo[] fr, RobotInfo[] ecr, RobotInfo[] fcr, int moveNumber) {
-        myMoveNumber = moveNumber;
         enemyRobots = er;
         friendlyRobots = fr;
-        closeFriendlyRobots = fcr;
-        closeEnemyRobots = ecr;
+        closeFriendlyRobots = ecr;
+        closeEnemyRobots = fcr;
         roundNumber = rc.getRoundNum();
         myLoc = rc.getLocation();
-    }
 
-    public static boolean movementMicro() throws GameActionException {
         MicroInfo[] microInfo = new MicroInfo[9];
         for (Direction d:Direction.allDirections()) {
             MapLocation nxt = myLoc.add(d);
@@ -60,6 +48,7 @@ public class AttackerMicro {
                 aroundMeX[d.ordinal()] = nullX;
                 aroundMeY[d.ordinal()] = nullY;
             }
+            //stunTracker[nxt.x][nxt.y] = 1;
             microInfo[d.ordinal()] = new MicroInfo(d);
         }
 
@@ -81,24 +70,6 @@ public class AttackerMicro {
             microInfo[8].updateEnemy(r, dps);
         }
 
-        for (RobotInfo r:friendlyRobots) {
-            int hps;
-            if (roundNumber >= 1200) {
-                hps = uhealerHPS[r.getHealLevel()];
-            } else {
-                hps = healerHPS[r.getHealLevel()];
-            }
-            microInfo[0].updateAlly(r, hps);
-            microInfo[1].updateAlly(r, hps);
-            microInfo[2].updateAlly(r, hps);
-            microInfo[3].updateAlly(r, hps);
-            microInfo[4].updateAlly(r, hps);
-            microInfo[5].updateAlly(r, hps);
-            microInfo[6].updateAlly(r, hps);
-            microInfo[7].updateAlly(r, hps);
-            microInfo[8].updateAlly(r, hps);
-        }
-
         MicroInfo bestMicro = microInfo[8];
         for (int i = 0; i < 8; ++i) {
             if (microInfo[i].isBetter(bestMicro, rc.getActionCooldownTurns())) bestMicro = microInfo[i];
@@ -106,12 +77,12 @@ public class AttackerMicro {
 
         if (bestMicro.dir == Direction.CENTER) return true;
         if (rc.canMove(bestMicro.dir)) {
-            //rc.setIndicatorString("best micro dir is " + bestMicro.dir);
+            rc.setIndicatorString("best micro dir is " + bestMicro.dir);
             rc.move(bestMicro.dir); return true;
         }
         return false;
     }
-
+    
     static class MicroInfo{
         Direction dir;
         MapLocation location;
@@ -122,10 +93,6 @@ public class AttackerMicro {
         boolean canMove = true;
         int stunLikely = 0;
         boolean enemyTerritory;
-        int heals = 0;
-        int stunScrew = 0; //how many allies am i screwing if I move here and stun goes off
-        int lowestHealth = 1000000;
-        int alliesNearby = 0;
 
         public MicroInfo(Direction dir) throws GameActionException {
             this.dir = dir;
@@ -144,32 +111,19 @@ public class AttackerMicro {
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
-
-            if (dist <= 12) DPSreceived += dps;
-
+            if (dist <= 4) DPSreceived += dps; //MAKE THIS MORE PRECISE
             if (dist <= 20) enemiesTargeting += dps;
             if (dist <= 4) stunLikely++;
         }
 
-        void updateTrap(MapLocation m) {
-            if (!canMove) return;
-            int dist = m.distanceSquaredTo(location);
-            if (dist <= 0) {
-                DPSreceived -= rc.getAttackDamage();
-            }
-        }
-
-        void updateAlly(RobotInfo unit, int hps){
+        void updateAlly(RobotInfo unit){
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
             if (dist <= 2)
                 stunLikely--;
-            if(dist<=4)
-                heals+=hps;
-            if(dist<=4)
-                alliesNearby++;
         }
-        int safe(){
+
+        int safe(){ 
             if (!canMove) return -1;
             if (DPSreceived > 0) return 0;
             if (enemiesTargeting > alliesTargeting) return 1;
@@ -181,25 +135,15 @@ public class AttackerMicro {
             return minDistanceToEnemy <= 4;
         }
 
-        boolean canBeHit() {
-            return minDistanceToEnemy <= 12;
-        }
-
+        //equal => true
         boolean isBetter(MicroInfo M, int cooldown){
             if (!canMove) return false;
             if (!M.canMove) return true;
-
-            if (rc.getHealth() < DPSreceived-heals&&rc.getHealth()>M.DPSreceived-M.heals) return false;
-            if (rc.getHealth() > DPSreceived-heals&&rc.getHealth()<M.DPSreceived-M.heals) return true;
-
-
-//            if (rc.getHealth() < DPSreceived&&rc.getHealth()>M.DPSreceived) return false;
-//            if (rc.getHealth() > DPSreceived&&rc.getHealth()<M.DPSreceived) return true;
-
+            if (rc.getHealth() < DPSreceived) return false;
             if (cooldown < 10) { //WE WANT TO BE BIG AND STEAMY
                 if (inRange() && !M.inRange()) return true;
                 if (!inRange() && M.inRange()) return false;
-
+                
                 if (inRange()) { //both squares are in range
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
@@ -207,54 +151,28 @@ public class AttackerMicro {
                     if (enemiesTargeting < M.enemiesTargeting) return true;
                     else if (enemiesTargeting > M.enemiesTargeting) return false;
 
-//                    if (stunLikely < M.stunLikely) return true;
-//                    if (stunLikely > M.stunLikely) return false;
+                    if (stunLikely < M.stunLikely) return true;
+                    if (stunLikely > M.stunLikely) return false;
 
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
-                else {
-                    return minDistanceToEnemy <= M.minDistanceToEnemy;
-                }
-            }else if(cooldown<20){
+                else return minDistanceToEnemy <= M.minDistanceToEnemy;
+            } else { //dont wanna proc anything rn
                 if (!inRange() && M.inRange()) return true;
                 if (inRange() && !M.inRange()) return false;
 
-                if (!canBeHit() && M.canBeHit()&&rc.getHealth()==1000) return false;
-                if (canBeHit() && !M.canBeHit()&&rc.getHealth()==1000) return true;
-
-                if (DPSreceived < M.DPSreceived) return true;
-                if (M.DPSreceived < DPSreceived) return false;
-
-                if(inRange()){
-//                    if(alliesNearby>=M.alliesNearby){
-//                        return true;
-//                    }else{
-//                        return false;
-//                    }
-
-                    return minDistanceToEnemy >= M.minDistanceToEnemy;
-                }else{
-                    if(alliesNearby>=M.alliesNearby){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
-            }else { //mess with CanBeHit?
-                if (!canBeHit() && M.canBeHit()) return true;
-                if (canBeHit() && !M.canBeHit()) return false;
-                if (canBeHit()) {
+                if (inRange()) { //both squares are in range
                     if (DPSreceived < M.DPSreceived) return true;
                     if (M.DPSreceived < DPSreceived) return false;
-
+                    
                     if (enemiesTargeting < M.enemiesTargeting) return true;
                     else if (enemiesTargeting > M.enemiesTargeting) return false;
-
+                    
                     return minDistanceToEnemy >= M.minDistanceToEnemy;
                 }
                 else {
-                    if (enemiesTargeting - heals < M.enemiesTargeting - M.heals) return true;
-                    else if (enemiesTargeting - heals > M.enemiesTargeting - M.heals) return false;
+                    if (enemiesTargeting < M.enemiesTargeting) return true;
+                    else if (enemiesTargeting > M.enemiesTargeting) return false;
 
                     return minDistanceToEnemy <= M.minDistanceToEnemy;
                 }
