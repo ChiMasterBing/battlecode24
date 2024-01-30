@@ -161,8 +161,6 @@ public class Comms {
         squadronMessages = new FastQueue<Integer>();
         //priorityMessageQueue = new FastQueue<Integer>(64);
 
-        spawnCenters = new MapLocation[3];
-        getSpawnCenters();
         allyFlagData = new FlagData[3];
         allyFlagData[0].flagNum = 0;
         allyFlagData[1].flagNum = 1;
@@ -978,5 +976,6 @@ class FlagData {
     public FlagData() {
         captured = false;
         taken = true;
+        flagNum = 0;
     }
 }
