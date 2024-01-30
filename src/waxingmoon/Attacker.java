@@ -191,7 +191,7 @@ public class Attacker extends Robot {
                 }
             }
 
-            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100) {
+            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100&&rc.getActionCooldownTurns()<10) {
                 rc.dropFlag(myLoc);
                 Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
             }

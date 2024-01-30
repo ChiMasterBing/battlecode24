@@ -134,7 +134,6 @@ public class Comms {
 
     public static void init(RobotController r) throws GameActionException {
         rc = r;
-
         moveOrderToID = new int[50];
         IDToMoveOrder = new FastIntIntMap();
 
@@ -739,6 +738,11 @@ public class Comms {
 
         // status update
         myStatus = bugNav2.isStuck?STATUS_STUCK:STATUS_NEUTRAL;
+        if(rc.getActionCooldownTurns()>=20){
+            myStatus|=2;
+        }else{
+            myStatus&=(~2);
+        }
         int status = overwriteBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder]], myStatus, Utils.ALLY_IDX_TO_STATUS_BITSHIFT[myMoveOrder], ALLY_STATUS_BITLEN);
         //writeToBufferPool(Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder], myStatus);
         writeToBufferPool(Utils.ALLY_IDX_TO_STATUS_SLOT[myMoveOrder], status);
@@ -997,6 +1001,10 @@ public class Comms {
     // can use individually
     private static int getAllyStatus(int idx) {
         return readBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[idx]], Utils.ALLY_IDX_TO_STATUS_BITSHIFT[idx], ALLY_STATUS_BITLEN);
+     }
+     public static boolean checkStunned(int idx){
+        int x = allyStatus[idx];
+         return (x&2)!=0;
      }
 
     private static void parseBuilderMessages() {

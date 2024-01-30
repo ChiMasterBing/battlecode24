@@ -470,7 +470,7 @@ public class bugNav2 {
         if (dirRobots[dirInt] == null)
             return OPEN;
         if (!dirRobots[dirInt].team.equals(rc.getTeam())) return WALL;
-        return Comms.allyStatus[Comms.IDToMoveOrder.getVal(dirRobots[dirInt].getID())] == 1 ? ALLY_STUCK : ALLY_UNSTUCK;
+        return (Comms.allyStatus[Comms.IDToMoveOrder.getVal(dirRobots[dirInt].getID())]&1) == 1 ? ALLY_STUCK : ALLY_UNSTUCK;
     }
 
     private static int rotateDir(int dirInt, boolean reverse) {
