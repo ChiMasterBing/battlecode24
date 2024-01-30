@@ -184,9 +184,9 @@ public abstract class Robot {
 
     MapLocation lastLocation = new MapLocation(80, 80);
     public void spawnedTurn() throws GameActionException {
+        int currentRound = roundNumber;
+
         senseGlobals();
-
-
         if (roundNumber == 3) {
             commFlagID();
         }
@@ -197,7 +197,6 @@ public abstract class Robot {
         int s1 = Comms.getEnemyFlagStatus(0);
         int s2 = Comms.getEnemyFlagStatus(1);
         int s3 = Comms.getEnemyFlagStatus(2);
-
 
         if (s1 == 1) {
             rc.setIndicatorDot(m1, 255, 0, 0);
@@ -221,7 +220,7 @@ public abstract class Robot {
             rc.setIndicatorDot(m3, 0, 255, 0);
         }
         
-        rc.setIndicatorString(m1 + " " + m2 + " " + m3);
+        // rc.setIndicatorString(m1 + " " + m2 + " " + m3);
 
         lastLocation = rc.getLocation();
 
@@ -236,19 +235,20 @@ public abstract class Robot {
         }
         lastLocation = rc.getLocation();
 
-        if (roundNumber < 200) {
-            if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
-                Navigation.scout();
-                Navigation.updateSymm();
+        if (rc.getRoundNum() == currentRound) {
+            if (roundNumber < 200) {
+                if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
+                    Navigation.scout();
+                    Navigation.updateSymm();
+                }
+            }
+            else {
+                if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
+                    Navigation.scout();
+                    Navigation.updateSymm();
+                }
             }
         }
-        else {
-            if (Clock.getBytecodesLeft() > 6000 && roundNumber > 10) {
-                Navigation.scout();
-                Navigation.updateSymm();
-            }
-        }
-
     }
 
     // todo for me:
@@ -313,7 +313,6 @@ public abstract class Robot {
 
     boolean isSwiper = false;
     private boolean trySpawn() throws GameActionException {
-
         if (myMoveNumber == 49) {
             if (roundNumber > 20) {
                 for (int i=0; i<spawnLocs.length; i++) {
@@ -334,13 +333,12 @@ public abstract class Robot {
             return false;
         }
 
+
         if (roundNumber < 200) {
             if (roundNumber == 1) { //find closest you can get to your opp via dam
                 if (myMoveNumber < 3) {
                     mySpawn = myMoveNumber;
                     rc.spawn(myFlags[mySpawn]);
-                    isSwiper = true;
-                    isSwiper = false;
                 }
             }
             else if (roundNumber > 5) {
@@ -370,7 +368,6 @@ public abstract class Robot {
             }
         }
         else if (roundNumber > 200) {
-
             MapLocation center = null;
             isSwiper = false;
 
@@ -423,7 +420,7 @@ public abstract class Robot {
                 }
             }
 
-            if (center == null) {
+            if (center == null) { // or is swiper  || myMoveNumber < 3
                 mySpawn = myMoveNumber % 3;
                 center = myFlags[myMoveNumber % 3];
             }
@@ -432,21 +429,15 @@ public abstract class Robot {
                 MapLocation attempt = center.add(allDirections[i]);
                 if (rc.canSpawn(attempt)) {
                     rc.spawn(attempt);
-                    if (isSwiper) {
-                        // System.out.println("I am new swiper # " + mySpawn + " @ " + center);
-                        Comms.writeSniperStatus(mySpawn, 1);
-                    }
                     return true;
                 }
             }
         }
-
         return false;
     }
 
     boolean aliveLastTurn = false;
     FlagInfo heldFlagLastTurn = null;
-    
 
     public void play() throws GameActionException {
         roundNumber = rc.getRoundNum();
@@ -454,25 +445,35 @@ public abstract class Robot {
         // if (myMoveNumber < 1 && roundNumber % 100 == 0) { //Debug Messages
         //     Debug.println(Comms.readSymmetry() + " <-- Symm");
         //     Debug.println(Comms.countFlagsCaptured() + "<-- flags captured");
-        // }
-
-
-        if (myMoveNumber == 20 && roundNumber % 20 == 0) System.out.println("------------");
-        
-        buyUpgrades();
+        // }        
+         buyUpgrades();
 
         Comms.commsStartTurn(roundNumber);
 
         doPreRoundTasks();
 
         if (!rc.isSpawned()){
-            mySpawn = -1;
-            if (trySpawn()) {
-                spawnedTurn();
+            if (aliveLastTurn) { //i died
+                if (spawnLocToIndex.contains(lastLocation)) {
+                    Comms.writeOccupy(spawnLocToIndex.getVal(lastLocation), 0);
+                    lastLocation = new MapLocation(80, 80);
+                }
+
+                if (heldFlagLastTurn != null) {
+                    Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
+                    heldFlagLastTurn = null;
+                }
             }
-            else deadFunctions();
-        }else {
+            mySpawn = -1; 
+            if (trySpawn()) {
+                spawnedTurn(); aliveLastTurn = true;
+            } else  {
+                deadFunctions(); aliveLastTurn = false;
+            }
+        } else {
+            aliveLastTurn = true;
             spawnedTurn();
+            Comms.writeAlive();
         }
 
         Comms.commsEndTurn(); 
@@ -485,10 +486,6 @@ public abstract class Robot {
             }
         }
 
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " f");
-
-//        rc.setIndicatorString(Comms.myFlagExists(myMoveNumber%3) + " " + mySpawn + ": " + Comms.readFlagStatus(0) + " " + Comms.readFlagStatus(1) + " " + Comms.readFlagStatus(2));
+        //rc.setIndicatorString(Comms.getAlive() + " ");
     }
 }

@@ -51,16 +51,16 @@ public class ChickenMicro {
 
     public static boolean movementMicro() throws GameActionException {
         MicroInfo[] microInfo = new MicroInfo[9];
-        for (Direction d:Direction.allDirections()) {
-            MapLocation nxt = myLoc.add(d);
-            if (rc.onTheMap(nxt)) {
-                aroundMeX[d.ordinal()] = nxt.x;
-                aroundMeY[d.ordinal()] = nxt.y;
-            } else {
-                aroundMeX[d.ordinal()] = nullX;
-                aroundMeY[d.ordinal()] = nullY;
-            }
-            microInfo[d.ordinal()] = new MicroInfo(d);
+        for (int i = 9; i-- > 0;) {
+            // MapLocation nxt = myLoc.add(Direction.allDirections()[i]);
+            // if (rc.onTheMap(nxt)) {
+            //     aroundMeX[i] = nxt.x;
+            //     aroundMeY[i] = nxt.y;
+            // } else {
+            //     aroundMeX[i] = nullX;
+            //     aroundMeY[i] = nullY;
+            // }
+            microInfo[i] = new MicroInfo(Direction.allDirections()[i]);
         }
 
         for (RobotInfo r:enemyRobots) {
@@ -121,7 +121,7 @@ public class ChickenMicro {
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
         boolean canMove = true;
-        int stunLikely = 0;
+        //int stunLikely = 0;
         boolean enemyTerritory;
         int heals = 0;
         int allysNear = 0;
@@ -149,7 +149,7 @@ public class ChickenMicro {
             if (dist <= 12) DPSreceived += dps;
 
             if (dist <= 20) enemiesTargeting += dps;
-            if (dist <= 4) stunLikely++;
+            // if (dist <= 4) stunLikely++;
         }
 
         void updateTrap(MapLocation m) {
@@ -163,12 +163,12 @@ public class ChickenMicro {
         void updateAlly(RobotInfo unit, int hps){
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
-            if (dist <= 2)
-                stunLikely--;
-            if(dist<=4)
+            // if (dist <= 2)
+            //     stunLikely--;
+            if(dist<=4) {
                 heals+=hps;
-            if(dist<=4)
                 allysNear+=uAttackerDPS[unit.attackLevel];
+            }
             getMinDistanceToAlly = Math.min(getMinDistanceToAlly, dist);
         }
         int safe(){

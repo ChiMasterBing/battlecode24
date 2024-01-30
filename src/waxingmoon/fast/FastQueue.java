@@ -46,11 +46,10 @@ public class FastQueue<T> {
             return null;
         return buf[l];
     }
-
     public T get(int idx){
-        if(idx < size()) {
-            return buf[(l + idx) % ln];
-        } else {
+        if(idx<size()) {
+            return buf[(idx + l) % ln];
+        }else{
             return null;
         }
     }

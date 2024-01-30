@@ -156,7 +156,7 @@ public class AttackerMicro {
                     DPSreceived += dps;
                 } else {
                     for (Direction dir: moveAtkDirs) {
-                        rc.setIndicatorLine(enemyLoc, new MapLocation(enemyLoc.x + dir.dx, enemyLoc.y + dir.dy), 255, Navigation.map[enemyLoc.x + dir.dx][enemyLoc.y + dir.dy] == 1 ? 0:255, 0);
+                        // rc.setIndicatorLine(enemyLoc, new MapLocation(enemyLoc.x + dir.dx, enemyLoc.y + dir.dy), 255, Navigation.map[enemyLoc.x + dir.dx][enemyLoc.y + dir.dy] == 1 ? 0:255, 0);
                         if (Navigation.map[enemyLoc.x + dir.dx][enemyLoc.y + dir.dy] < 2) {
                             DPSreceived += dps;
                             break;

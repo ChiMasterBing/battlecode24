@@ -158,7 +158,7 @@ public class Comms {
         dirtyFlags = new boolean[64];
 
         messageQueue = new FastQueue<Integer>(64);
-        squadronMessages = new FastQueue<Integer>();
+        squadronMessages = new FastQueue<Integer>(250);
         //priorityMessageQueue = new FastQueue<Integer>(64);
     }
 
@@ -176,7 +176,6 @@ public class Comms {
         
 
         squadronMessages.clear();
-
 
         if (roundNumber == 1) {
             writeBotID();
@@ -201,7 +200,6 @@ public class Comms {
             //     readSectorMessages();
             readSquadronMessages();
         }
-
         // if (true /*& Robot.type = BUILDER*/) parseBuilderMessages();
     }
 
@@ -212,11 +210,15 @@ public class Comms {
         }
 
         //flushQueue(priorityMessageQueue);
-        flushQueue(messageQueue);
+        if (roundNumber == rc.getRoundNum())
+            flushQueue(messageQueue);
+        if (roundNumber == rc.getRoundNum())
         writeRegularUpdate();
 
+
         // sends all messages at once
-        flushBufferPool();
+        if (roundNumber == rc.getRoundNum())
+            flushBufferPool();
     }
 
     // ----------------------------------- //
@@ -257,7 +259,7 @@ public class Comms {
 
     static int numberAlive = 49;
     public static int getAlive() {
-        // Debug.println("idk if this actually works");
+        Debug.println("idk if this actually works");
         if (roundNumber % 2 == 1) {
             numberAlive = bufferPool[63];
         }
@@ -774,10 +776,11 @@ public class Comms {
     private static void flushQueue(FastQueue<Integer> queue) throws GameActionException {
         int index;
         while (!queue.isEmpty()) {
-            if (Clock.getBytecodesLeft() < 2000) break;
+            if (Clock.getBytecodesLeft() < 3000) break;
 
             int encodedMessage = queue.poll();
             int queueType = encodedMessage & 0x3;
+
             switch (queueType) {
                 case QUEUE_SQUADRON:
                     if (squadronMessagesLen >= SQUADRON_QUEUE_LEN) break;
@@ -927,11 +930,12 @@ public class Comms {
         squadronMessagesOffset += squadronMessagesSent;
         squadronMessagesOffset %= SQUADRON_QUEUE_LEN;
         squadronMessagesLen = (bufferPool[SQUADRON_QUEUE_HEADER] >> 6) & 0x3f;
+
 //        assert (squadronMessagesLen>=squadronMessagesSent);
         if(squadronMessagesSent>squadronMessagesLen) {
             System.out.println(squadronMessagesLen + " " + squadronMessagesSent);
             squadronMessagesLen = squadronMessagesSent;//SUS
-//            rc.resign();
+///            rc.resign();
         }
         squadronMessagesLen -= squadronMessagesSent;
         squadronMessagesSent = 0;
@@ -1004,9 +1008,8 @@ public class Comms {
         return readBits(bufferPool[Utils.ALLY_IDX_TO_STATUS_SLOT[idx]], Utils.ALLY_IDX_TO_STATUS_BITSHIFT[idx], ALLY_STATUS_BITLEN);
      }
      public static boolean checkStunned(int idx){
-        int x = allyStatus[idx];
-         return (x&2)!=0;
-     }
+        return (allyStatus[idx]&2)!=0;
+      }
 
     private static void parseBuilderMessages() {
         // evaluate stuff

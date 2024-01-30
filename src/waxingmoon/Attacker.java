@@ -42,15 +42,12 @@ public class Attacker extends Robot {
 
     public void turn() throws GameActionException{
         premoveSetGlobals();
-
         callFriends();
-
         checkPickupFlag();
 
         checkBuildTraps();
 
         updateCurrentTarget();
-
         prevEnemies--;
         if(numberOfEnemies>0){
             prevEnemies = 1;
@@ -61,8 +58,7 @@ public class Attacker extends Robot {
             attackLogic();
             if(rc.getLevel(SkillType.ATTACK) == 6)
                 attackLogic();
-        }
-
+       }
         if(rc.getID()%3<2&&rc.getLevel(SkillType.HEAL)>2) {
             if (rc.getHealth() <= chickenLevel || ((rc.getLevel(SkillType.HEAL) != 3 || rc.getLevel(SkillType.ATTACK) > 3 || myMoveNumber % 3 < 2) && numberOfEnemies == 0)) {
                 tryHeal();
@@ -70,13 +66,10 @@ public class Attacker extends Robot {
         }
 
         movement();
-
         postmoveSetGlobals();
-
         callFriends();
 
         checkBuildTraps();
-
         if(rc.getLevel(SkillType.HEAL)>3){
             tryHeal();
         }
@@ -88,8 +81,6 @@ public class Attacker extends Robot {
         if(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))>3){
             chickenLevel = 450+150*(Math.max(rc.getLevel(SkillType.ATTACK), rc.getLevel(SkillType.HEAL))-3);
         }
-
-
         if(rc.getLevel(SkillType.ATTACK)>3||(rc.getLevel(SkillType.HEAL)<=3&&rc.getID()%3==0)) {
             if (rc.getHealth()<=chickenLevel||closestEnemy == null || enemyRobots.length==0) {
                 tryHeal();
@@ -99,7 +90,6 @@ public class Attacker extends Robot {
                 tryHeal();
             }
         }
-
         tryFill();
 //        if(Clock.getBytecodesLeft()<5000){
 //            System.out.println(Clock.getBytecodesLeft());
@@ -113,6 +103,9 @@ public class Attacker extends Robot {
 
     boolean previouslyDistressFlag = false;
     public void callFriends() {
+        if(roundNumber<160){
+            return;
+        }
         boolean isFlagPickedUp = false; 
         for (FlagInfo f:flags) {
             if (f.getTeam() == rc.getTeam()) {
@@ -167,6 +160,7 @@ public class Attacker extends Robot {
             }
         }
     }
+
     public MapLocation findCombatLocation(){
         if(friendlyRobots.length<=7||enemyRobots.length<=7){
             MapLocation ret = currentTarget;
@@ -192,28 +186,31 @@ public class Attacker extends Robot {
         }
     }
 
+    public  void updateMyHeldFlag() {
+        for (FlagInfo f:flags) {
+            if (f.getLocation().equals(myLoc) && f.isPickedUp()) {
+                heldFlagLastTurn = f; return;
+            }
+        }
+    }
+
     public Boolean flagMovementLogic() throws GameActionException {
         if (roundNumber <= 200) return false;
-        heldFlagLastTurn = null;
-        //THIS IS NULL WHAT?
-        //follow not close
         if (rc.hasFlag()){
-            for (FlagInfo f:flags) {
-                if (f.getLocation().equals(myLoc) && f.isPickedUp()) {
-                    heldFlagLastTurn = f; break;
-                }
-            }
+            updateMyHeldFlag();
 
-            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100&&rc.getActionCooldownTurns()<10) {
+            if (numberOfFriendlies == 0 && numberOfCloseEnemies > 0 && myLoc.distanceSquaredTo(closestSpawn) > 100 && rc.getActionCooldownTurns()<10) {
                 rc.dropFlag(myLoc);
                 Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
+                heldFlagLastTurn = null;
+                return false;
             }
 
-            for (Direction d:Utils.DIRS_CENTER) {
+            for (Direction d:allDirections) {
                 if (spawnSet.contains(myLoc.add(d)) && rc.canMove(d)) {
                     rc.move(d);
                     if (spawnSet.contains(rc.getLocation())) {
-                        // Debug.println("I DEPOSITED FLAG WOO!");
+                        Debug.println("I DEPOSITED FLAG WOO!");
                         Comms.depositFlag(heldFlagLastTurn.getID());
                     }
                     return true;
@@ -221,42 +218,45 @@ public class Attacker extends Robot {
             }
 
             MapLocation tempObstacle = bugNav.lastObstacleFound;
-            if(myLoc.distanceSquaredTo(closestSpawn) > 9 && (tempObstacle == null || (rc.getHealth()<=chickenLevel||rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null&&rc.senseRobotAtLocation(tempObstacle).getTeam()==rc.getTeam()))) {
-                int dist = myLoc.distanceSquaredTo(closestSpawn);
+            if((tempObstacle == null || (rc.getHealth()<=chickenLevel||rc.canSenseRobotAtLocation(tempObstacle)&& rc.senseRobotAtLocation(tempObstacle) != null&&rc.senseRobotAtLocation(tempObstacle).getTeam()==rc.getTeam()))) {
+                int dist = Math.abs(myLoc.x - closestSpawn.x) + Math.abs(myLoc.y - closestSpawn.y); //myLoc.distanceSquaredTo(closestSpawn);
                 RobotInfo best = null;
-                int flagValue = rc.senseNearbyFlags(0)[0].getID();
+                int flagValue = rc.senseNearbyFlags(0, rc.getTeam().opponent())[0].getID();
                 Comms.updateFlagID(flagValue);
-                for(RobotInfo ri : rc.senseNearbyRobots(8)) {
-                    int value = ri.getLocation().distanceSquaredTo(closestSpawn);
+                for(RobotInfo ri : rc.senseNearbyRobots(8, rc.getTeam())) {
+                    int value = Math.abs(closestSpawn.x - ri.getLocation().x) + Math.abs(closestSpawn.y - ri.getLocation().y) + 1; //+1 dont wanna pass horizontally
                     if(value < dist) {
                         dist = value;
                         Comms.updateRobotID(flagValue, ri.ID);
                         best = ri;
                     }
+                    rc.setIndicatorDot(ri.getLocation(), 0, 255, 255);
                 }
-                if(best != null && (!isSwiper || numberOfFriendlies > 15)) {
+                if(best != null) {
                     MapLocation temp = myLoc.add(myLoc.directionTo(best.getLocation()));
                     if(rc.canDropFlag(temp)) {
                         rc.dropFlag(temp);
+                        rc.setIndicatorDot(best.getLocation(), 0, 0, 255);
+                        rc.setIndicatorString(myLoc.distanceSquaredTo(closestSpawn) + " " + dist);
+                        if (heldFlagLastTurn == null) updateMyHeldFlag(); //to be safe
                         Comms.writeEnemyFlagStatus(heldFlagLastTurn, 1);
+                        heldFlagLastTurn = null;
+                        return false;
                     }
                 }
             }
 
-            if (!isSwiper) bugNav.move(closestSpawn);
-            else {
-                if (closestSpawn.distanceSquaredTo(myLoc) < 225) bugNav.move(closestSpawn);
-                else bugNav.move(myFlags[mySpawn]); //try and flank;
-            }
+            bugNav.move(closestSpawn);
             
             if (spawnSet.contains(rc.getLocation())) { //this should never happen?
-                // Debug.println("I DEPOSITED FLAG WOO!");
-                Comms.depositFlag(0);
+                Debug.println("I DEPOSITED FLAG WOO!");
+                Comms.depositFlag(heldFlagLastTurn.getID());
             }
             return true;
         }
-        else {
-            FlagInfo[] closeFlags = rc.senseNearbyFlags(8);
+        else { //THIS IS SUS
+            heldFlagLastTurn = null;
+            FlagInfo[] closeFlags = rc.senseNearbyFlags(8, rc.getTeam().opponent());
             if(closeFlags.length > 0) {
                 FlagInfo i = closeFlags[0];
                 if(Comms.closeToFlag(i.getID(), rc.getID())) {
@@ -307,13 +307,14 @@ public class Attacker extends Robot {
                         targ = i.getLocation();
                         break;
                     }
-                    else if (i.getLocation().distanceSquaredTo(myLoc) > 6) {
-                        targ = closestSpawn;
+                    else if (i.getLocation().distanceSquaredTo(myLoc) >4) {
+                        targ = i.getLocation();
                         break;
                     }
                     else {
                         if(rc.getRoundNum()%2==0) {
-                            targ = closestSpawn;
+                            Direction toSpawn = myLoc.directionTo(closestSpawn);
+                            targ = closestSpawn.add(toSpawn).add(toSpawn).add(toSpawn).add(toSpawn).add(toSpawn);
                             break;
                         }
                     }
@@ -330,20 +331,31 @@ public class Attacker extends Robot {
     public void checkPickupFlag() throws GameActionException {
         if(rc.getRoundNum()<=200) return;
 
-        for (Direction d: Utils.DIRS_CENTER) {
+        for (Direction d:allDirections) {
             MapLocation nxt = myLoc.add(d);
             if(rc.canPickupFlag(nxt)) {
                 boolean isDead = true;
-                FlagInfo i = rc.senseNearbyFlags(2)[0];
-                for(int j = friendlyRobots.length; j-- > 0;) {
-                    if(Comms.closeToFlag(i.getID(), friendlyRobots[j].getID())) {
+                FlagInfo i = rc.senseNearbyFlags(2, rc.getTeam().opponent())[0];
+                for(RobotInfo ri : friendlyRobots) {
+                    if(Comms.closeToFlag(i.getID(), ri.getID())) {
                         isDead = false;
                     }
                 }
+
+                if (spawnSet.contains(rc.getLocation())) { //if I'm already on my spawnzone, ALWAYS try to pickup flag
+                    rc.pickupFlag(nxt);
+                    heldFlagLastTurn = i;
+                    Debug.println("I DEPOSITED FLAG WOO!");
+                    Comms.depositFlag(heldFlagLastTurn.getID());
+                    return;
+                }
+
                 if (Comms.assignedToOther(i.getID(), rc.getID())||isDead) {
-                    if ((friendlyRobots.length + 1) - enemyRobots.length > 0 && rc.getRoundNum() > 200) {
+                    if ((friendlyRobots.length + 1) - enemyRobots.length > 0 && roundNumber > 200) {
                         rc.pickupFlag(nxt);
+                        heldFlagLastTurn = i;
                         Comms.writeEnemyFlagStatus(i, 2);
+                        return;
                     }
                 }
             }
@@ -366,7 +378,7 @@ public class Attacker extends Robot {
         }
         else if(roundNumber < 200-Math.max(rc.getMapHeight(), rc.getMapWidth())/1.5){
             MapLocation choice;
-            choice = myLoc.add(Utils.DIRS_CENTER[random.nextInt(8)]);
+            choice = myLoc.add(allDirections[random.nextInt(8)]);
             bugNav.move(choice);
             return true;
         }
@@ -382,7 +394,6 @@ public class Attacker extends Robot {
     }
 
     public void movement() throws GameActionException {
-
         if(flagMovementLogic()) {
             explorePtr = 0;
             centerOfExploration = null;
@@ -391,27 +402,11 @@ public class Attacker extends Robot {
  
         if(crumbMovementLogic()) return;
 
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " premicro");
-        //* END HLIGHT //
-
         if (attackMicro()) {
             explorePtr = 0;
             centerOfExploration = null;
-            //! HIGHLIGHT //
-            if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-            System.out.println(Clock.getBytecodeNum() + " postmicro");
-            //* END HLIGHT //
             return;
         }
-
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " postmicro");
-        //* END HLIGHT //
-
-        
 
         int ret = 0;
         for(RobotInfo i: closeFriendlyRobots){
@@ -428,26 +423,27 @@ public class Attacker extends Robot {
         if(lowestHealthLoc!=null&&(rc.getLevel(SkillType.HEAL)>3||rc.getID()%3<2)){
             bugNav.move(lowestHealthLoc);//I cant bfs cuz osmeimtes it moves perpenduclarly into enemy base
         }
-
         if(enemyRobots.length==0 && !isSwiper) {
             MapLocation combatLoc = findCombatLocation();
             if (combatLoc != null) {
                 lastCombatLoc = combatLoc;
             }
         }
-
-        if(lastCombatLoc!=null&&myLoc.distanceSquaredTo(lastCombatLoc)<20||enemyRobots.length>0){
+        if(lastCombatLoc!=null&&(myLoc.distanceSquaredTo(lastCombatLoc)<20||enemyRobots.length>0)){
             lastCombatLoc = null;
         }
         if(lastCombatLoc!=null){
+            rc.setIndicatorLine(myLoc, lastCombatLoc, 255, 0, 0);
             bugNav.move(lastCombatLoc);
         }else if(currentTarget!=null) {
             MapInfo myInfo = rc.senseMapInfo(myLoc);
             if (myInfo.getTeamTerritory() == rc.getTeam().opponent() && rc.getHealth() < 900 && friendlyRobots.length > 2) return;
+
+            rc.setIndicatorLine(myLoc, currentTarget, 0, 0, 0);
             bugNav.move(currentTarget);
         }
-
     }
+
     public void premoveSetGlobals() throws GameActionException {
         myLoc = rc.getLocation();
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
@@ -460,6 +456,7 @@ public class Attacker extends Robot {
         numberOfCloseFriends = closeFriendlyRobots.length;
 
         tooCloseToSpawn = roundNumber>200 && currentTarget!=null && myLoc.distanceSquaredTo(currentTarget)>=closestSpawn.distanceSquaredTo(currentTarget);
+
 
         int lowestHealth = 1000;
         lowestHealthLoc = null;
@@ -491,6 +488,7 @@ public class Attacker extends Robot {
             }
         }
     }
+
     public void postmoveSetGlobals() throws GameActionException { //a lot of the setGlobals are only used for movement, hence, diff function
         myLoc = rc.getLocation();
         closeEnemyRobots = rc.senseNearbyRobots(4, rc.getTeam().opponent());
@@ -736,7 +734,7 @@ public class Attacker extends Robot {
             }
             for (int k = -1; ++k < 9;) {
                 Direction d = Utils.DIRS_CENTER[k];
-                nxt = myLoc.add(d);
+               nxt = myLoc.add(d);
                 // if (nxt.equals(myLoc) && nxt.equals(mirrorFlags[0]) || nxt.equals(mirrorFlags[1]) || nxt.equals(mirrorFlags[2])) {
                 //     if (rc.canBuild(TrapType.WATER, nxt) && rc.senseNearbyFlags(-1, rc.getTeam().opponent()).length == 0) {
                 //         rc.build(TrapType.WATER, nxt);
@@ -761,14 +759,14 @@ public class Attacker extends Robot {
                     }
                     if(!stun && rc.canBuild(TrapType.STUN, nxt)) {
                         rc.build(TrapType.STUN, nxt);
-                    }
+                     }
                 }
             }
-
         }
         if (roundNumber > 202)
             prevTurnCrumbs = rc.getCrumbs();
     }
+
     public void buildSpawnTraps() throws GameActionException {
         Direction[] diagonal = {Direction.NORTHEAST, Direction.NORTHWEST, Direction.SOUTHEAST, Direction.SOUTHWEST};
         if(myLoc.distanceSquaredTo(myFlags[0])<3){
@@ -863,26 +861,79 @@ public class Attacker extends Robot {
             int idx = Navigation.getClosestSpawnNumber(myLoc, mirrorFlags[0], mirrorFlags[1], mirrorFlags[2]);
             currentTarget = mirrorFlags[idx]; //by symmetry
         } else {
-            if (myMoveNumber < 3) {
-                isSwiper = true;
-                int choice = -1;
-                if (broadcastLocations.length == 3) {
-                    choice = myMoveNumber%3;
-                } else if (broadcastLocations.length == 2) {
-                    choice = myMoveNumber%2;
-                } else if (broadcastLocations.length == 1) {
-                    choice = 0;
-                }
+            if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(0)) == 0 && flags.length == 0) {
+                if (Comms.readFlagStatus(0) == 1)
+                    Comms.writeEnemyFlagStatusByNumber(0, 2);
+            }
+            if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(1)) == 0 && flags.length == 0) {
+                if (Comms.readFlagStatus(1) == 1)
+                    Comms.writeEnemyFlagStatusByNumber(1, 2);
+            }
+            if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(2)) == 0 && flags.length == 0) {
+                if (Comms.readFlagStatus(2) == 1)
+                    Comms.writeEnemyFlagStatusByNumber(2, 2);
+            }
 
-                if (choice == -1) {
-                    isSwiper = false;
-                } else {
-                    if (Comms.getEnemyFlagLocation(choice).x < 70 && Comms.getEnemyFlagStatus(choice) == 1) {
-                        currentTarget = Comms.getEnemyFlagLocation(choice);
-                    } else {
-                        currentTarget = broadcastLocations[choice];
+            if (Comms.getEnemyFlagLocation(0).x < 70 && Comms.getEnemyFlagStatus(0) == 1) {
+                currentTarget = Comms.getEnemyFlagLocation(0);
+            }
+            else if (Comms.getEnemyFlagLocation(1).x < 70 && Comms.getEnemyFlagStatus(1) == 1) {
+                currentTarget = Comms.getEnemyFlagLocation(1);
+            }
+            else if (Comms.getEnemyFlagLocation(2).x < 70 && Comms.getEnemyFlagStatus(2) == 1) {
+                currentTarget = Comms.getEnemyFlagLocation(2);
+            } else if (broadcastLocations.length > 0 && broadcastLocations[0] != null) {
+                currentTarget = broadcastLocations[0];
+            }
+
+            if (myMoveNumber < 3) { //find the furthest location away form currentTarget
+                isSwiper = true;
+                rc.setIndicatorDot(myLoc, 255, 0, 255);
+                MapLocation choice = null;
+                int maxDist = 0, d;
+
+                if (Comms.getEnemyFlagStatus(0) == 1) {
+                    MapLocation m = Comms.getEnemyFlagLocation(0);
+                    if ((d = myLoc.distanceSquaredTo(m)) > maxDist) {
+                        maxDist = d;
+                        choice = m;
+                    }
+                } else if (Comms.getEnemyFlagStatus(1) == 1) {
+                    MapLocation m = Comms.getEnemyFlagLocation(1);
+                    if ((d = myLoc.distanceSquaredTo(m)) > maxDist) {
+                        maxDist = d;
+                        choice = m;
+                    }
+                } else if (Comms.getEnemyFlagStatus(2) == 1) {
+                    MapLocation m = Comms.getEnemyFlagLocation(2);
+                    if ((d = myLoc.distanceSquaredTo(m)) > maxDist) {
+                        maxDist = d;
+                        choice = m;
                     }
                 }
+
+                maxDist += 101;
+
+                if (broadcastLocations.length >= 1) {
+                    if ((d = myLoc.distanceSquaredTo(broadcastLocations[0])) > maxDist) {
+                        maxDist = d;
+                        choice = broadcastLocations[0];
+                    }
+                }
+                if (broadcastLocations.length >= 2) {
+                    if ((d = myLoc.distanceSquaredTo(broadcastLocations[1])) > maxDist) {
+                        maxDist = d;
+                        choice = broadcastLocations[1];
+                    }
+                }
+                if (broadcastLocations.length >= 3) {
+                    if ((d = myLoc.distanceSquaredTo(broadcastLocations[2])) > maxDist) {
+                        maxDist = d;
+                        choice = broadcastLocations[2];
+                    }
+                }
+
+                currentTarget = choice;
 
                 if (myLoc.equals(currentTarget) || explorePtr != 0) {
                     if (centerOfExploration == null) {
@@ -890,35 +941,7 @@ public class Attacker extends Robot {
                     }
                     currentTarget = exploreTarget();
                 }
-            } else {
-                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(0)) == 0 && flags.length == 0) {
-                    if (Comms.readFlagStatus(0) == 1)
-                        Comms.writeEnemyFlagStatusByNumber(0, 2);
-                }
-                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(1)) == 0 && flags.length == 0) {
-                    if (Comms.readFlagStatus(1) == 1)
-                        Comms.writeEnemyFlagStatusByNumber(1, 2);
-                }
-                if (myLoc.distanceSquaredTo(Comms.getEnemyFlagLocation(2)) == 0 && flags.length == 0) {
-                    if (Comms.readFlagStatus(2) == 1)
-                        Comms.writeEnemyFlagStatusByNumber(2, 2);
-                }
-
-                if (Comms.getEnemyFlagLocation(0).x < 70 && Comms.getEnemyFlagStatus(0) == 1) {
-                    currentTarget = Comms.getEnemyFlagLocation(0);
-                }
-                else if (Comms.getEnemyFlagLocation(1).x < 70 && Comms.getEnemyFlagStatus(1) == 1) {
-                    currentTarget = Comms.getEnemyFlagLocation(1);
-                }
-                else if (Comms.getEnemyFlagLocation(2).x < 70 && Comms.getEnemyFlagStatus(2) == 1) {
-                    currentTarget = Comms.getEnemyFlagLocation(2);
-                } else if (broadcastLocations.length > 0 && broadcastLocations[0] != null) {
-                    currentTarget = broadcastLocations[0];
-                }
             }
-            // if (Comms.countFlagsCaptured() == 2 && broadcastLocations.length == 0) {
-            //     currentTarget = mirrorFlags[myMoveNumber % 3];
-            // }
         }
 
         MapLocation[] arr = rc.senseBroadcastFlagLocations();
@@ -1000,29 +1023,7 @@ public class Attacker extends Robot {
         if (!rc.isMovementReady()) return true;
 
         int realNumberOfEnemies = numberOfEnemies;
-
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(0));
-        //* END HLIGHT //
-
         if (Clock.getBytecodesLeft() > 15000) {
-            // VisionBitBFS VB = new VisionBitBFS(rc.getLocation(), rc.senseNearbyMapInfos());
-            // int[] reachable = VB.floodfill(4);
-            // System.out.println(Arrays.toString(reachable));
-            // int x = 4 + myLoc.x;
-            // int y = 4 + myLoc.y;
-            // for (RobotInfo ri:enemyRobots) {
-            //     MapLocation m = ri.getLocation();
-            //     if ((reachable[y - m.y] & (1 << (x - m.x))) == 0) {
-            //         realNumberOfEnemies--;
-            //         System.out.println(Arrays.toString(VB.floodfill(1)));
-            //         System.out.println(Arrays.toString(VB.floodfill(2)));
-            //         System.out.println(Arrays.toString(VB.floodfill(3)));
-            //         rc.resign();
-            //     }
-            // }
-            //int start = Clock.getBytecodesLeft();
             for (RobotInfo ri:enemyRobots) {
                 if (Clock.getBytecodesLeft() < 15000) break;
                 MapLocation m = ri.getLocation();
@@ -1059,33 +1060,14 @@ public class Attacker extends Robot {
             }
         }
 
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(1));
-        //* END HLIGHT //
-
         if (realNumberOfEnemies == 0) return false;
         
         if(rc.getHealth()<=chickenLevel){
             ChickenMicro.processTurn(enemyRobots, friendlyRobots, closeEnemyRobots, closeFriendlyRobots);
-            //! HIGHLIGHT //
-            if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-            System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(2));
-            //* END HLIGHT //
             return true;
         }
 
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(2));
-        //* END HLIGHT //
-        
         int cooldown = rc.getActionCooldownTurns();
-
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(3));
-        //* END HLIGHT //
 
         int mosthealth = 0;
         for(RobotInfo ri : closeFriendlyRobots){
@@ -1094,11 +1076,6 @@ public class Attacker extends Robot {
         Direction oppdir = myLoc.directionTo(closestEnemy).opposite();
         MapLocation opposite = myLoc.add(oppdir).add(oppdir).add(oppdir);
 
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(4));
-        //* END HLIGHT //
-
         if (cooldown >= 10 && rc.getHealth() < mosthealth && !tooCloseToSpawn) {
             BFSController.move(rc, opposite);
             //            BFSController.move(rc, opposite);
@@ -1106,11 +1083,6 @@ public class Attacker extends Robot {
             // if (rc.isMovementReady()) return false;
             // else return true;
         }
-
-        //! HIGHLIGHT //
-        if (Comms.myMoveOrder == 20 && roundNumber % 20 == 0) 
-        System.out.println(Clock.getBytecodeNum() + " " + String.valueOf(5));
-        //* END HLIGHT //
 
         // if(rc.senseMapInfo(myLoc).getTeamTerritory()==rc.getTeam().opponent()&&numberOfFriendlies<5&&numberOfEnemies+2<numberOfFriendlies){
         //     weakestEnemy = myLoc;
@@ -1143,7 +1115,8 @@ public class Attacker extends Robot {
 
             int cval = Math.max(i.getHealth(), myAtk);
             if (cval <= myAtk) {
-                if (i.getBuildLevel() >= 5) cval -= 15; //prioritize pro builders
+                if (i.getBuildLevel() >= 4) cval -= 15; //prioritize pro builders
+                // if (i.getAttackLevel() >= 4) cval -= 7; //prioritize pro attackers
                 else cval -= Math.max(3 * i.getAttackLevel(), 2 * i.getHealLevel());
 
                 if (!canKill) { //this is the first one where I can kill
@@ -1155,6 +1128,7 @@ public class Attacker extends Robot {
             }
             if (cval > myAtk && !canKill) { 
                 if (i.getBuildLevel() >= 5) cval -= 15; //prioritize pro builders
+                // if (i.getAttackLevel() >= 4) cval -= 7; //prioritize pro attackers
                 else cval -= Math.max(3 * i.getAttackLevel(), 2 * i.getHealLevel());
                 
                 if (cval < minHP) {

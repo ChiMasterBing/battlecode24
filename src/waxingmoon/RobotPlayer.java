@@ -19,10 +19,8 @@ public strictfp class RobotPlayer {
         int totalByteCode = 0;
 
         int turn = rc.getRoundNum();
-
-
         while(robot != null){
-
+            //if (rc.getRoundNum() == 436) rc.resign();
             robot.play();
 
             if (turn != rc.getRoundNum()) {

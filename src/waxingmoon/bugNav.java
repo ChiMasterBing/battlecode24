@@ -41,7 +41,6 @@ public class bugNav {
     static public void move(MapLocation loc) {
         if (!rc.isMovementReady()) return;
         initTurn();
-//        Debug.setIndicatorLine(Debug.INDICATORS, rc.getLocation(), loc, 0, 0, 255);
         target = loc;
         nav();
     }
@@ -55,7 +54,10 @@ public class bugNav {
     }
 
     static int getBaseMovementCooldown() {
-        //IF THIS IS FLAG
+        if (rc.hasFlag()) {
+            if (rc.getRoundNum() > 1800) return 12;
+            return 20;
+        }
         return 10;
     }
 
@@ -67,7 +69,6 @@ public class bugNav {
         try {
             // different target? ==> previous data does not help!
             if (prevTarget == null || target.distanceSquaredTo(prevTarget) > 0) {
-                // Debug.println("New target: " + target, id);
                 resetPathfinding();
             }
 
@@ -103,10 +104,6 @@ public class bugNav {
                 resetPathfinding();
             }
             
-            if (!rc.isSpawned()) {
-                // System.out.println("WHATT");
-            }
-            
             // I rotate clockwise or counterclockwise (depends on 'rotateRight'). If I try
             // to go out of the map I change the orientation
             // Note that we have to try at most 16 times since we can switch orientation in
@@ -123,14 +120,8 @@ public class bugNav {
                 if (!rc.onTheMap(newLoc)) {
                     rotateRight = !rotateRight;
                 } else if ((ri = rc.senseRobotAtLocation(newLoc)) != null) {
-                    //Debug.println("itsa mario");
 
-                    if (ri.team == rc.getTeam()) {
-                        //WHAT
-                    }
                 } else if (!rc.sensePassability(newLoc)) {
-                    
-
                     // This is the latest obstacle found if
                     // - I can't move there
                     // - It's on the map
@@ -182,7 +173,6 @@ public class bugNav {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Debug.println("Last exit", id);
         return true;
     }
 

@@ -15,8 +15,8 @@ public class AttackerMicro {
     static RobotInfo[] enemyRobots, friendlyRobots, closeFriendlyRobots, closeEnemyRobots;
     static int roundNumber;
     static MapLocation myLoc;
-    static int[] aroundMeX = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] aroundMeY = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    // static int[] aroundMeX = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    // static int[] aroundMeY = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int nullX, nullY;
     static int myMoveNumber;
     static long noStunMask;
@@ -51,20 +51,21 @@ public class AttackerMicro {
 
     public static boolean movementMicro() throws GameActionException {
         MicroInfo[] microInfo = new MicroInfo[9];
-        for (Direction d:Direction.allDirections()) {
-            MapLocation nxt = myLoc.add(d);
-            if (rc.onTheMap(nxt)) {
-                aroundMeX[d.ordinal()] = nxt.x;
-                aroundMeY[d.ordinal()] = nxt.y;
-            } else {
-                aroundMeX[d.ordinal()] = nullX;
-                aroundMeY[d.ordinal()] = nullY;
-            }
-            microInfo[d.ordinal()] = new MicroInfo(d);
+        for (int i = 9; i-- > 0;) {
+            // MapLocation nxt = myLoc.add(Direction.allDirections()[i]);
+            // if (rc.onTheMap(nxt)) {
+            //     aroundMeX[i] = nxt.x;
+            //     aroundMeY[i] = nxt.y;
+            // } else {
+            //     aroundMeX[i] = nullX;
+            //     aroundMeY[i] = nullY;
+            // }
+            microInfo[i] = new MicroInfo(Direction.allDirections()[i]);
         }
 
-        for (RobotInfo r:enemyRobots) {
-            int dps;
+        for (int i = enemyRobots.length; i-- > 0;) {
+            RobotInfo r = enemyRobots[i];
+           int dps;
             if (roundNumber >= 600) {
                 dps = uAttackerDPS[r.getAttackLevel()];
             } else {
@@ -88,16 +89,17 @@ public class AttackerMicro {
             } else {
                 hps = healerHPS[r.getHealLevel()];
             }
-            microInfo[0].updateAlly(r, hps);
-            microInfo[1].updateAlly(r, hps);
-            microInfo[2].updateAlly(r, hps);
-            microInfo[3].updateAlly(r, hps);
-            microInfo[4].updateAlly(r, hps);
-            microInfo[5].updateAlly(r, hps);
-            microInfo[6].updateAlly(r, hps);
-            microInfo[7].updateAlly(r, hps);
-            microInfo[8].updateAlly(r, hps);
-        }
+            int moveOrder = Comms.IDToMoveOrder.getVal(r.getID());
+            microInfo[0].updateAlly(r, hps, moveOrder);
+            microInfo[1].updateAlly(r, hps, moveOrder);
+            microInfo[2].updateAlly(r, hps, moveOrder);
+            microInfo[3].updateAlly(r, hps, moveOrder);
+            microInfo[4].updateAlly(r, hps, moveOrder);
+            microInfo[5].updateAlly(r, hps, moveOrder);
+            microInfo[6].updateAlly(r, hps, moveOrder);
+            microInfo[7].updateAlly(r, hps, moveOrder);
+            microInfo[8].updateAlly(r, hps, moveOrder);
+       }
 
         MicroInfo bestMicro = microInfo[8];
         for (int i = 0; i < 8; ++i) {
@@ -120,7 +122,7 @@ public class AttackerMicro {
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
         boolean canMove = true;
-        int stunLikely = 0;
+        // int stunLikely = 0;
         boolean enemyTerritory;
         int heals = 0;
         int stunned = 0;
@@ -131,13 +133,9 @@ public class AttackerMicro {
             this.dir = dir;
             this.location = rc.getLocation().add(dir);
             if (dir != Direction.CENTER && !rc.canMove(dir)) canMove = false;
-            else{
-                if (rc.senseMapInfo(location).getTeamTerritory() == rc.getTeam()) {
-                    enemyTerritory = false;
-                } else {
-                    enemyTerritory = true;
-                }
-            }
+            else {
+                enemyTerritory = rc.senseMapInfo(location).getTeamTerritory() == rc.getTeam();
+             }
         }
 
         void updateEnemy(RobotInfo unit, int dps){
@@ -149,7 +147,7 @@ public class AttackerMicro {
 
             if (dist <= 20) enemiesTargeting += dps;
 //            assert(moveOrder>=0);
-            if (dist <= 4) stunLikely++;
+            //if (dist <= 4) stunLikely++;
         }
 
         void updateTrap(MapLocation m) {
@@ -160,30 +158,15 @@ public class AttackerMicro {
             }
         }
 
-        void updateAlly(RobotInfo unit, int hps){
+        void updateAlly(RobotInfo unit, int hps, int moveOrder){
             if (!canMove) return;
-            int dist = unit.getLocation().distanceSquaredTo(location);
-            if (dist <= 2)
-                stunLikely--;
-            if(dist<=4){
-                heals+=hps;
+            // if (dist <= 2)
+            //     stunLikely--;
+            if(unit.getLocation().distanceSquaredTo(location) <= 4) {
+                heals += hps;
                 alliesNearby++;
-//            if(unit.getID()!=12853) {
-//                int[] penis =  Comms.IDToMoveOrder.getKeys();
-//                System.out.println(unit.getLocation());
-//                for(int i: penis){
-//                    if(i==12853){
-//                        assert false;
-//                    }
-//                    System.out.println(i);
-//                    System.out.println(Comms.IDToMoveOrder.getVal(i));
-//                    System.out.println();
-//                }
-//                System.out.println(Comms.IDToMoveOrder.size);
-            }
-            if(dist<=4){
-                int moveOrder = Comms.IDToMoveOrder.getVal(unit.getID());
-                if (Comms.checkStunned(moveOrder)) {
+
+                 if (Comms.checkStunned(moveOrder)) {
                     stunned++;
                 }
             }
@@ -266,6 +249,11 @@ public class AttackerMicro {
 //                    }else if(M.minDistanceToEnemy<minDistanceToEnemy){
 //                        return false;
 //                    }
+                //    if(stunned>M.stunned){
+                //        return true;
+                //    }else if(M.stunned>stunned){
+                //        return false;
+                //    }
                     if(alliesNearby>=M.alliesNearby){
                         return true;
                     }else{
