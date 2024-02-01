@@ -7,8 +7,7 @@ import java.util.Random;
 import battlecode.common.*;
 
 // custom package
-import template1.java_utils.*;
-import template1.Debug.*;
+import waxingmoon.fast.*;
 
 public class Utils {
     private static RobotController rc;
@@ -62,34 +61,24 @@ public class Utils {
         Direction.WEST,
     };
 
-    static final Direction[][] SHIFTED_DX_DY_TO_DIRECTION = {
-        {Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST},
-        {Direction.SOUTH, Direction.CENTER, Direction.NORTH},
-        {Direction.SOUTHEAST, Direction.EAST, Direction.NORTHEAST}
-    };
-
-    static final int[][] SHIFTED_DX_DY_TO_INT = {
-        {5, 6, 7},
-        {4, 8, 0},
-        {3, 2, 1}
-    };
-
-    static final int[] INT_TO_DX = {
-        0, 1, 1, 1, 0, -1, -1, -1, 0
-    };
-
-    static final int[] INT_TO_DY = {
-        1, 1, 0, -1, -1, -1, 0, 1, 0
-    };
-
     static final int[] BASIC_MASKS = {
-        (1 << 0) - 1, (1 << 1) - 1, (1 << 2) - 1, (1 << 3) - 1, (1 << 4) - 1, (1 << 5) - 1, (1 << 6) - 1, (1 << 7) - 1, (1 << 8) - 1, (1 << 9) - 1, 
-        (1 << 10) - 1, (1 << 11) - 1, (1 << 12) - 1, (1 << 13) - 1, (1 << 14) - 1, (1 << 15) - 1, (1 << 16) - 1, (1 << 17) - 1, (1 << 18) - 1, (1 << 19) - 1, 
-        (1 << 20) - 1, (1 << 21) - 1, (1 << 22) - 1, (1 << 23) - 1, (1 << 24) - 1, (1 << 25) - 1, (1 << 26) - 1, (1 << 27) - 1, (1 << 28) - 1, (1 << 29) - 1, 
-        (1 << 30) - 1, (1 << 31) - 1, (1 << 32) - 1, (1 << 33) - 1, (1 << 34) - 1, (1 << 35) - 1, (1 << 36) - 1, (1 << 37) - 1, (1 << 38) - 1, (1 << 39) - 1, 
-        (1 << 40) - 1, (1 << 41) - 1, (1 << 42) - 1, (1 << 43) - 1, (1 << 44) - 1, (1 << 45) - 1, (1 << 46) - 1, (1 << 47) - 1, (1 << 48) - 1, (1 << 49) - 1, 
-        (1 << 50) - 1, (1 << 51) - 1, (1 << 52) - 1, (1 << 53) - 1, (1 << 54) - 1, (1 << 55) - 1, (1 << 56) - 1, (1 << 57) - 1, (1 << 58) - 1, (1 << 59) - 1, 
-        (1 << 60) - 1, (1 << 61) - 1, (1 << 62) - 1, (1 << 63) - 1, (1 << 64) - 1, 
+        (1 << 0) - 1,
+        (1 << 1) - 1,
+        (1 << 2) - 1,
+        (1 << 3) - 1,
+        (1 << 4) - 1,
+        (1 << 5) - 1,
+        (1 << 6) - 1,
+        (1 << 7) - 1,
+        (1 << 8) - 1,
+        (1 << 9) - 1,
+        (1 << 10) - 1,
+        (1 << 11) - 1,
+        (1 << 12) - 1,
+        (1 << 13) - 1,
+        (1 << 14) - 1,
+        (1 << 15) - 1,
+        (1 << 16) - 1
     };
 
     // init
@@ -131,21 +120,6 @@ public class Utils {
 
     public static MapLocation locationDelta(MapLocation from, MapLocation to) {
         return new MapLocation(to.x - from.x, to.y - from.y);
-    }
-
-    public static Direction dxDyToDirection(int dx, int dy) {
-        return SHIFTED_DX_DY_TO_DIRECTION[dx+1][dy+1];
-    }
-
-    public static int dxDyToInt(int dx, int dy) {
-        return SHIFTED_DX_DY_TO_INT[dx+1][dy+1];
-    }
-    public static int dxDyToInt(Direction dir) {
-        return SHIFTED_DX_DY_TO_INT[dir.dx+1][dir.dy+1];
-    }
-
-    public static boolean isInMap(MapLocation loc) {
-        return (loc.x >= 0 && loc.x < MAP_WIDTH && loc.y >= 0 && loc.y < MAP_HEIGHT);
     }
 
     // comms

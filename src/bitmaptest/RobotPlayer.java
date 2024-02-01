@@ -51,7 +51,7 @@ public strictfp class RobotPlayer {
      *            information on its current status. Essentially your portal to interacting with the world.
      **/
     private static void test() throws GameActionException {
-        System.out.println(Clock.getBytecodeNum());
+
     }
     
      @SuppressWarnings("unused")
@@ -64,7 +64,7 @@ public strictfp class RobotPlayer {
 
         // You can also use indicators to save debug notes in replays.
         rc.setIndicatorString("Hello world!");
-
+        Utils.init(rc);
         while (true) {
             // This code runs during the entire lifespan of the robot, which is why it is in an infinite
             // loop. If we ever leave this loop and return from run(), the robot dies! At the end of the
@@ -73,13 +73,14 @@ public strictfp class RobotPlayer {
             turnCount += 1;  // We have now been alive for one more turn!
 
             // Try/catch blocks stop unhandled exceptions, which cause your robot to explode.
+            
             try {
 
                 if (!rc.isSpawned()){
                     MapLocation[] spawnLocs = rc.getAllySpawnLocations();
                     // Pick a random spawn location to attempt spawning in.
                     MapLocation randomLoc = spawnLocs[rng.nextInt(spawnLocs.length)];
-                    if (rc.canSpawn(spawnLocs[14]) && turnCount == 1) rc.spawn(spawnLocs[14]);
+                    if (rc.canSpawn(spawnLocs[7]) && turnCount == 1) rc.spawn(spawnLocs[7]);
                 }
                 else{
                     // if (rc.canPickupFlag(rc.getLocation())){
@@ -98,17 +99,19 @@ public strictfp class RobotPlayer {
                     // Move and attack randomly if no objective.
                     if (turnCount == 2) {
                         //test();
+                        System.out.println(Clock.getBytecodeNum());
                         System.out.println("--- sense ---");
                         MapInfo[] mapInfos = rc.senseNearbyMapInfos();
                         MapLocation myLoc = rc.getLocation();
                         System.out.println(Clock.getBytecodeNum());
                         System.out.println("--- instantiate ---");
-                        VisionBitMap vbm = new VisionBitMap(myLoc, mapInfos);
+                        //VisionBitMap vbm = new VisionBitMap(myLoc, mapInfos);
+                        VisionLongMap vlm = new VisionLongMap(myLoc, mapInfos);
                         System.out.println(Clock.getBytecodeNum());
-                        System.out.println("--- bfs ---");
-                        int[][] bfs = vbm.bfs();
+                        System.out.println("--- floodfill ---");
+                        long[] ff = vlm.floodfill();
                         System.out.println(Clock.getBytecodeNum());
-
+                        vlm.printState(ff);
                         // for (int x: floodfill) {
                         //     System.out.println(Integer.toBinaryString(x|(1<<9)).substring(1));
                         // }
