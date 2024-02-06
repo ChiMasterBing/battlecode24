@@ -52,14 +52,6 @@ public class AttackerMicro {
     public static boolean movementMicro() throws GameActionException {
         MicroInfo[] microInfo = new MicroInfo[9];
         for (int i = 9; i-- > 0;) {
-            // MapLocation nxt = myLoc.add(Direction.allDirections()[i]);
-            // if (rc.onTheMap(nxt)) {
-            //     aroundMeX[i] = nxt.x;
-            //     aroundMeY[i] = nxt.y;
-            // } else {
-            //     aroundMeX[i] = nullX;
-            //     aroundMeY[i] = nullY;
-            // }
             microInfo[i] = new MicroInfo(Direction.allDirections()[i]);
         }
 

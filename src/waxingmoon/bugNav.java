@@ -17,8 +17,6 @@ public class bugNav {
     static FastIntSet visited = new FastIntSet();
     static int id = 12620;
     static FastLocSet dontMove;
-    static boolean isSwiper = false;
-    static boolean isBugging;
 
     public static void init(RobotController r) {
         rc = r;
@@ -68,30 +66,24 @@ public class bugNav {
     }
 
     static boolean nav() {
-        // System.out.println("obstacle " + rc.getLocation() + "" + lastObstacleFound + " ");
         try {
             // different target? ==> previous data does not help!
+            if (prevTarget == null || target.distanceSquaredTo(prevTarget) > 0) {
+                resetPathfinding();
+            }
+
             // If I'm at a minimum distance to the target, I'm free!
             MapLocation myLoc = rc.getLocation();
-
-            if (prevTarget != null && !prevTarget.equals(target)) {
-                if (myLoc.directionTo(prevTarget) != myLoc.directionTo(target)) {
-                    resetPathfinding();
-                }
-            } else {
-                int d = distance(myLoc, target);
-                if (d < minDistToEnemy) {
-                    resetPathfinding();
-                    // System.out.println("reset B");
-                    minDistToEnemy = d;
-                }
+            int d = distance(myLoc, target);
+            if (d < minDistToEnemy) {
+                resetPathfinding();
+                minDistToEnemy = d;
             }
 
             int code = getCode();
 
             if (visited.contains(code)) {
                 // Debug.println("Contains code", id);
-                // System.out.println("reset C");
                 resetPathfinding();
             }
             visited.add(code);
@@ -107,18 +99,11 @@ public class bugNav {
                 dir = myLoc.directionTo(lastObstacleFound);
             }
 
-            if (lastObstacleFound != null)
-                rc.setIndicatorLine(myLoc,lastObstacleFound, 255, 255, 0);
-
             if (canMove(dir)) {
                 // Debug.println("can move: " + dir, id);
                 resetPathfinding();
             }
             
-            rc.setIndicatorLine(myLoc, myLoc.add(dir), 255, 0, 255);
-
-            isBugging = (lastObstacleFound != null);
-
             // I rotate clockwise or counterclockwise (depends on 'rotateRight'). If I try
             // to go out of the map I change the orientation
             // Note that we have to try at most 16 times since we can switch orientation in
@@ -128,19 +113,19 @@ public class bugNav {
                 if (rc.canSenseLocation(newLoc)) {
                     if (canMove(dir)) {
                         rc.move(dir);
-                        rc.setIndicatorString("bugging " + lastObstacleFound);
                         return true;
                     }
                 }
+                RobotInfo ri; 
                 if (!rc.onTheMap(newLoc)) {
                     rotateRight = !rotateRight;
+                } else if ((ri = rc.senseRobotAtLocation(newLoc)) != null) {
+
                 } else if (!rc.sensePassability(newLoc)) {
                     // This is the latest obstacle found if
                     // - I can't move there
                     // - It's on the map
                     // - It's not passable
-                    rc.setIndicatorDot(newLoc, 0, 0, 0);
-
                     lastObstacleFound = newLoc;
                     if (shouldGuessRotation) {
                         shouldGuessRotation = false;
@@ -193,7 +178,7 @@ public class bugNav {
 
     // clear some of the previous data
     static void resetPathfinding() {
-        //System.out.println("Resetting pathfinding " + id);
+        // Debug.println("Resetting pathfinding", id);
         lastObstacleFound = null;
         minDistToEnemy = INF;
         visited.clear();

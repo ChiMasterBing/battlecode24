@@ -29,7 +29,6 @@ public abstract class Robot {
     public Robot(RobotController rc) throws GameActionException {
         this.rc = rc;
         bugNav.init(rc);
-        bugNav2.init(rc);
         Navigation.init(rc);
         Debug.init(rc);
         Comms.init(rc);
@@ -278,10 +277,6 @@ public abstract class Robot {
                 readCommFlagID();
                 break;
             case 5:
-                Comms.writeSniperStatus(0, 1);
-                Comms.writeSniperStatus(1, 1);
-                Comms.writeSniperStatus(2, 1);
-                Comms.writeFlagStatus(myMoveNumber%3, 8);
                 break;
             case 176:
                 // for (FlagInfo f:flags) {
